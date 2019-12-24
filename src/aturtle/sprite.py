@@ -22,10 +22,10 @@ class Sprite:
         self._theta = 0
 
         offset_coords = [
-            value - offset
+            value + offset
             for value, offset in zip(
                 shape.coords,
-                it.cycle((shape.x_center, shape.y_center))
+                it.cycle((x - shape.x_center, y - shape.y_center))
             )
         ]
 
