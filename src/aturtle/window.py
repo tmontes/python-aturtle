@@ -13,7 +13,8 @@ class Window:
     _root = None
     _toplevels = []
 
-    def __init__(self, width=320, height=320, x=None, y=None, title='A-Turtle'):
+    def __init__(self, width=320, height=320, x=None, y=None,
+                 fill_color='white', title='A-Turtle'):
 
         if not Window._root:
             Window._root = tkinter.Tk()
@@ -29,7 +30,11 @@ class Window:
         y = (window.winfo_screenheight() - height) // 2 if y is None else y
 
         window.geometry(f'{width}x{height}+{x}+{y}')
-        canvas = tkinter.Canvas(window)
+        canvas = tkinter.Canvas(
+            window,
+            highlightthickness=0,
+            background=fill_color,
+        )
         canvas.pack(expand=True, fill='both')
         window.update()
 
