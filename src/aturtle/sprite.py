@@ -65,8 +65,8 @@ class Sprite:
     def rotate(self, theta=0, *, around=None, update=False):
 
         # Be fast
-        sin = math.sin
-        cos = math.cos
+        sin_theta = math.sin(theta)
+        cos_theta = math.cos(theta)
         cx = around[0] if around else self._x
         cy = around[1] if around else self._y
 
@@ -75,15 +75,15 @@ class Sprite:
         for i in range(0, len(coords)-1, 2):
             x = coords[i] - cx
             y = coords[i+1] - cy
-            coords[i] = x * cos(theta) - y * sin(theta) + cx
-            coords[i+1] = x * sin(theta) + y * cos(theta) + cy
+            coords[i] = x * cos_theta - y * sin_theta + cx
+            coords[i+1] = x * sin_theta + y * cos_theta + cy
 
         # Rotate anchor point, if not rotating around it.
         if around:
             x = self._x - cx
             y = self._y - cy
-            new_x = x * cos(theta) - y * sin(theta) + cx
-            new_y = x * sin(theta) + y * cos(theta) + cy
+            new_x = x * cos_theta - y * sin_theta + cx
+            new_y = x * sin_theta + y * cos_theta + cy
             self._x = new_x
             self._y = new_y
 
