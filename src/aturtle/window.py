@@ -13,7 +13,7 @@ class Window:
     _root = None
     _toplevels = []
 
-    def __init__(self, w=320, h=320, x=None, y=None, title='A-Turtle'):
+    def __init__(self, width=320, height=320, x=None, y=None, title='A-Turtle'):
 
         if not Window._root:
             Window._root = tkinter.Tk()
@@ -24,48 +24,50 @@ class Window:
 
         window.title(title)
 
-        x = (window.winfo_screenwidth() - w) // 2 if x is None else x
-        y = (window.winfo_screenheight() - h) // 2 if y is None else y
+        # Center window on screen unless (x, y) is given.
+        x = (window.winfo_screenwidth() - width) // 2 if x is None else x
+        y = (window.winfo_screenheight() - height) // 2 if y is None else y
 
-        window.geometry(f'{w}x{h}+{x}+{y}')
+        window.geometry(f'{width}x{height}+{x}+{y}')
         canvas = tkinter.Canvas(window)
         canvas.pack(expand=True, fill='both')
         window.update()
 
-        # 0, 0 should be at the center
+        # Make (0, 0) the visual canvas center.
         canvas.config(xscrollincrement=1, yscrollincrement=1)
-        self._xscroll = -w // 2
-        self._yscroll = -w // 2
-        canvas.xview_scroll(self._xscroll, 'units')
-        canvas.yview_scroll(self._yscroll, 'units')
+        self._x_scroll = -width // 2
+        self._y_scroll = -width // 2
+        canvas.xview_scroll(self._x_scroll, 'units')
+        canvas.yview_scroll(self._y_scroll, 'units')
 
-        # Handle window resizing
+        # Handle window resizing.
         window.bind('<Configure>', self._resize_handler)
 
         self._window = window
         self.canvas = canvas
 
-        self._w = w
-        self._h = h
+        self._width = width
+        self._height = height
 
 
     def _resize_handler(self, event):
 
-        event_w = event.width
-        event_h = event.height
+        # Adjust canvas scroll to keep (0, 0) at the visual center.
 
-        if event_w != self._w:
-            new_xscroll = -event_w // 2
-            self.canvas.xview_scroll(new_xscroll-self._xscroll, 'units')
-            self._xscroll = new_xscroll
-            self._w = event_w
+        event_width = event.width
+        event_height = event.height
 
-        if event_h != self._h:
-            new_yscroll = -event_h // 2
-            self.canvas.yview_scroll(new_yscroll-self._yscroll, 'units')
-            self._yscroll = new_yscroll
-            self._h = event_h
+        if event_width != self._width:
+            new_x_scroll = -event_width // 2
+            self.canvas.xview_scroll(new_x_scroll-self._x_scroll, 'units')
+            self._x_scroll = new_x_scroll
+            self._width = event_width
 
+        if event_height != self._height:
+            new_y_scroll = -event_height // 2
+            self.canvas.yview_scroll(new_y_scroll-self._y_scroll, 'units')
+            self._y_scroll = new_y_scroll
+            self._height = event_height
 
 
     def close(self):
@@ -81,4 +83,3 @@ class Window:
         self._window.destroy()
         self.canvas = None
         self._window = None
-
