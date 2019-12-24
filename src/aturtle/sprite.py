@@ -62,13 +62,13 @@ class Sprite:
         self.move(x - self._x, y - self._y, update=update)
 
 
-    def rotate(self, theta=0, *, update=False):
+    def rotate(self, theta=0, *, around=None, update=False):
 
         # Be fast
         sin = math.sin
         cos = math.cos
-        cx = self._x
-        cy = self._y
+        cx = around[0] if around else self._x
+        cy = around[1] if around else self._y
 
         # Avoid list reallocation
         coords = self._c.coords(self._id)
@@ -77,6 +77,15 @@ class Sprite:
             y = coords[i+1] - cy
             coords[i] = x * cos(theta) - y * sin(theta) + cx
             coords[i+1] = x * sin(theta) + y * cos(theta) + cy
+
+        # Rotate anchor point, if not rotating around it.
+        if around:
+            x = self._x - cx
+            y = self._y - cy
+            new_x = x * cos(theta) - y * sin(theta) + cx
+            new_y = x * sin(theta) + y * cos(theta) + cy
+            self._x = new_x
+            self._y = new_y
 
         self._c.coords(self._id, coords)
         self._theta += theta
