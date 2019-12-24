@@ -11,8 +11,8 @@ class Square:
 
         half_side = side // 2
 
-        self.x_center = half_side
-        self.y_center = half_side
+        self.x_anchor = half_side
+        self.y_anchor = half_side
 
 
         self.coords = [

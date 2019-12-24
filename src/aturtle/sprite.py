@@ -25,7 +25,7 @@ class Sprite:
             value + offset
             for value, offset in zip(
                 shape.coords,
-                it.cycle((x - shape.x_center, y - shape.y_center))
+                it.cycle((x - shape.x_anchor, y - shape.y_anchor))
             )
         ]
 
