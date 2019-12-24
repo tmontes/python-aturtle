@@ -88,8 +88,7 @@ class Sprite:
             self._y = new_y
 
         self._c.coords(self._id, coords)
-        self._theta += theta
-        self._theta = self._theta % (math.pi * 2)
+        self._theta = (self._theta + theta) % (math.pi * 2)
         if update:
             self.update()
 
