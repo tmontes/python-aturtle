@@ -56,6 +56,9 @@ class Window:
     @x.setter
     def x(self, value):
 
+        if value < 0:
+            value = self._tk_window.winfo_screenwidth() - self.width + value
+
         self._tk_window.geometry(f'+{value}+{self.y}')
 
 
@@ -67,6 +70,9 @@ class Window:
 
     @y.setter
     def y(self, value):
+
+        if value < 0:
+            value = self._tk_window.winfo_screenheight() - self.height + value
 
         self._tk_window.geometry(f'+{self.x}+{value}')
 
