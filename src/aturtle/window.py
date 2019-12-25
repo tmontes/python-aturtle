@@ -10,33 +10,28 @@ import tkinter
 
 class Window:
 
-    _root = None
-    _toplevels = []
+    _windows = []
 
     def __init__(self, width=320, height=320, x=None, y=None,
                  fill_color='white', title='A-Turtle'):
 
-        if not Window._root:
-            Window._root = tkinter.Tk()
-            window = Window._root
-        else:
-            window = tkinter.Toplevel()
-            Window._toplevels.append(window)
+        tk_window = tkinter.Tk() if not Window._windows else tkinter.Toplevel()
+        Window._windows.append(self)
 
-        window.title(title)
+        tk_window.title(title)
 
-        # Center window on screen unless (x, y) is given.
-        x = (window.winfo_screenwidth() - width) // 2 if x is None else x
-        y = (window.winfo_screenheight() - height) // 2 if y is None else y
+        # Center tk_window on screen unless (x, y) is given.
+        x = (tk_window.winfo_screenwidth() - width) // 2 if x is None else x
+        y = (tk_window.winfo_screenheight() - height) // 2 if y is None else y
 
-        window.geometry(f'{width}x{height}+{x}+{y}')
+        tk_window.geometry(f'{width}x{height}+{x}+{y}')
         canvas = tkinter.Canvas(
-            window,
+            tk_window,
             highlightthickness=0,
             background=fill_color,
         )
         canvas.pack(expand=True, fill='both')
-        window.update()
+        tk_window.update()
 
         # Make (0, 0) the visual canvas center.
         canvas.config(xscrollincrement=1, yscrollincrement=1)
@@ -45,59 +40,59 @@ class Window:
         canvas.xview_scroll(self._x_scroll, 'units')
         canvas.yview_scroll(self._y_scroll, 'units')
 
-        # Handle window resizing.
-        window.bind('<Configure>', self._resize_handler)
+        # Handle tk_window resizing.
+        tk_window.bind('<Configure>', self._resize_handler)
 
-        self._window = window
+        self._tk_window = tk_window
         self.canvas = canvas
 
 
     @property
     def x(self):
 
-        return self._window.winfo_x()
+        return self._tk_window.winfo_x()
 
 
     @x.setter
     def x(self, value):
 
-        self._window.geometry(f'+{value}+{self.y}')
+        self._tk_window.geometry(f'+{value}+{self.y}')
 
 
     @property
     def y(self):
 
-        return self._window.winfo_y()
+        return self._tk_window.winfo_y()
 
 
     @y.setter
     def y(self, value):
 
-        self._window.geometry(f'+{self.x}+{value}')
+        self._tk_window.geometry(f'+{self.x}+{value}')
 
 
     @property
     def width(self):
 
-        return self._window.winfo_width()
+        return self._tk_window.winfo_width()
 
 
     @width.setter
     def width(self, value):
 
-        self._window.geometry(f'{value}x{self.height}')
+        self._tk_window.geometry(f'{value}x{self.height}')
 
 
     @property
     def height(self):
 
-        return self._window.winfo_height()
+        return self._tk_window.winfo_height()
 
 
     @height.setter
     def height(self, value):
 
-        self._window.geometry(f'{self.width}x{value}')
+        self._tk_window.geometry(f'{self.width}x{value}')
 
 
     def _resize_handler(self, event):
@@ -115,14 +110,12 @@ class Window:
 
     def close(self):
 
-        if self._window is Window._root and Window._toplevels:
+        is_root = self._tk_window is Window._windows[0]._tk_window
+        if is_root and len(Window._windows) > 1:
             raise RuntimeError('Must be last to close.')
 
-        if self._window is not Window._root:
-            Window._toplevels.remove(self._window)
-        else:
-            Window._root = None
+        self._tk_window.destroy()
 
-        self._window.destroy()
+        Window._windows.remove(self)
         self.canvas = None
-        self._window = None
+        self._tk_window = None
