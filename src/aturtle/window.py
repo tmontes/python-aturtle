@@ -119,3 +119,14 @@ class Window:
         Window._windows.remove(self)
         self.canvas = None
         self._tk_window = None
+
+
+    @classmethod
+    def close_all(cls):
+
+        if not cls._windows:
+            raise RuntimeError('No windows.')
+
+        root = cls._windows[0]._tk_window
+        root.destroy()
+        cls._windows.clear()
