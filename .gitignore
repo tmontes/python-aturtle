@@ -1,2 +1,4 @@
 xplore/
 *.egg-info/
+.coverage
+htmlcov/

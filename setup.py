@@ -29,7 +29,10 @@ CLASSIFIERS = [
 INSTALL_REQUIRES = [
 ]
 EXTRAS_REQUIRE = {
-    "tests": [],
+    "tests": [
+        "coverage",
+        "pylint",
+    ],
     "docs": [],
 }
 EXTRAS_REQUIRE["dev"] = EXTRAS_REQUIRE["tests"] + EXTRAS_REQUIRE["docs"]
