@@ -54,10 +54,55 @@ class Window:
         self._width = width
         self._height = height
 
+    @property
+    def x(self):
+
+        return self._window.winfo_x()
+
+
+    @x.setter
+    def x(self, value):
+
+        self._window.geometry(f'+{value}+{self.y}')
+
+
+    @property
+    def y(self):
+
+        return self._window.winfo_y()
+
+
+    @y.setter
+    def y(self, value):
+
+        self._window.geometry(f'+{self.x}+{value}')
+
+
+    @property
+    def width(self):
+
+        return self._window.winfo_width()
+
+
+    @width.setter
+    def width(self, value):
+
+        self._window.geometry(f'{value}x{self.height}')
+
+
+    @property
+    def height(self):
+
+        return self._window.winfo_height()
+
+
+    @height.setter
+    def height(self, value):
+
+        self._window.geometry(f'{self.width}x{value}')
+
 
     def _resize_handler(self, event):
-
-        # Adjust canvas scroll to keep (0, 0) at the visual center.
 
         event_width = event.width
         event_height = event.height
