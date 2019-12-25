@@ -181,6 +181,48 @@ class TestOneWindow(unittest.TestCase):
         tk_window.title.assert_called_once_with('Test Title')
 
 
+    def test_positive_horizontal_placement(self):
+
+        w = window.Window()
+        w.x = 100
+        self.assertEqual(w.x, 100)
+
+
+    def test_positive_vertical_placement(self):
+
+        w = window.Window()
+        w.y = 50
+        self.assertEqual(w.y, 50)
+
+
+    def test_negative_horizontal_placement(self):
+
+        w = window.Window()
+        w.x = -100
+        self.assertEqual(w.x, SCREEN_WIDTH - w.width - 100)
+
+
+    def test_negative_vertical_placement(self):
+
+        w = window.Window()
+        w.y = -50
+        self.assertEqual(w.y, SCREEN_HEIGHT - w.height - 50)
+
+
+    def test_horizontal_sizing(self):
+
+        w = window.Window()
+        w.width = 200
+        self.assertEqual(w.width, 200)
+
+
+    def test_vertical_sizing(self):
+
+        w = window.Window()
+        w.height = 100
+        self.assertEqual(w.height, 100)
+
+
     def test_close(self):
 
         w = window.Window()

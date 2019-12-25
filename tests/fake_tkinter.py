@@ -18,21 +18,26 @@ class FakeWindow:
         self.title = mock.Mock()
         self._x = None
         self._y = None
-        self._width = None
-        self._height = None
+        self._w = None
+        self._h = None
         self.bind = mock.Mock()
         self.update = mock.Mock()
         self.destroy = mock.Mock()
 
-    GEOMETRY_RE = re.compile(r'(\d+)x(\d+)\+(\d+)\+(\d+)')
+    FULL_GEOMETRY_RE = re.compile(r'^(\d+)x(\d+)\+(\d+)\+(\d+)$')
+    MOVE_GEOMETRY_RE = re.compile(r'^\+(\d+)\+(\d+)$')
+    SIZE_GEOMETRY_RE = re.compile(r'^(\d+)x(\d+)$')
 
     def geometry(self, geometry):
-        match = self.GEOMETRY_RE.search(geometry)
-        width, height, x, y = map(int, match.groups())
-        self._x = x
-        self._y = y
-        self._width = width
-        self._height = height
+        if full := self.FULL_GEOMETRY_RE.search(geometry):
+            self._w, self._h, self._x, self._y = map(int, full.groups())
+            return
+        if move := self.MOVE_GEOMETRY_RE.search(geometry):
+            self._x, self._y = map(int, move.groups())
+            return
+        if size := self.SIZE_GEOMETRY_RE.search(geometry):
+            self._w, self._h = map(int, size.groups())
+
 
     def winfo_x(self):
         return self._x
@@ -41,10 +46,10 @@ class FakeWindow:
         return self._y
 
     def winfo_width(self):
-        return self._width
+        return self._w
 
     def winfo_height(self):
-        return self._height
+        return self._h
 
 
 
