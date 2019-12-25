@@ -97,7 +97,7 @@ class Sprite:
         # TODO: Use update_idletasks, instead?
         #       http://www.tcl.tk/man/tcl8.6/TclCmd/update.htm
         self._canvas.update()
-    
+
 
     def delete(self):
 
