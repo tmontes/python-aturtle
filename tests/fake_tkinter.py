@@ -5,9 +5,17 @@
 # See LICENSE for details.
 # ----------------------------------------------------------------------------
 
-import collections
 import re
 from unittest import mock
+
+
+class FakeCanvas:
+
+    def __init__(self):
+        self.pack = mock.Mock()
+        self.config = mock.Mock()
+        self.xview_scroll = mock.Mock()
+        self.yview_scroll = mock.Mock()
 
 
 class FakeWindow:
@@ -66,10 +74,14 @@ class FakeTkinter:
     def __init__(self, screen_width, screen_height):
         self.screen_width = screen_width
         self.screen_height = screen_height
-        self.Canvas = mock.Mock()
+        self.canvas_init_calls = []
 
     def Tk(self):
         return FakeTk(self.screen_width, self.screen_height)
 
     def Toplevel(self):
         return FakeToplevel(self.screen_width, self.screen_height)
+
+    def Canvas(self, *args, **kwargs):
+        self.canvas_init_calls.append((args, kwargs))
+        return FakeCanvas()

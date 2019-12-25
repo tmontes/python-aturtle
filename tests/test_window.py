@@ -103,20 +103,22 @@ class TestWindow(FakedTkinterTestCase):
     def test_canvas_border_removed(self):
 
         w = window.Window()
-        fake_canvas = self.tkinter.Canvas
-        fake_canvas.assert_called_once()
 
-        (_tk_window,), kwargs = fake_canvas.call_args
+        canvas_init_call_args = self.tkinter.canvas_init_calls
+        self.assertEqual(len(canvas_init_call_args), 1, 'Non single canvas init.')
+
+        (_tk_window,), kwargs = canvas_init_call_args[0]
         self.assertEqual(kwargs['highlightthickness'], 0)
 
 
     def test_canvas_default_fill_is_white(self):
 
         w = window.Window()
-        fake_canvas = self.tkinter.Canvas
-        fake_canvas.assert_called_once()
 
-        (_tk_window,), kwargs = fake_canvas.call_args
+        canvas_init_call_args = self.tkinter.canvas_init_calls
+        self.assertEqual(len(canvas_init_call_args), 1, 'Non single canvas init.')
+
+        (_tk_window,), kwargs = canvas_init_call_args[0]
         self.assertEqual(kwargs['background'], 'white')
 
 
@@ -187,8 +189,11 @@ class TestWindow(FakedTkinterTestCase):
     def test_custom_fill_passed_to_canvas(self):
 
         w = window.Window(fill_color='orange')
-        self.tkinter.Canvas.assert_called_once()
-        _args, kwargs = self.tkinter.Canvas.call_args
+
+        canvas_init_call_args = self.tkinter.canvas_init_calls
+        self.assertEqual(len(canvas_init_call_args), 1, 'Non single canvas init.')
+
+        (_tk_window,), kwargs = canvas_init_call_args[0]
         self.assertEqual(kwargs['background'], 'orange')
 
 
