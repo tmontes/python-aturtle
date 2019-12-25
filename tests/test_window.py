@@ -6,6 +6,7 @@
 # ----------------------------------------------------------------------------
 
 import contextlib
+import types
 import unittest
 from unittest import mock
 
@@ -18,7 +19,7 @@ SCREEN_WIDTH = 640
 SCREEN_HEIGHT = 480
 
 
-class TestOneWindow(unittest.TestCase):
+class FakedTkinterTestCase(unittest.TestCase):
 
     def setUp(self):
 
@@ -43,6 +44,8 @@ class TestOneWindow(unittest.TestCase):
         window.Window.close_all(strict=False)
 
 
+class TestWindow(FakedTkinterTestCase):
+
     def test_create(self):
 
         w = window.Window()
@@ -50,9 +53,8 @@ class TestOneWindow(unittest.TestCase):
 
     def test_create_window_creates_underlying_tk_object(self):
 
-        self.assertEqual(self.tkinter.tk_calls, 0)
         w = window.Window()
-        self.assertEqual(self.tkinter.tk_calls, 1)
+        self.assertIsInstance(w._tk_window, fake_tkinter.FakeTk)
 
 
     def test_default_title_was_set(self):
@@ -140,6 +142,22 @@ class TestOneWindow(unittest.TestCase):
         (sequence, func), _kwargs = tk_window.bind.call_args
         self.assertEqual(sequence, '<Configure>')
         self.assertTrue(callable(func), 'Resize handler not callable.')
+
+
+    def test_resize_handler_adjusts_canvas_scroll(self):
+
+        w = window.Window()
+
+        w.canvas.xview_scroll.reset_mock()
+        w.canvas.yview_scroll.reset_mock()
+
+        event = types.SimpleNamespace()
+        event.width = 200
+        event.height = 100
+        w._resize_handler(event)
+
+        w.canvas.xview_scroll.assert_called_once()
+        w.canvas.yview_scroll.assert_called_once()
 
 
     def test_custom_size_width(self):
@@ -242,9 +260,53 @@ class TestOneWindow(unittest.TestCase):
         w.close_all()
 
 
+    def test_second_close_all_raises(self):
+
+        w = window.Window()
+        w.close_all()
+        with self.assertRaises(RuntimeError):
+            w.close_all()
+
+
     def test_no_canvas_after_close_all(self):
 
         w = window.Window()
         w.close_all()
 
         self.assertIsNone(w.canvas)
+
+
+class TestMultipleWindows(FakedTkinterTestCase):
+
+    def test_create_two_windows(self):
+
+        w1 = window.Window()
+        w2 = window.Window()
+
+
+    def test_close_two_windows(self):
+
+        w1 = window.Window()
+        w2 = window.Window()
+        w2.close()
+        w1.close()
+
+
+    def test_first_has_underlying_tk_others_have_underlying_toplevels(self):
+
+        w1 = window.Window()
+        w2 = window.Window()
+        w3 = window.Window()
+
+        self.assertIsInstance(w1._tk_window, fake_tkinter.FakeTk)
+        self.assertIsInstance(w2._tk_window, fake_tkinter.FakeToplevel)
+        self.assertIsInstance(w3._tk_window, fake_tkinter.FakeToplevel)
+
+
+    def test_close_first_window_raises_if_there_are_other_windows(self):
+
+        w1 = window.Window()
+        w2 = window.Window()
+
+        with self.assertRaises(RuntimeError):
+            w1.close()

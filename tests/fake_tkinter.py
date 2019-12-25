@@ -66,14 +66,10 @@ class FakeTkinter:
     def __init__(self, screen_width, screen_height):
         self.screen_width = screen_width
         self.screen_height = screen_height
-        self.tk_calls = 0
-        self.toplevel_calls = 0
         self.Canvas = mock.Mock()
 
     def Tk(self):
-        self.tk_calls += 1
         return FakeTk(self.screen_width, self.screen_height)
 
     def Toplevel(self):
-        self.toplevel_calls += 1
         return FakeToplevel(self.screen_width, self.screen_height)
