@@ -9,9 +9,9 @@ import contextlib
 import unittest
 from unittest import mock
 
-from . import fake_tkinter
-
 from aturtle import window
+
+from . import fake_tkinter
 
 
 SCREEN_WIDTH = 640
@@ -48,7 +48,7 @@ class TestOneWindow(unittest.TestCase):
         w = window.Window()
 
 
-    def test_created_underlying_tk_object(self):
+    def test_create_window_creates_underlying_tk_object(self):
 
         self.assertEqual(self.tkinter.tk_calls, 0)
         w = window.Window()
@@ -140,6 +140,45 @@ class TestOneWindow(unittest.TestCase):
         (sequence, func), _kwargs = tk_window.bind.call_args
         self.assertEqual(sequence, '<Configure>')
         self.assertTrue(callable(func), 'Resize handler not callable.')
+
+
+    def test_custom_size_width(self):
+
+        w = window.Window(width=200, height=100)
+        self.assertEqual(w.width, 200)
+
+
+    def test_custom_size_height(self):
+
+        w = window.Window(width=200, height=100)
+        self.assertEqual(w.height, 100)
+
+
+    def test_custom_placement_x(self):
+
+        w = window.Window(x=100)
+        self.assertEqual(w.x, 100)
+
+
+    def test_custom_placement_y(self):
+
+        w = window.Window(y=50)
+        self.assertEqual(w.y, 50)
+
+
+    def test_custom_fill_passed_to_canvas(self):
+
+        w = window.Window(fill_color='orange')
+        self.tkinter.Canvas.assert_called_once()
+        _args, kwargs = self.tkinter.Canvas.call_args
+        self.assertEqual(kwargs['background'], 'orange')
+
+
+    def test_custom_title_passed_to_tk_window(self):
+
+        w = window.Window(title='Test Title')
+        tk_window = w._tk_window
+        tk_window.title.assert_called_once_with('Test Title')
 
 
     def test_close(self):
