@@ -51,8 +51,6 @@ class Window:
         self._window = window
         self.canvas = canvas
 
-        self._width = width
-        self._height = height
 
     @property
     def x(self):
@@ -104,20 +102,15 @@ class Window:
 
     def _resize_handler(self, event):
 
-        event_width = event.width
-        event_height = event.height
+        # Adjust canvas scroll to keep (0, 0) centered.
 
-        if event_width != self._width:
-            new_x_scroll = -event_width // 2
-            self.canvas.xview_scroll(new_x_scroll-self._x_scroll, 'units')
-            self._x_scroll = new_x_scroll
-            self._width = event_width
+        new_x_scroll = -event.width // 2
+        self.canvas.xview_scroll(new_x_scroll-self._x_scroll, 'units')
+        self._x_scroll = new_x_scroll
 
-        if event_height != self._height:
-            new_y_scroll = -event_height // 2
-            self.canvas.yview_scroll(new_y_scroll-self._y_scroll, 'units')
-            self._y_scroll = new_y_scroll
-            self._height = event_height
+        new_y_scroll = -event.height // 2
+        self.canvas.yview_scroll(new_y_scroll-self._y_scroll, 'units')
+        self._y_scroll = new_y_scroll
 
 
     def close(self):
