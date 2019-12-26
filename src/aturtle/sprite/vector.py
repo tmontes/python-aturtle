@@ -8,8 +8,10 @@
 import itertools as it
 import math
 
+from . import base
 
-class Sprite:
+
+class VectorSprite(base.BaseSprite):
 
     def __init__(self, canvas, shape, *, x=0, y=0, fill_color='#009fff',
                  line_color='black', line_width=2):
