@@ -14,7 +14,6 @@ class Square:
         self.x_anchor = half_side
         self.y_anchor = half_side
 
-
         self.coords = [
             0, 0,
             side, 0,
