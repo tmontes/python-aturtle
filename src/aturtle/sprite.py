@@ -37,6 +37,19 @@ class Sprite:
         )
 
 
+    @property
+    def x(self):
+
+        return self._x_anchor
+
+
+    @property
+    def y(self):
+
+        return self._y_anchor
+
+
+    @property
     def coords(self):
 
         return self._canvas.coords(self._id)
