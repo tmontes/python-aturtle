@@ -5,6 +5,8 @@
 # See LICENSE for details.
 # ----------------------------------------------------------------------------
 
+import base64
+import io
 import math
 
 try:
@@ -16,13 +18,18 @@ except ImportError:
 
 class Bitmap:
 
-    def __init__(self, filename, *, cx=0.5, cy=0.5, rotations=36):
+    def __init__(self, filename=None, data=None, *, cx=0.5, cy=0.5, rotations=36):
+
+        if not filename and not data:
+            raise ValueError('Need one of filename or data arguments.')
 
         if tkinter:
             pil_image = None
-            image = tkinter.PhotoImage(file=filename)
+            kwargs = {'file': filename} if filename else {'data': data}
+            image = tkinter.PhotoImage(**kwargs)
         else:
-            pil_image = Image.open(filename)
+            source = filename if filename else io.BytesIO(base64.b64decode(data))
+            pil_image = Image.open(source)
             image = ImageTk.PhotoImage(pil_image)
 
         w = image.width()
