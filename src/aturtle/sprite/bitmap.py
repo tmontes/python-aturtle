@@ -65,7 +65,27 @@ class BitmapSprite(base.BaseSprite):
     def rotate(self, theta=0, *, around=None, update=False):
 
         self._theta = (self._theta + theta) % (math.pi * 2)
+
+        # Use the pre-rendered image for the new orientation.
         self._canvas.itemconfig(self._id, image=self._image[self._theta])
+
+        # Rotate anchor point, if not rotating around it.
+        if around:
+            cx, cy = around
+            x = self._x_anchor - cx
+            y = self._y_anchor - cy
+            cos_theta = math.cos(theta)
+            sin_theta = math.sin(theta)
+            new_x = x * cos_theta - y * sin_theta + cx
+            new_y = x * sin_theta + y * cos_theta + cy
+            self._x_anchor = new_x
+            self._y_anchor = new_y
+            self._canvas.moveto(
+                self._id,
+                new_x - self._image.cx,
+                new_y - self._image.cy,
+            )
+
         if update:
             self.update()
 
