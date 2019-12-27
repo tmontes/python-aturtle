@@ -5,28 +5,27 @@
 # See LICENSE for details.
 # ----------------------------------------------------------------------------
 
+import math
 from . import base
 
 
 class BitmapSprite(base.BaseSprite):
 
-    def __init__(self, canvas, image, *, x=0, y=0, x_anchor=0.5, y_anchor=0.5):
+    def __init__(self, canvas, image, *, x=0, y=0):
 
         self._canvas = canvas
         self._id = None
 
         self._x_anchor = x
         self._y_anchor = y
-        self._x_anchor_offset = self._anchor_offset(image.width(), x_anchor)
-        self._y_anchor_offset = self._anchor_offset(image.height(), y_anchor)
         self._theta = 0
 
         self._image = image
 
         self._id = self._canvas.create_image(
-            x - self._x_anchor_offset,
-            y - self._y_anchor_offset,
-            image=image,
+            x - image.cx,
+            y - image.cy,
+            image=image[self._theta],
             anchor='nw',
         )
 
@@ -65,8 +64,10 @@ class BitmapSprite(base.BaseSprite):
 
     def rotate(self, theta=0, *, around=None, update=False):
 
-        # TODO: Let's try this with the standard library only, shall we?
-        raise NotImplementedError
+        self._theta = (self._theta + theta) % (math.pi * 2)
+        self._canvas.itemconfig(self._id, image=self._image[self._theta])
+        if update:
+            self.update()
 
 
     def unrotate(self, update=False):

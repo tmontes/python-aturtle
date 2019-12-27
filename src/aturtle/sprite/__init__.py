@@ -7,6 +7,8 @@
 
 import pathlib
 
+from aturtle import Bitmap
+
 from . bitmap import BitmapSprite
 from . vector import VectorSprite
 
@@ -14,8 +16,7 @@ from . vector import VectorSprite
 def Sprite(canvas, image, *, x=0, y=0, **kwargs):
     """
     """
-    # If `image.tk` exists, assume it is a `tkinter.PhotoImage`-like object.
-    if hasattr(image, 'tk'):
+    if isinstance(image, Bitmap):
         sprite = BitmapSprite(canvas, image, x=x, y=y, **kwargs)
     else:
         sprite = VectorSprite(canvas, image, x=x, y=y, **kwargs)

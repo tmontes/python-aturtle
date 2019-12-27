@@ -23,8 +23,8 @@ __email__ = 'tiago.montes@gmail.com'
 
 
 from . window import Window
-from . sprite import Sprite
 from . image import Square, Bitmap
+from . sprite import Sprite
 
 
 __all__ = ['Window', 'Sprite', 'Square']
