@@ -5,22 +5,15 @@
 # See LICENSE for details.
 # ----------------------------------------------------------------------------
 
-import tkinter
-
 from . import base
 
 
 class BitmapSprite(base.BaseSprite):
 
-    def __init__(self, canvas, shape, *, x=0, y=0, x_anchor=0.5, y_anchor=0.5):
+    def __init__(self, canvas, image, *, x=0, y=0, x_anchor=0.5, y_anchor=0.5):
 
         self._canvas = canvas
         self._id = None
-
-        try:
-            image = tkinter.PhotoImage(file=shape)
-        except tkinter.TclError as exc:
-            raise IOError(exc)
 
         self._x_anchor = x
         self._y_anchor = y
@@ -34,7 +27,7 @@ class BitmapSprite(base.BaseSprite):
             x - self._x_anchor_offset,
             y - self._y_anchor_offset,
             image=image,
-            anchor=tkinter.NW,
+            anchor='nw',
         )
 
 

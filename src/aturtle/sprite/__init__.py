@@ -11,13 +11,13 @@ from . bitmap import BitmapSprite
 from . vector import VectorSprite
 
 
-def Sprite(canvas, shape, *, x=0, y=0, **kwargs):
+def Sprite(canvas, image, *, x=0, y=0, **kwargs):
     """
     """
-    # If shape is a `str` or `Path`, take it as a filename with a bitmap image.
-    if isinstance(shape, (pathlib.Path, str)):
-        sprite = BitmapSprite(canvas, shape, x=x, y=y, **kwargs)
+    # If `image.tk` exists, assume it is a `tkinter.PhotoImage`-like object.
+    if hasattr(image, 'tk'):
+        sprite = BitmapSprite(canvas, image, x=x, y=y, **kwargs)
     else:
-        sprite = VectorSprite(canvas, shape, x=x, y=y, **kwargs)
+        sprite = VectorSprite(canvas, image, x=x, y=y, **kwargs)
 
     return sprite
