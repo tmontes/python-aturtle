@@ -1,0 +1,14 @@
+[run]
+
+; Ensure we measure test coverage against all files in the source.
+; Include the tests too, helping confirm we don't have dead code there.
+
+source =
+    src/
+    tests/
+
+; Don't measure test coverage against third-party libraries.
+
+omit =
+    */site-packages/*
+
