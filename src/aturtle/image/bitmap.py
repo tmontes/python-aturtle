@@ -6,14 +6,38 @@
 # ----------------------------------------------------------------------------
 
 import math
-import tkinter
+
+try:
+    from PIL import Image, ImageTk
+    USE_TKINTER = False
+except ImportError:
+    import tkinter
+    USE_TKINTER = True
+
+
+class _PhotoImage(ImageTk.PhotoImage):
+
+    def __init__(self, pil_image):
+
+        super().__init__(pil_image)
+        self._pil_image = pil_image
+
+
+    def rotate(self, angle, cx, cy):
+
+        rotated_pil_image = self._pil_image.rotate(
+            angle,
+            resample=Image.BICUBIC,
+            center=(cx, cy),
+        )
+        return _PhotoImage(rotated_pil_image)
 
 
 class Bitmap:
 
     def __init__(self, source, cx=0.5, cy=0.5, *, rotations=36):
 
-        image = tkinter.PhotoImage(file=source)
+        image = self._load_image(source)
 
         w = image.width()
         h = image.height()
@@ -31,7 +55,23 @@ class Bitmap:
         self._cy = cy
 
 
+    def _load_image(self, source):
+
+        if USE_TKINTER:
+            return tkinter.PhotoImage(file=source)
+        else:
+            return _PhotoImage(Image.open(source))
+
+
     def _rotated(self, image, w, h, cx, cy, step, total):
+
+        if USE_TKINTER:
+            return self._rotated_tkinter(image, w, h, cx, cy, step, total)
+        else:
+            return self._rotated_pil(image, w, h, cx, cy, step, total)
+
+
+    def _rotated_tkinter(self, image, w, h, cx, cy, step, total):
 
         neg_theta = -math.pi * 2 * step / total
 
@@ -63,6 +103,12 @@ class Bitmap:
             rotated.transparency_set(x, y, transp)
 
         return rotated
+
+
+    def _rotated_pil(self, image, w, h, cx, cy, step, total):
+
+        neg_theta = -360 * step / total
+        return image.rotate(neg_theta, cx, cy)
 
 
     @property

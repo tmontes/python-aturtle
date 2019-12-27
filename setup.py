@@ -29,13 +29,20 @@ CLASSIFIERS = [
 INSTALL_REQUIRES = [
 ]
 EXTRAS_REQUIRE = {
+    "pillow": [
+        "pillow",
+    ],
     "tests": [
         "coverage",
         "pylint",
     ],
     "docs": [],
 }
-EXTRAS_REQUIRE["dev"] = EXTRAS_REQUIRE["tests"] + EXTRAS_REQUIRE["docs"]
+EXTRAS_REQUIRE["dev"] = [
+    requirement
+    for requirements in EXTRAS_REQUIRE.values()
+    for requirement in requirements
+]
 
 ###############################################################################
 
