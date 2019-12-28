@@ -7,18 +7,18 @@
 
 import pathlib
 
-from ..image import Bitmap
+from ..shapes import Bitmap
 
 from . bitmap import BitmapSprite
 from . vector import VectorSprite
 
 
-def Sprite(canvas, image, *, x=0, y=0, **kwargs):
+def Sprite(canvas, shape, *, x=0, y=0, **kwargs):
     """
     """
-    if isinstance(image, Bitmap):
-        sprite = BitmapSprite(canvas, image, x=x, y=y, **kwargs)
+    if isinstance(shape, Bitmap):
+        sprite = BitmapSprite(canvas, shape, x=x, y=y, **kwargs)
     else:
-        sprite = VectorSprite(canvas, image, x=x, y=y, **kwargs)
+        sprite = VectorSprite(canvas, shape, x=x, y=y, **kwargs)
 
     return sprite

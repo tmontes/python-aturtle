@@ -7,7 +7,7 @@
 
 import unittest
 
-from aturtle.image import vector
+from aturtle.shapes import vector
 
 
 class TestSquare(unittest.TestCase):

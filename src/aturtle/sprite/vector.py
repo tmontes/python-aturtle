@@ -13,16 +13,16 @@ from . import base
 
 class VectorSprite(base.BaseSprite):
 
-    def __init__(self, canvas, image, *, x=0, y=0, fill_color='#009fff',
+    def __init__(self, canvas, shape, *, x=0, y=0, fill_color='#009fff',
                  line_color='black', line_width=2):
 
-        super().__init__(canvas, image, x=x, y=y)
+        super().__init__(canvas, shape, x=x, y=y)
 
         offset_coords = [
             value + offset
             for value, offset in zip(
-                image.coords,
-                it.cycle((x - image.x_anchor, y - image.y_anchor))
+                shape.coords,
+                it.cycle((x - shape.x_anchor, y - shape.y_anchor))
             )
         ]
 
