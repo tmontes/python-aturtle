@@ -17,43 +17,49 @@ class TestSquare(unittest.TestCase):
         s = vector.Square()
 
 
+    def _assert_equal_rounded_list_values(self, list_a, list_b):
+
+        for a, b in zip(list_a, list_b):
+            self.assertEqual(round(a), round(b))
+
+
     def test_default_coords(self):
 
         s = vector.Square()
-        self.assertEqual(
+        self._assert_equal_rounded_list_values(
             s.coords,
-            [0, 0, 32, 0, 32, 32, 0, 32],
+            [30, -30, 30, 30, -30, 30, -30, -30],
         )
 
 
     def test_default_anchor_x(self):
 
         s = vector.Square()
-        self.assertEqual(s.x_anchor, 16)
+        self.assertEqual(s.x_anchor, 0)
 
 
     def test_default_anchor_y(self):
 
         s = vector.Square()
-        self.assertEqual(s.y_anchor, 16)
+        self.assertEqual(s.y_anchor, 0)
 
 
     def test_custom_size_coords(self):
 
         s = vector.Square(side=42)
-        self.assertEqual(
+        self._assert_equal_rounded_list_values(
             s.coords,
-            [0, 0, 42, 0, 42, 42, 0, 42],
+            [21, -21, 21, 21, -21, 21, -21, -21]
         )
 
 
     def test_custom_size_anchor_x(self):
 
         s = vector.Square(side=42)
-        self.assertEqual(s.x_anchor, 21)
+        self.assertEqual(s.x_anchor, 0)
 
 
     def test_custom_size_anchor_y(self):
 
         s = vector.Square(side=42)
-        self.assertEqual(s.y_anchor, 21)
+        self.assertEqual(s.y_anchor, 0)
