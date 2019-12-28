@@ -14,15 +14,15 @@ class BaseSprite:
     Base class.
     """
 
-    def __init__(self, canvas, image, *, x=0, y=0):
+    def __init__(self, canvas, shape, *, x=0, y=0):
         """
-        Initialize a Sprite with the given `image` and place it on the output
+        Initialize a Sprite with the given `shape` and place it on the output
         `canvas` at the given `x`, `y` coordinates.
         """
         self._canvas = canvas
         self._id = None
 
-        self._image = image
+        self._shape = shape
         self._x_anchor = x
         self._y_anchor = y
         self._theta = 0

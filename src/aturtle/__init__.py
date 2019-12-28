@@ -23,7 +23,7 @@ __email__ = 'tiago.montes@gmail.com'
 
 
 from . window import Window
-from . image import Square, Bitmap
+from . shapes import Square, Bitmap
 from . sprite import Sprite
 
 
