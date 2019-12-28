@@ -7,7 +7,7 @@
 
 import pathlib
 
-from aturtle import Bitmap
+from ..image import Bitmap
 
 from . bitmap import BitmapSprite
 from . vector import VectorSprite
