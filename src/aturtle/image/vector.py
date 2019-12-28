@@ -97,3 +97,26 @@ def _create_regular_polygon_classes():
 
 
 _create_regular_polygon_classes()
+
+
+
+class Star(VectorShape):
+
+    def __init__(self, *, points=5, radius=42, inner_radius=0.5, angle=0,
+                 anchor=(0, 0)):
+
+        if isinstance(inner_radius, float):
+            inner_radius = inner_radius * radius
+
+        steps = points * 2
+
+        coords = []
+        for step in range(steps):
+            theta = math.pi * 2 * (step / steps) + angle
+            point_radius = inner_radius if step % 2 else radius
+            x = point_radius * math.sin(theta)
+            y = -point_radius * math.cos(theta)
+            # TODO: Should become a list of (x, y) tuples.
+            coords.extend((x, y))
+
+        super().__init__(coords, anchor=anchor)
