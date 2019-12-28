@@ -18,7 +18,7 @@ except ImportError:
 
 class Bitmap:
 
-    def __init__(self, filename=None, data=None, *, cx=0.5, cy=0.5, rotations=36):
+    def __init__(self, filename=None, data=None, *, anchor=(0.5, 0.5), rotations=36):
 
         if not filename and not data:
             raise ValueError('Need one of filename or data arguments.')
@@ -35,6 +35,7 @@ class Bitmap:
         w = image.width()
         h = image.height()
 
+        cx, cy = anchor
         cx = int(cx * w) if isinstance(cx, float) else cx
         cy = int(cy * h) if isinstance(cy, float) else cy
 
