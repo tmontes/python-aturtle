@@ -80,7 +80,8 @@ def _create_regular_polygon_classes():
         angle = polygon_spec['angle']
 
         def init_creator(number_of_sides, default_angle):
-            def __init__(self, *, side=None, radius=42, angle=default_angle):
+            def __init__(self, *, side=None, radius=42, angle=default_angle,
+                         anchor=(0, 0)):
                 radius = None if side else radius
                 RegularPolygon.__init__(
                     self,
@@ -88,6 +89,7 @@ def _create_regular_polygon_classes():
                     side=side,
                     radius=radius,
                     angle=angle,
+                    anchor=anchor,
                 )
             return __init__
 
