@@ -5,7 +5,6 @@
 # See LICENSE for details.
 # ----------------------------------------------------------------------------
 
-import functools
 import math
 
 
@@ -22,10 +21,10 @@ class BaseShape:
         self._rotations = rotations
         self._pre_rotate = pre_rotate
 
+        self._rotated_sprite_data = {}
         if pre_rotate:
             for step in range(rotations):
-                # Pass args by name, as in __getitem__, or pre-cache won't work.
-                _ = self.rotated_sprite_data(
+                self._rotated_sprite_data[step] = self.rotated_sprite_data(
                     data=data,
                     around=anchor,
                     step=step,
@@ -38,7 +37,6 @@ class BaseShape:
         return f'sprite-data({data!r})'
 
 
-    @functools.lru_cache(maxsize=360)
     def rotated_sprite_data(self, data, around, step, rotations):
 
         print(f'{self=} {data=} {around=} {step=} {rotations=}')
@@ -50,11 +48,15 @@ class BaseShape:
     def __getitem__(self, radians):
 
         rotations = self._rotations
+        step = int(radians * rotations / _CIRCLE_RADIANS) % rotations
 
-        # Pass args by name, as in __init__, or pre-cache won't work.
-        return self.rotated_sprite_data(
-            data=self._source_data,
-            around=self._anchor,
-            step=int(radians * rotations / _CIRCLE_RADIANS) % rotations,
-            rotations=rotations,
-        )
+        rotated_sprite_data = self._rotated_sprite_data
+        if not step in rotated_sprite_data and not self._pre_rotate:
+            rotated_sprite_data[step] = self.rotated_sprite_data(
+                data=self._source_data,
+                around=self._anchor,
+                step=step,
+                rotations=rotations,
+            )
+
+        return rotated_sprite_data[step]
