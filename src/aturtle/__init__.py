@@ -23,11 +23,11 @@ __email__ = 'tiago.montes@gmail.com'
 
 
 from . window import Window
-from . shapes import Square, Bitmap
+from . import shapes
 from . sprites import Sprite
 
 
-__all__ = ['Window', 'Sprite', 'Square']
+__all__ = ['Window', 'Sprite']
 
 
 # ----------------------------------------------------------------------------
