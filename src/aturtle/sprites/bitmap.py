@@ -8,7 +8,7 @@
 from . import base
 
 
-class BitmapSprite(base.BaseSprite):
+class Sprite(base.Sprite):
 
     def __init__(self, canvas, shape, *, anchor=(0, 0)):
 

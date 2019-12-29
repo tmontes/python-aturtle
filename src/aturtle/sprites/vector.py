@@ -10,7 +10,7 @@ import itertools as it
 from . import base
 
 
-class VectorSprite(base.BaseSprite):
+class Sprite(base.Sprite):
 
     def __init__(self, canvas, shape, *, anchor=(0, 0)):
 

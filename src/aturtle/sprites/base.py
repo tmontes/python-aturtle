@@ -8,7 +8,7 @@
 import math
 
 
-class BaseSprite:
+class Sprite:
 
     """
     Base class.
