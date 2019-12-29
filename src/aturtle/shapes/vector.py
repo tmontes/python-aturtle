@@ -7,6 +7,8 @@
 
 import math
 
+from . import base
+
 
 
 _FILL_COLOR = '#009fff'
@@ -15,18 +17,34 @@ _LINE_WIDTH = 2
 
 
 
-class VectorShape:
+class VectorShape(base.BaseShape):
 
-    def __init__(self, points, *, anchor=(0, 0), fill_color=_FILL_COLOR,
-                 line_color=_LINE_COLOR, line_width=_LINE_WIDTH):
+    def __init__(self, coords, *, anchor=(0, 0), fill_color=_FILL_COLOR,
+                 line_color=_LINE_COLOR, line_width=_LINE_WIDTH, rotations=360,
+                 pre_rotate=False):
 
-        # TODO: Rename to self.points.
-        self.coords = points
-        self.x_anchor, self.y_anchor = anchor
+        super().__init__(
+            coords,
+            anchor=anchor,
+            rotations=rotations,
+            pre_rotate=pre_rotate,
+        )
 
         self._fill_color = fill_color
         self._line_color = line_color
         self._line_width = line_width
+
+
+    @property
+    def x_anchor(self):
+
+        return self._anchor[0]
+
+
+    @property
+    def y_anchor(self):
+
+        return self._anchor[1]
 
 
     @property
@@ -47,6 +65,23 @@ class VectorShape:
         return self._line_width
 
 
+    def rotated_sprite_data(self, image, around, step, rotations):
+
+        theta = math.pi * 2 * step / rotations
+        sin_theta = math.sin(theta)
+        cos_theta = math.cos(theta)
+        ax, ay = around
+
+        coords = list(self._image_source)
+        for i in range(0, len(coords)-1, 2):
+            x = coords[i] - ax
+            y = coords[i+1] - ay
+            coords[i] = x * cos_theta - y * sin_theta
+            coords[i+1] = x * sin_theta + y * cos_theta
+
+        return coords
+
+
 
 class RegularPolygon(VectorShape):
 
@@ -62,16 +97,15 @@ class RegularPolygon(VectorShape):
         if side:
             radius = side / (2 * math.sin(math.pi / sides))
 
-        points = []
+        coords = []
         for step in range(sides):
             theta = math.pi * 2 * (step / sides) - angle
             x = radius * math.cos(theta)
             y = radius * math.sin(theta)
-            # TODO: Should become a list of (x, y) tuples.
-            points.extend((x, y))
+            coords.extend((x, y))
 
         super().__init__(
-            points,
+            coords,
             anchor=anchor,
             fill_color=fill_color,
             line_color=line_color,
@@ -160,7 +194,6 @@ class Star(VectorShape):
             point_radius = inner_radius if step % 2 else radius
             x = point_radius * math.sin(theta)
             y = -point_radius * math.cos(theta)
-            # TODO: Should become a list of (x, y) tuples.
             coords.extend((x, y))
 
         super().__init__(
