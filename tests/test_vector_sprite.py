@@ -8,7 +8,7 @@
 import math
 import unittest
 
-from aturtle import sprite, Square
+from aturtle import sprites, Square
 
 from . import fake_tkinter
 
@@ -34,24 +34,24 @@ class TestVectorSprite(unittest.TestCase):
 
     def test_create(self):
 
-        s = sprite.VectorSprite(self.canvas, UnitSquare())
+        s = sprites.VectorSprite(self.canvas, UnitSquare())
 
 
     def test_default_x_anchor(self):
 
-        s = sprite.VectorSprite(self.canvas, UnitSquare())
+        s = sprites.VectorSprite(self.canvas, UnitSquare())
         self.assertEqual(s.x, 0)
 
 
     def test_default_y_anchor(self):
 
-        s = sprite.VectorSprite(self.canvas, UnitSquare())
+        s = sprites.VectorSprite(self.canvas, UnitSquare())
         self.assertEqual(s.y, 0)
 
 
     def test_shape_fill_color_passed_to_create_polygon(self):
 
-        s = sprite.VectorSprite(self.canvas, UnitSquare(fill_color='#009fff'))
+        s = sprites.VectorSprite(self.canvas, UnitSquare(fill_color='#009fff'))
 
         create_polygon_kwargs = self.canvas._polygon_kwargs
         self.assertEqual(create_polygon_kwargs['fill'], '#009fff')
@@ -59,7 +59,7 @@ class TestVectorSprite(unittest.TestCase):
 
     def test_shape_line_color_passed_to_create_polygon(self):
 
-        s = sprite.VectorSprite(self.canvas, UnitSquare(line_color='black'))
+        s = sprites.VectorSprite(self.canvas, UnitSquare(line_color='black'))
 
         create_polygon_kwargs = self.canvas._polygon_kwargs
         self.assertEqual(create_polygon_kwargs['outline'], 'black')
@@ -67,7 +67,7 @@ class TestVectorSprite(unittest.TestCase):
 
     def test_shape_line_width_passed_to_create_polygon(self):
 
-        s = sprite.VectorSprite(self.canvas, UnitSquare(line_width=2))
+        s = sprites.VectorSprite(self.canvas, UnitSquare(line_width=2))
 
         create_polygon_kwargs = self.canvas._polygon_kwargs
         self.assertEqual(create_polygon_kwargs['width'], 2)
@@ -75,19 +75,19 @@ class TestVectorSprite(unittest.TestCase):
 
     def test_create_custom_anchor_x(self):
 
-        s = sprite.VectorSprite(self.canvas, UnitSquare(), anchor=(2, 1))
+        s = sprites.VectorSprite(self.canvas, UnitSquare(), anchor=(2, 1))
         self.assertEqual(s.x, 2)
 
 
     def test_create_custom_anchor_y(self):
 
-        s = sprite.VectorSprite(self.canvas, UnitSquare(), anchor=(2, 1))
+        s = sprites.VectorSprite(self.canvas, UnitSquare(), anchor=(2, 1))
         self.assertEqual(s.y, 1)
 
 
     def test_create_custom_anchor_coords(self):
 
-        s = sprite.VectorSprite(self.canvas, UnitSquare(), anchor=(2, 1))
+        s = sprites.VectorSprite(self.canvas, UnitSquare(), anchor=(2, 1))
 
         shape_coords_after_offset = [2.5, 0.5, 2.5, 1.5, 1.5, 1.5, 1.5, 0.5]
         self.assertEqual(s.coords, shape_coords_after_offset)
@@ -95,63 +95,63 @@ class TestVectorSprite(unittest.TestCase):
 
     def test_horizontal_move_moves_anchor_x(self):
 
-        s = sprite.VectorSprite(self.canvas, UnitSquare())
+        s = sprites.VectorSprite(self.canvas, UnitSquare())
         s.move(20, 0)
         self.assertEqual(s.x, 20)
 
 
     def test_vertical_move_moves_anchor_y(self):
 
-        s = sprite.VectorSprite(self.canvas, UnitSquare())
+        s = sprites.VectorSprite(self.canvas, UnitSquare())
         s.move(0, 10)
         self.assertEqual(s.y, 10)
 
 
     def test_move_does_not_call_canvas_update(self):
 
-        s = sprite.VectorSprite(self.canvas, UnitSquare())
+        s = sprites.VectorSprite(self.canvas, UnitSquare())
         s.move(0, 10)
         self.canvas.update.assert_not_called()
 
 
     def test_move_with_update_calls_calls_canvas_update(self):
 
-        s = sprite.VectorSprite(self.canvas, UnitSquare())
+        s = sprites.VectorSprite(self.canvas, UnitSquare())
         s.move(0, 10, update=True)
         self.canvas.update.assert_called_once_with()
 
 
     def test_horizontal_moveto_moves_anchor_x(self):
 
-        s = sprite.VectorSprite(self.canvas, UnitSquare())
+        s = sprites.VectorSprite(self.canvas, UnitSquare())
         s.moveto(20, 0)
         self.assertEqual(s.x, 20)
 
 
     def test_vertical_moveto_moves_anchor_y(self):
 
-        s = sprite.VectorSprite(self.canvas, UnitSquare())
+        s = sprites.VectorSprite(self.canvas, UnitSquare())
         s.moveto(0, 10)
         self.assertEqual(s.y, 10)
 
 
     def test_moveto_does_not_call_canvas_update(self):
 
-        s = sprite.VectorSprite(self.canvas, UnitSquare())
+        s = sprites.VectorSprite(self.canvas, UnitSquare())
         s.moveto(0, 10)
         self.canvas.update.assert_not_called()
 
 
     def test_moveto_with_update_calls_calls_canvas_update(self):
 
-        s = sprite.VectorSprite(self.canvas, UnitSquare())
+        s = sprites.VectorSprite(self.canvas, UnitSquare())
         s.moveto(0, 10, update=True)
         self.canvas.update.assert_called_once_with()
 
 
     def test_rotate_does_not_change_anchor_x(self):
 
-        s = sprite.VectorSprite(self.canvas, UnitSquare())
+        s = sprites.VectorSprite(self.canvas, UnitSquare())
         original_x = s.x
 
         s.rotate(1)
@@ -160,7 +160,7 @@ class TestVectorSprite(unittest.TestCase):
 
     def test_rotate_does_not_change_anchor_y(self):
 
-        s = sprite.VectorSprite(self.canvas, UnitSquare())
+        s = sprites.VectorSprite(self.canvas, UnitSquare())
         original_y = s.y
 
         s.rotate(1)
@@ -169,7 +169,7 @@ class TestVectorSprite(unittest.TestCase):
 
     def test_rotate_updates_coords(self):
 
-        s = sprite.VectorSprite(self.canvas, UnitSquare())
+        s = sprites.VectorSprite(self.canvas, UnitSquare())
         original_coords = list(s.coords)
 
         s.rotate(math.pi)
@@ -181,7 +181,7 @@ class TestVectorSprite(unittest.TestCase):
 
     def test_rotate_around_point_rotates_anchor_x(self):
 
-        s = sprite.VectorSprite(self.canvas, UnitSquare())
+        s = sprites.VectorSprite(self.canvas, UnitSquare())
 
         s.rotate(math.pi, around=(1, 1))
         self.assertAlmostEqual(s.x, 2, places=5)
@@ -189,7 +189,7 @@ class TestVectorSprite(unittest.TestCase):
 
     def test_rotate_around_point_rotates_anchor_y(self):
 
-        s = sprite.VectorSprite(self.canvas, UnitSquare())
+        s = sprites.VectorSprite(self.canvas, UnitSquare())
 
         s.rotate(math.pi, around=(1, 1))
         self.assertAlmostEqual(s.y, 2, places=5)
@@ -197,7 +197,7 @@ class TestVectorSprite(unittest.TestCase):
 
     def test_rotate_around_point_updates_coords(self):
 
-        s = sprite.VectorSprite(self.canvas, UnitSquare())
+        s = sprites.VectorSprite(self.canvas, UnitSquare())
 
         s.rotate(math.pi, around=(1, 1))
         # Half-circle rotated coords around (1, 1) are these.
@@ -208,21 +208,21 @@ class TestVectorSprite(unittest.TestCase):
 
     def test_rotate_does_not_call_canvas_update(self):
 
-        s = sprite.VectorSprite(self.canvas, UnitSquare())
+        s = sprites.VectorSprite(self.canvas, UnitSquare())
         s.rotate(1)
         self.canvas.update.assert_not_called()
 
 
     def test_rotate_with_update_calls_calls_canvas_update(self):
 
-        s = sprite.VectorSprite(self.canvas, UnitSquare())
+        s = sprites.VectorSprite(self.canvas, UnitSquare())
         s.rotate(1, update=True)
         self.canvas.update.assert_called_once_with()
 
 
     def test_unrotate_does_not_change_anchor_x(self):
 
-        s = sprite.VectorSprite(self.canvas, UnitSquare())
+        s = sprites.VectorSprite(self.canvas, UnitSquare())
         original_x = s.x
 
         s.unrotate()
@@ -231,7 +231,7 @@ class TestVectorSprite(unittest.TestCase):
 
     def test_unrotate_does_not_change_anchor_y(self):
 
-        s = sprite.VectorSprite(self.canvas, UnitSquare())
+        s = sprites.VectorSprite(self.canvas, UnitSquare())
         original_y = s.y
 
         s.unrotate()
@@ -240,21 +240,21 @@ class TestVectorSprite(unittest.TestCase):
 
     def test_unrotate_does_not_call_canvas_update(self):
 
-        s = sprite.VectorSprite(self.canvas, UnitSquare())
+        s = sprites.VectorSprite(self.canvas, UnitSquare())
         s.unrotate()
         self.canvas.update.assert_not_called()
 
 
     def test_unrotate_with_update_calls_calls_canvas_update(self):
 
-        s = sprite.VectorSprite(self.canvas, UnitSquare())
+        s = sprites.VectorSprite(self.canvas, UnitSquare())
         s.unrotate(update=True)
         self.canvas.update.assert_called_once_with()
 
 
     def test_update_calls_canvas_update(self):
 
-        s = sprite.VectorSprite(self.canvas, UnitSquare())
+        s = sprites.VectorSprite(self.canvas, UnitSquare())
 
         s.update()
         self.canvas.update.assert_called_once_with()
@@ -262,7 +262,7 @@ class TestVectorSprite(unittest.TestCase):
 
     def test_delete_calls_canvas_delete(self):
 
-        s = sprite.VectorSprite(self.canvas, UnitSquare())
+        s = sprites.VectorSprite(self.canvas, UnitSquare())
 
         s.delete()
         self.canvas.delete.assert_called_once()
@@ -270,7 +270,7 @@ class TestVectorSprite(unittest.TestCase):
 
     def test_two_deletes_only_call_canvas_delete_once(self):
 
-        s = sprite.VectorSprite(self.canvas, UnitSquare())
+        s = sprites.VectorSprite(self.canvas, UnitSquare())
 
         s.delete()
         s.delete()
