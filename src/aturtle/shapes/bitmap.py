@@ -15,60 +15,66 @@ try:
 except ImportError:
     import tkinter
 
+from . import base
 
-class Bitmap:
 
-    def __init__(self, filename=None, data=None, *, anchor=(0.5, 0.5), rotations=36):
+
+class Bitmap(base.BaseShape):
+
+    def __init__(self, filename=None, data=None, *, anchor=(0.5, 0.5),
+                 rotations=36, pre_rotate=True):
 
         if not filename and not data:
             raise ValueError('Need one of filename or data arguments.')
 
         if tkinter:
-            pil_image = None
             kwargs = {'file': filename} if filename else {'data': data}
             image = tkinter.PhotoImage(**kwargs)
         else:
             source = filename if filename else io.BytesIO(base64.b64decode(data))
-            pil_image = Image.open(source)
-            image = ImageTk.PhotoImage(pil_image)
+            image = Image.open(source)
+
+        super().__init__(
+            image=image,
+            anchor=anchor,
+            rotations=rotations,
+            pre_rotate=pre_rotate,
+        )
+
+
+    def rotated_sprite_data(self, image, around, step, rotations):
+
+        if tkinter:
+            if step == 0:
+                return image
+            return self._rotated_tkinter(image, around, step, rotations)
+
+        if step == 0:
+            return ImageTk.PhotoImage(image)
+        return self._rotated_pil(image, around, step, rotations)
+
+
+    def _rotated_tkinter(self, image, around, step, rotations):
 
         w = image.width()
         h = image.height()
 
-        cx, cy = anchor
-        cx = int(cx * w) if isinstance(cx, float) else cx
-        cy = int(cy * h) if isinstance(cy, float) else cy
+        ax, ay = around
 
-        images = {0: image}
-        for step in range(1, rotations):
-            if tkinter:
-                rotated = self._rotated_tkinter(image, w, h, cx, cy, step, rotations)
-            else:
-                rotated = self._rotated_pil(pil_image, cx, cy, step, rotations)
-            images[step] = rotated
-
-        self._images = images
-        self._cx = cx
-        self._cy = cy
-        self._rotations = rotations
-
-
-    def _rotated_tkinter(self, image, w, h, cx, cy, step, total):
-
-        neg_theta = -math.pi * 2 * step / total
+        neg_theta = -math.pi * 2 * step / rotations
 
         pixel_rows = []
         transparency = {}
 
-        for y in range(image.height()):
+        for y in range(h):
             pixel_row = []
-            for x in range(image.width()):
+            for x in range(w):
                 cos_neg_theta = math.cos(neg_theta)
                 sin_neg_theta = math.sin(neg_theta)
-                off_x = x - cx
-                off_y = y - cy
-                src_x = int(off_x * cos_neg_theta - off_y * sin_neg_theta) + cx
-                src_y = int(off_x * sin_neg_theta + off_y * cos_neg_theta) + cy
+                off_x = x - ax
+                off_y = y - ay
+                src_x = int(off_x * cos_neg_theta - off_y * sin_neg_theta) + ax
+                src_y = int(off_x * sin_neg_theta + off_y * cos_neg_theta) + ay
                 if (0 <= src_x < w) and (0 <= src_y < h):
                     red, green, blue = image.get(src_x, src_y)
                     transp = image.transparency_get(src_x, src_y)
@@ -87,14 +93,14 @@ class Bitmap:
         return rotated
 
 
-    def _rotated_pil(self, pil_image, cx, cy, step, total):
+    def _rotated_pil(self, pil_image, around, step, total):
 
         neg_theta = -360 * step / total
 
         rotated_pil_image = pil_image.rotate(
             neg_theta,
             resample=Image.BICUBIC,
-            center=(cx, cy),
+            center=around,
         )
 
         return ImageTk.PhotoImage(rotated_pil_image)
@@ -103,16 +109,10 @@ class Bitmap:
     @property
     def cx(self):
 
-        return self._cx
+        return self._anchor[0]
 
 
     @property
     def cy(self):
 
-        return self._cy
-
-
-    def __getitem__(self, theta):
-
-        step = int(theta * self._rotations / (math.pi * 2)) % self._rotations
-        return self._images[step]
+        return self._anchor[1]
