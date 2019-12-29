@@ -14,34 +14,38 @@ _CIRCLE_RADIANS = math.pi * 2
 
 class BaseShape:
 
-    def __init__(self, data, *, anchor, rotations, pre_rotate=True):
+    def __init__(self, image, *, anchor, rotations, pre_rotate=True):
 
-        self._source_data = data
-        self._anchor = anchor
+        self._image_source = image
         self._rotations = rotations
         self._pre_rotate = pre_rotate
 
         self._rotated_sprite_data = {}
+
+        # Must compute at least this one to determine width and height,
+        # in order to support floating point based anchors.
+        unrotated = self.rotated_sprite_data(image, anchor, 0, rotations)
+        self._rotated_sprite_data[0] = unrotated
+
+        ax, ay = anchor
+        self._anchor = (
+            int(ax * unrotated.width()) if isinstance(ax, float) else ax,
+            int(ay * unrotated.height()) if isinstance(ay, float) else ay,
+        )
+
         if pre_rotate:
-            for step in range(rotations):
+            for step in range(1, rotations):
                 self._rotated_sprite_data[step] = self.rotated_sprite_data(
-                    data=data,
-                    around=anchor,
+                    image=image,
+                    around=self._anchor,
                     step=step,
                     rotations=rotations,
                 )
 
 
-    def sprite_data(self, data):
+    def rotated_sprite_data(self, image, around, step, rotations):
 
-        return f'sprite-data({data!r})'
-
-
-    def rotated_sprite_data(self, data, around, step, rotations):
-
-        if not step:
-            return self.sprite_data(data)
-        return self.sprite_data(f'{data}-{step}/{rotations}-around-{around}')
+        raise NotImplementedError
 
 
     def __getitem__(self, radians):
@@ -52,7 +56,7 @@ class BaseShape:
         rotated_sprite_data = self._rotated_sprite_data
         if not step in rotated_sprite_data and not self._pre_rotate:
             rotated_sprite_data[step] = self.rotated_sprite_data(
-                data=self._source_data,
+                image=self._image_source,
                 around=self._anchor,
                 step=step,
                 rotations=rotations,
