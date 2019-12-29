@@ -14,7 +14,7 @@ class BaseSprite:
     Base class.
     """
 
-    def __init__(self, canvas, shape, *, x=0, y=0):
+    def __init__(self, canvas, shape, *, anchor=(0, 0)):
         """
         Initialize a Sprite with the given `shape` and place it on the output
         `canvas` at the given `x`, `y` coordinates.
@@ -23,25 +23,32 @@ class BaseSprite:
         self._id = None
 
         self._shape = shape
-        self._x_anchor = x
-        self._y_anchor = y
+        self._anchor = anchor
         self._theta = 0
+
+
+    @property
+    def anchor(self):
+        """
+        The Sprite's anchor position in the canvas, as an (x, y) tuple.
+        """
+        return self._anchor
 
 
     @property
     def x(self):
         """
-        The Sprite's `x` position in the canvas.
+        The Sprite's `x` anchor position in the canvas.
         """
-        return self._x_anchor
+        return self._anchor[0]
 
 
     @property
     def y(self):
         """
-        The Sprite's `y` position in the canvas.
+        The Sprite's `y` anchor position in the canvas.
         """
-        return self._y_anchor
+        return self._anchor[1]
 
 
     def move(self, dx=0, dy=0, *, update=False):
@@ -49,8 +56,8 @@ class BaseSprite:
         Move the Sprite by the given relative `dx` and `dy` values.
         Update the output if `update` is true.
         """
-        self._x_anchor += dx
-        self._y_anchor += dy
+        sprite_x, sprite_y = self._anchor
+        self._anchor = (sprite_x + dx, sprite_y + dy)
         self._canvas.move(self._id, dx, dy)
         if update:
             self.update()
@@ -61,7 +68,8 @@ class BaseSprite:
         Move the Sprite to the given absolute (`x`, `y`) position.
         Update the output if `update` is true.
         """
-        self.move(x - self._x_anchor, y - self._y_anchor, update=update)
+        sprite_x, sprite_y = self._anchor
+        self.move(x - sprite_x, y - sprite_y, update=update)
 
 
     def rotate(self, theta=0, *, around=None, update=False):
@@ -73,15 +81,15 @@ class BaseSprite:
         """
         self._theta = (self._theta + theta) % (math.pi * 2)
         if around:
+            sprite_x, sprite_y = self._anchor
             cx, cy = around
-            x = self._x_anchor - cx
-            y = self._y_anchor - cy
+            sprite_x -= cx
+            sprite_y -= cy
             sin_theta = math.sin(theta)
             cos_theta = math.cos(theta)
-            new_x = x * cos_theta - y * sin_theta + cx
-            new_y = x * sin_theta + y * cos_theta + cy
-            self._x_anchor = new_x
-            self._y_anchor = new_y
+            new_x = sprite_x * cos_theta - sprite_y * sin_theta + cx
+            new_y = sprite_x * sin_theta + sprite_y * cos_theta + cy
+            self._anchor = (new_x, new_y)
         if update:
             self.update()
 

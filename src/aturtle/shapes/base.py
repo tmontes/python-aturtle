@@ -43,6 +43,12 @@ class BaseShape:
                 )
 
 
+    @property
+    def anchor(self):
+
+        return self._anchor
+
+
     def rotated_sprite_data(self, image, around, step, rotations):
 
         raise NotImplementedError

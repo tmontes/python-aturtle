@@ -104,15 +104,3 @@ class Bitmap(base.BaseShape):
         )
 
         return ImageTk.PhotoImage(rotated_pil_image)
-
-
-    @property
-    def cx(self):
-
-        return self._anchor[0]
-
-
-    @property
-    def cy(self):
-
-        return self._anchor[1]
