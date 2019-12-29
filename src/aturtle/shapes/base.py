@@ -39,7 +39,6 @@ class BaseShape:
 
     def rotated_sprite_data(self, data, around, step, rotations):
 
-        print(f'{self=} {data=} {around=} {step=} {rotations=}')
         if not step:
             return self.sprite_data(data)
         return self.sprite_data(f'{data}-{step}/{rotations}-around-{around}')
