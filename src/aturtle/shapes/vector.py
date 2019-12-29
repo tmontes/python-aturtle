@@ -11,13 +11,49 @@ from . import base
 
 
 
+# Populated by the `export_class` decorator.
+
+__all__ = []
+
+def export_class(cls):
+
+    __all__.append(cls.__name__)
+    return cls
+
+
+
+# Track dynamically created classes.
+
+_VECTOR_SHAPE_CLASSES = {}
+
+
+def __getattr__(name):
+
+    # Give access dynamically created classes (see PEP-562).
+
+    if name in _VECTOR_SHAPE_CLASSES:
+        return _VECTOR_SHAPE_CLASSES[name]
+
+    raise AttributeError(f'module {__name__!r} has no attribute {name!r}')
+
+
+
+def __dir__():
+
+    # Expose exported classes (see PEP-562).
+
+    return __all__
+
+
+
 _FILL_COLOR = '#009fff'
 _LINE_COLOR = 'black'
 _LINE_WIDTH = 2
 
 
 
-class VectorShape(base.BaseShape):
+@export_class
+class Shape(base.Shape):
 
     def __init__(self, coords, *, anchor=(0, 0), fill_color=_FILL_COLOR,
                  line_color=_LINE_COLOR, line_width=_LINE_WIDTH, rotations=360,
@@ -71,7 +107,8 @@ class VectorShape(base.BaseShape):
 
 
 
-class RegularPolygon(VectorShape):
+@export_class
+class RegularPolygon(Shape):
 
     def __init__(self, *, sides, radius=None, side=None, angle=0, anchor=(0, 0),
                  fill_color=_FILL_COLOR, line_color=_LINE_COLOR,
@@ -99,17 +136,6 @@ class RegularPolygon(VectorShape):
             line_color=line_color,
             line_width=line_width,
         )
-
-
-
-_VECTOR_SHAPES = {}
-
-def __getattr__(name):
-
-    if name in _VECTOR_SHAPES:
-        return _VECTOR_SHAPES[name]
-
-    raise AttributeError(f'module {__name__!r} has no attribute {name!r}')
 
 
 
@@ -158,14 +184,15 @@ def _create_regular_polygon_classes():
 
         class_dict = dict(__init__=init_creator(sides, angle))
         Class = type(class_name, (RegularPolygon,), class_dict)
-        _VECTOR_SHAPES[class_name] = Class
-
+        _VECTOR_SHAPE_CLASSES[class_name] = Class
+        export_class(Class)
 
 _create_regular_polygon_classes()
 
 
 
-class Star(VectorShape):
+@export_class
+class Star(Shape):
 
     def __init__(self, *, points=5, radius=42, inner_radius=0.5, angle=0,
                  anchor=(0, 0), fill_color=_FILL_COLOR, line_color=_LINE_COLOR,

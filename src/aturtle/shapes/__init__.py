@@ -5,5 +5,5 @@
 # See LICENSE for details.
 # ----------------------------------------------------------------------------
 
-from . bitmap import Bitmap
-from . vector import Square
+from . import bitmap
+from . import vector

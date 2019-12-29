@@ -12,7 +12,7 @@ _CIRCLE_RADIANS = math.pi * 2
 
 
 
-class BaseShape:
+class Shape:
 
     def __init__(self, image, *, anchor, rotations, pre_rotate=True):
 

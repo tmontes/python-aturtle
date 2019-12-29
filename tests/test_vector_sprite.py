@@ -8,12 +8,12 @@
 import math
 import unittest
 
-from aturtle import sprites, Square
+from aturtle import sprites, shapes
 
 from . import fake_tkinter
 
 
-class UnitSquare(Square):
+class UnitSquare(shapes.vector.Square):
 
     def __init__(self, fill_color=None, line_color=None, line_width=None):
 
