@@ -35,6 +35,12 @@ class VectorSprite(base.BaseSprite):
         ]
 
 
+    @property
+    def coords(self):
+
+        return self._offset_coords(self._theta)
+
+
     def rotate(self, theta=0, *, around=None, update=False):
 
         # Rotate anchor point if needed.

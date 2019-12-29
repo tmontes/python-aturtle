@@ -8,20 +8,21 @@
 import math
 import unittest
 
-from aturtle import sprite
+from aturtle import sprite, Square
 
 from . import fake_tkinter
 
 
-class UnitSquare:
+class UnitSquare(Square):
 
     def __init__(self, fill_color=None, line_color=None, line_width=None):
-        self.x_anchor = 0.5
-        self.y_anchor = 0.5
-        self.coords = [0, 0, 0, 1, 1, 1, 1, 0]
-        self.fill_color = fill_color
-        self.line_color = line_color
-        self.line_width = line_width
+
+        super().__init__(
+            side=1,
+            fill_color=fill_color,
+            line_color=line_color,
+            line_width=line_width,
+        )
 
 
 class TestVectorSprite(unittest.TestCase):
@@ -46,15 +47,6 @@ class TestVectorSprite(unittest.TestCase):
 
         s = sprite.VectorSprite(self.canvas, UnitSquare())
         self.assertEqual(s.y, 0)
-
-
-    def test_coords_are_shape_coords_after_anchor_offset(self):
-
-        shape = UnitSquare()
-        s = sprite.VectorSprite(self.canvas, shape)
-
-        shape_coords_after_offset = [c - 0.5 for c in shape.coords]
-        self.assertEqual(s.coords, shape_coords_after_offset)
 
 
     def test_shape_fill_color_passed_to_create_polygon(self):
@@ -97,7 +89,7 @@ class TestVectorSprite(unittest.TestCase):
 
         s = sprite.VectorSprite(self.canvas, UnitSquare(), x=2, y=1)
 
-        shape_coords_after_offset = [1.5, 0.5, 1.5, 1.5, 2.5, 1.5, 2.5, 0.5]
+        shape_coords_after_offset = [2.5, 0.5, 2.5, 1.5, 1.5, 1.5, 1.5, 0.5]
         self.assertEqual(s.coords, shape_coords_after_offset)
 
 
@@ -209,7 +201,7 @@ class TestVectorSprite(unittest.TestCase):
 
         s.rotate(math.pi, around=(1, 1))
         # Half-circle rotated coords around (1, 1) are these.
-        expected_coords = [2.5, 2.5, 2.5, 1.5, 1.5, 1.5, 1.5, 2.5]
+        expected_coords = [1.5, 2.5, 1.5, 1.5, 2.5, 1.5, 2.5, 2.5]
         for orig, new in zip(expected_coords, s.coords):
             self.assertAlmostEqual(orig, new, places=5)
 
