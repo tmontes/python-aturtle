@@ -15,10 +15,13 @@ from . import fake_tkinter
 
 class UnitSquare:
 
-    def __init__(self):
+    def __init__(self, fill_color=None, line_color=None, line_width=None):
         self.x_anchor = 0.5
         self.y_anchor = 0.5
         self.coords = [0, 0, 0, 1, 1, 1, 1, 0]
+        self.fill_color = fill_color
+        self.line_color = line_color
+        self.line_width = line_width
 
 
 class TestVectorSprite(unittest.TestCase):
@@ -54,25 +57,25 @@ class TestVectorSprite(unittest.TestCase):
         self.assertEqual(s.coords, shape_coords_after_offset)
 
 
-    def test_default_polygon_fill_color(self):
+    def test_shape_fill_color_passed_to_create_polygon(self):
 
-        s = sprite.VectorSprite(self.canvas, UnitSquare())
+        s = sprite.VectorSprite(self.canvas, UnitSquare(fill_color='#009fff'))
 
         create_polygon_kwargs = self.canvas._polygon_kwargs
         self.assertEqual(create_polygon_kwargs['fill'], '#009fff')
 
 
-    def test_default_polygon_line_color(self):
+    def test_shape_line_color_passed_to_create_polygon(self):
 
-        s = sprite.VectorSprite(self.canvas, UnitSquare())
+        s = sprite.VectorSprite(self.canvas, UnitSquare(line_color='black'))
 
         create_polygon_kwargs = self.canvas._polygon_kwargs
         self.assertEqual(create_polygon_kwargs['outline'], 'black')
 
 
-    def test_default_polygon_line_width(self):
+    def test_shape_line_width_passed_to_create_polygon(self):
 
-        s = sprite.VectorSprite(self.canvas, UnitSquare())
+        s = sprite.VectorSprite(self.canvas, UnitSquare(line_width=2))
 
         create_polygon_kwargs = self.canvas._polygon_kwargs
         self.assertEqual(create_polygon_kwargs['width'], 2)
@@ -96,30 +99,6 @@ class TestVectorSprite(unittest.TestCase):
 
         shape_coords_after_offset = [1.5, 0.5, 1.5, 1.5, 2.5, 1.5, 2.5, 0.5]
         self.assertEqual(s.coords, shape_coords_after_offset)
-
-
-    def test_create_custom_fill_color(self):
-
-        s = sprite.VectorSprite(self.canvas, UnitSquare(), fill_color='pink')
-
-        create_polygon_kwargs = self.canvas._polygon_kwargs
-        self.assertEqual(create_polygon_kwargs['fill'], 'pink')
-
-
-    def test_create_custom_line_color(self):
-
-        s = sprite.VectorSprite(self.canvas, UnitSquare(), line_color='fuschia')
-
-        create_polygon_kwargs = self.canvas._polygon_kwargs
-        self.assertEqual(create_polygon_kwargs['outline'], 'fuschia')
-
-
-    def test_create_custom_line_width(self):
-
-        s = sprite.VectorSprite(self.canvas, UnitSquare(), line_width=1)
-
-        create_polygon_kwargs = self.canvas._polygon_kwargs
-        self.assertEqual(create_polygon_kwargs['width'], 1)
 
 
     def test_horizontal_move_moves_anchor_x(self):
