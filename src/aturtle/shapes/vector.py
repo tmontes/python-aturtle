@@ -36,18 +36,6 @@ class VectorShape(base.BaseShape):
 
 
     @property
-    def x_anchor(self):
-
-        return self._anchor[0]
-
-
-    @property
-    def y_anchor(self):
-
-        return self._anchor[1]
-
-
-    @property
     def fill_color(self):
 
         return self._fill_color

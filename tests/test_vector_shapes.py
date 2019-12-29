@@ -35,13 +35,13 @@ class TestSquare(unittest.TestCase):
     def test_default_anchor_x(self):
 
         s = vector.Square()
-        self.assertEqual(s.x_anchor, 0)
+        self.assertEqual(s.anchor[0], 0)
 
 
     def test_default_anchor_y(self):
 
         s = vector.Square()
-        self.assertEqual(s.y_anchor, 0)
+        self.assertEqual(s.anchor[1], 0)
 
 
     def test_custom_size_coords(self):
@@ -56,10 +56,10 @@ class TestSquare(unittest.TestCase):
     def test_custom_size_anchor_x(self):
 
         s = vector.Square(side=42)
-        self.assertEqual(s.x_anchor, 0)
+        self.assertEqual(s.anchor[0], 0)
 
 
     def test_custom_size_anchor_y(self):
 
         s = vector.Square(side=42)
-        self.assertEqual(s.y_anchor, 0)
+        self.assertEqual(s.anchor[1], 0)

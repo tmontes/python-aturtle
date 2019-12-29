@@ -75,19 +75,19 @@ class TestVectorSprite(unittest.TestCase):
 
     def test_create_custom_anchor_x(self):
 
-        s = sprite.VectorSprite(self.canvas, UnitSquare(), x=2, y=1)
+        s = sprite.VectorSprite(self.canvas, UnitSquare(), anchor=(2, 1))
         self.assertEqual(s.x, 2)
 
 
     def test_create_custom_anchor_y(self):
 
-        s = sprite.VectorSprite(self.canvas, UnitSquare(), x=2, y=1)
+        s = sprite.VectorSprite(self.canvas, UnitSquare(), anchor=(2, 1))
         self.assertEqual(s.y, 1)
 
 
     def test_create_custom_anchor_coords(self):
 
-        s = sprite.VectorSprite(self.canvas, UnitSquare(), x=2, y=1)
+        s = sprite.VectorSprite(self.canvas, UnitSquare(), anchor=(2, 1))
 
         shape_coords_after_offset = [2.5, 0.5, 2.5, 1.5, 1.5, 1.5, 1.5, 0.5]
         self.assertEqual(s.coords, shape_coords_after_offset)
@@ -192,7 +192,7 @@ class TestVectorSprite(unittest.TestCase):
         s = sprite.VectorSprite(self.canvas, UnitSquare())
 
         s.rotate(math.pi, around=(1, 1))
-        self.assertAlmostEqual(s.x, 2, places=5)
+        self.assertAlmostEqual(s.y, 2, places=5)
 
 
     def test_rotate_around_point_updates_coords(self):

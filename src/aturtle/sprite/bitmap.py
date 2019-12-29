@@ -10,13 +10,15 @@ from . import base
 
 class BitmapSprite(base.BaseSprite):
 
-    def __init__(self, canvas, shape, *, x=0, y=0):
+    def __init__(self, canvas, shape, *, anchor=(0, 0)):
 
-        super().__init__(canvas, shape, x=x, y=y)
+        super().__init__(canvas, shape, anchor=anchor)
 
+        sprite_x, sprite_y = anchor
+        shape_x, shape_y = shape.anchor
         self._id = self._canvas.create_image(
-            x - shape.cx,
-            y - shape.cy,
+            sprite_x - shape_x,
+            sprite_y - shape_y,
             image=shape[self._theta],
             anchor='nw',
         )
@@ -29,10 +31,12 @@ class BitmapSprite(base.BaseSprite):
 
         # Anchor point rotated, move the shape.
         if around:
+            sprite_x, sprite_y = self._anchor
+            shape_x, shape_y = self._shape.anchor
             self._canvas.moveto(
                 self._id,
-                self._x_anchor - self._shape.cx,
-                self._y_anchor - self._shape.cy,
+                sprite_x - shape_x,
+                sprite_y - shape_y,
             )
 
         # Use the pre-rendered shape for the new orientation.

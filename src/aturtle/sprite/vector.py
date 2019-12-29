@@ -12,9 +12,9 @@ from . import base
 
 class VectorSprite(base.BaseSprite):
 
-    def __init__(self, canvas, shape, *, x=0, y=0):
+    def __init__(self, canvas, shape, *, anchor=(0, 0)):
 
-        super().__init__(canvas, shape, x=x, y=y)
+        super().__init__(canvas, shape, anchor=anchor)
 
         self._id = self._canvas.create_polygon(
             self._offset_coords(0),
@@ -26,12 +26,11 @@ class VectorSprite(base.BaseSprite):
 
     def _offset_coords(self, theta):
 
+        shape_coords = self._shape[theta]
+        anchor_cycle = it.cycle(self._anchor)
         return [
             value + offset
-            for value, offset in zip(
-                self._shape[theta],
-                it.cycle((self._x_anchor, self._y_anchor))
-            )
+            for value, offset in zip(shape_coords, anchor_cycle)
         ]
 
 
