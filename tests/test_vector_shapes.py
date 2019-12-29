@@ -27,7 +27,7 @@ class TestSquare(unittest.TestCase):
 
         s = vector.Square()
         self._assert_equal_rounded_list_values(
-            s.coords,
+            s[0],
             [30, -30, 30, 30, -30, 30, -30, -30],
         )
 
@@ -48,7 +48,7 @@ class TestSquare(unittest.TestCase):
 
         s = vector.Square(side=42)
         self._assert_equal_rounded_list_values(
-            s.coords,
+            s[0],
             [21, -21, 21, 21, -21, 21, -21, -21]
         )
 
