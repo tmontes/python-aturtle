@@ -13,8 +13,7 @@ from . import base
 
 class VectorSprite(base.BaseSprite):
 
-    def __init__(self, canvas, shape, *, x=0, y=0, fill_color='#009fff',
-                 line_color='black', line_width=2):
+    def __init__(self, canvas, shape, *, x=0, y=0):
 
         super().__init__(canvas, shape, x=x, y=y)
 
@@ -28,9 +27,9 @@ class VectorSprite(base.BaseSprite):
 
         self._id = self._canvas.create_polygon(
             offset_coords,
-            fill=fill_color,
-            outline=line_color,
-            width=line_width,
+            fill=shape.fill_color,
+            outline=shape.line_color,
+            width=shape.line_width,
         )
 
 

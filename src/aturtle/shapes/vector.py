@@ -9,19 +9,50 @@ import math
 
 
 
+_FILL_COLOR = '#009fff'
+_LINE_COLOR = 'black'
+_LINE_WIDTH = 2
+
+
+
 class VectorShape:
 
-    def __init__(self, points, *, anchor=(0, 0)):
+    def __init__(self, points, *, anchor=(0, 0), fill_color=_FILL_COLOR,
+                 line_color=_LINE_COLOR, line_width=_LINE_WIDTH):
 
         # TODO: Rename to self.points.
         self.coords = points
         self.x_anchor, self.y_anchor = anchor
 
+        self._fill_color = fill_color
+        self._line_color = line_color
+        self._line_width = line_width
+
+
+    @property
+    def fill_color(self):
+
+        return self._fill_color
+
+
+    @property
+    def line_color(self):
+
+        return self._line_color
+
+
+    @property
+    def line_width(self):
+
+        return self._line_width
+
 
 
 class RegularPolygon(VectorShape):
 
-    def __init__(self, *, sides, radius=None, side=None, angle=0, anchor=(0, 0)):
+    def __init__(self, *, sides, radius=None, side=None, angle=0, anchor=(0, 0),
+                 fill_color=_FILL_COLOR, line_color=_LINE_COLOR,
+                 line_width=_LINE_WIDTH):
 
         if not radius and not side:
             raise ValueError('Need radius or side to be non-zero.')
@@ -39,7 +70,13 @@ class RegularPolygon(VectorShape):
             # TODO: Should become a list of (x, y) tuples.
             points.extend((x, y))
 
-        super().__init__(points, anchor=anchor)
+        super().__init__(
+            points,
+            anchor=anchor,
+            fill_color=fill_color,
+            line_color=line_color,
+            line_width=line_width,
+        )
 
 
 
@@ -81,7 +118,8 @@ def _create_regular_polygon_classes():
 
         def init_creator(number_of_sides, default_angle):
             def __init__(self, *, side=None, radius=42, angle=default_angle,
-                         anchor=(0, 0)):
+                         anchor=(0, 0), fill_color=_FILL_COLOR,
+                         line_color=_LINE_COLOR, line_width=_LINE_WIDTH):
                 radius = None if side else radius
                 RegularPolygon.__init__(
                     self,
@@ -90,6 +128,9 @@ def _create_regular_polygon_classes():
                     radius=radius,
                     angle=angle,
                     anchor=anchor,
+                    fill_color=fill_color,
+                    line_color=line_color,
+                    line_width=line_width,
                 )
             return __init__
 
@@ -105,7 +146,8 @@ _create_regular_polygon_classes()
 class Star(VectorShape):
 
     def __init__(self, *, points=5, radius=42, inner_radius=0.5, angle=0,
-                 anchor=(0, 0)):
+                 anchor=(0, 0), fill_color=_FILL_COLOR, line_color=_LINE_COLOR,
+                 line_width=_LINE_WIDTH):
 
         if isinstance(inner_radius, float):
             inner_radius = inner_radius * radius
@@ -121,4 +163,10 @@ class Star(VectorShape):
             # TODO: Should become a list of (x, y) tuples.
             coords.extend((x, y))
 
-        super().__init__(coords, anchor=anchor)
+        super().__init__(
+            coords,
+            anchor=anchor,
+            fill_color=fill_color,
+            line_color=line_color,
+            line_width=line_width,
+        )
