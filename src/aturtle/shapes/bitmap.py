@@ -19,7 +19,7 @@ from . import base
 
 
 
-class Bitmap(base.BaseShape):
+class Shape(base.Shape):
 
     def __init__(self, filename=None, data=None, *, anchor=(0.5, 0.5),
                  rotations=36, pre_rotate=True):

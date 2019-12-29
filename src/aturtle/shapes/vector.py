@@ -17,7 +17,7 @@ _LINE_WIDTH = 2
 
 
 
-class VectorShape(base.BaseShape):
+class Shape(base.Shape):
 
     def __init__(self, coords, *, anchor=(0, 0), fill_color=_FILL_COLOR,
                  line_color=_LINE_COLOR, line_width=_LINE_WIDTH, rotations=360,
@@ -71,7 +71,7 @@ class VectorShape(base.BaseShape):
 
 
 
-class RegularPolygon(VectorShape):
+class RegularPolygon(Shape):
 
     def __init__(self, *, sides, radius=None, side=None, angle=0, anchor=(0, 0),
                  fill_color=_FILL_COLOR, line_color=_LINE_COLOR,
@@ -165,7 +165,7 @@ _create_regular_polygon_classes()
 
 
 
-class Star(VectorShape):
+class Star(Shape):
 
     def __init__(self, *, points=5, radius=42, inner_radius=0.5, angle=0,
                  anchor=(0, 0), fill_color=_FILL_COLOR, line_color=_LINE_COLOR,
