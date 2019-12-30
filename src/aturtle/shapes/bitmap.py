@@ -42,7 +42,7 @@ class Shape(base.Shape):
         )
 
 
-    def rotated_sprite_data(self, image, around, step, rotations):
+    def rotated_data(self, image, around, step, rotations):
 
         if tkinter:
             if step == 0:

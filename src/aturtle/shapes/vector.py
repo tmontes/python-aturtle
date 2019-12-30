@@ -89,7 +89,7 @@ class Shape(base.Shape):
         return self._line_width
 
 
-    def rotated_sprite_data(self, image, around, step, rotations):
+    def rotated_data(self, image, around, step, rotations):
 
         theta = math.pi * 2 * step / rotations
         sin_theta = math.sin(theta)

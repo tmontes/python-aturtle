@@ -20,12 +20,12 @@ class Shape:
         self._rotations = rotations
         self._pre_rotate = pre_rotate
 
-        self._rotated_sprite_data = {}
+        self._rotated_data = {}
 
         # Must compute at least this one to determine width and height,
         # in order to support floating point based anchors.
-        unrotated = self.rotated_sprite_data(image, anchor, 0, rotations)
-        self._rotated_sprite_data[0] = unrotated
+        unrotated = self.rotated_data(image, anchor, 0, rotations)
+        self._rotated_data[0] = unrotated
 
         ax, ay = anchor
         self._anchor = (
@@ -35,7 +35,7 @@ class Shape:
 
         if pre_rotate:
             for step in range(1, rotations):
-                self._rotated_sprite_data[step] = self.rotated_sprite_data(
+                self._rotated_data[step] = self.rotated_data(
                     image=image,
                     around=self._anchor,
                     step=step,
@@ -49,7 +49,7 @@ class Shape:
         return self._anchor
 
 
-    def rotated_sprite_data(self, image, around, step, rotations):
+    def rotated_data(self, image, around, step, rotations):
 
         raise NotImplementedError
 
@@ -59,13 +59,13 @@ class Shape:
         rotations = self._rotations
         step = int(radians * rotations / _CIRCLE_RADIANS) % rotations
 
-        rotated_sprite_data = self._rotated_sprite_data
-        if not step in rotated_sprite_data and not self._pre_rotate:
-            rotated_sprite_data[step] = self.rotated_sprite_data(
+        rotated_data = self._rotated_data
+        if not step in rotated_data and not self._pre_rotate:
+            rotated_data[step] = self.rotated_data(
                 image=self._image_source,
                 around=self._anchor,
                 step=step,
                 rotations=rotations,
             )
 
-        return rotated_sprite_data[step]
+        return rotated_data[step]
