@@ -9,8 +9,6 @@
 Shapes.
 """
 
-import math
-
 
 
 class Shape:
@@ -30,6 +28,9 @@ class Shape:
     """
 
     def __init__(self, image, *, anchor, rotations, pre_rotate=True):
+
+        if not isinstance(anchor, (tuple, list)):
+            raise TypeError('anchor must be a tuple or a list')
 
         if rotations < 1:
             raise ValueError('rotations must be strictly positive')

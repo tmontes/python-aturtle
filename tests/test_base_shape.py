@@ -33,7 +33,16 @@ class _TestShape(base.Shape):
 
 
 
-class TestCreateWithBadRotations(unittest.TestCase):
+class TestCreateWithBadArguments(unittest.TestCase):
+
+    def test_non_tuple_or_list_anchor_raises_TypeError(self):
+
+        bad_anchors = (None, 42, 'hi', (1 for _ in range(2)))
+        for bad_anchor in bad_anchors:
+            with self.subTest(bad_anchor=bad_anchor):
+                with self.assertRaises(TypeError):
+                    _shape = _TestShape(image=None, anchor=bad_anchor, rotations=1)
+
 
     def test_negative_rotations_raises_ValueError(self):
 
