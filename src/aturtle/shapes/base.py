@@ -5,6 +5,10 @@
 # See LICENSE for details.
 # ----------------------------------------------------------------------------
 
+"""
+Shapes.
+"""
+
 import math
 
 
@@ -13,6 +17,20 @@ _CIRCLE_RADIANS = math.pi * 2
 
 
 class Shape:
+    """
+    A shape, defined by `image`, with an `anchor` at the given (x, y) tuple.
+
+    Creates rotated variations of the image, accessible via indexing with an
+    angle, where the source image is taken as angle 0. Rotated image data is
+    pre-computed if `pre_rotate` is true, and computed on access otherwise.
+    In either case, the computed rotations are cached internally.
+
+    The number of supported rotations is given by `rotations`, which must be
+    a strictly positive integer.
+
+    Image rotation code is provided by sub-classes implementing the
+    `rotated_data` method.
+    """
 
     def __init__(self, image, *, anchor, rotations, pre_rotate=True):
 
@@ -45,17 +63,24 @@ class Shape:
 
     @property
     def anchor(self):
-
+        """
+        Image anchor as an (x, y) tuple.
+        """
         return self._anchor
 
 
     def rotated_data(self, image, around, step, rotations):
-
+        """
+        Returns `image` rotated around the `around` (x, y) tuple.
+        Rotation angle is `step` * 360 degrees / `rotations`.
+        """
         raise NotImplementedError
 
 
     def __getitem__(self, radians):
-
+        """
+        Image data at the given angle.
+        """
         rotations = self._rotations
         step = int(radians * rotations / _CIRCLE_RADIANS) % rotations
 
