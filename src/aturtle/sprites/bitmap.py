@@ -19,15 +19,15 @@ class Sprite(base.Sprite):
         self._id = self._canvas.create_image(
             sprite_x - shape_x,
             sprite_y - shape_y,
-            image=shape[self._theta],
+            image=shape[0],
             anchor='nw',
         )
 
 
-    def rotate(self, theta=0, *, around=None, update=False):
+    def rotate(self, angle=0, *, around=None, update=False):
 
         # Rotate anchor point if needed.
-        super().rotate(theta, around=around, update=False)
+        super().rotate(angle, around=around, update=False)
 
         # Anchor point rotated, move the shape.
         if around:
@@ -40,7 +40,7 @@ class Sprite(base.Sprite):
             )
 
         # Use the pre-rendered shape for the new orientation.
-        self._canvas.itemconfig(self._id, image=self._shape[self._theta])
+        self._canvas.itemconfig(self._id, image=self._shape[self._angle])
 
         if update:
             self.update()

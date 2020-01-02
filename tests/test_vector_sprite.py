@@ -172,7 +172,7 @@ class TestVectorSprite(unittest.TestCase):
         s = sprites.VectorSprite(self.canvas, UnitSquare())
         original_coords = list(s.coords)
 
-        s.rotate(math.pi)
+        s.rotate(180)
         # Half-circle rotated coords are easy to determine.
         expected_coords = original_coords[4:] + original_coords[:5]
         for orig, new in zip(expected_coords, s.coords):
@@ -183,7 +183,7 @@ class TestVectorSprite(unittest.TestCase):
 
         s = sprites.VectorSprite(self.canvas, UnitSquare())
 
-        s.rotate(math.pi, around=(1, 1))
+        s.rotate(180, around=(1, 1))
         self.assertAlmostEqual(s.x, 2, places=5)
 
 
@@ -191,7 +191,7 @@ class TestVectorSprite(unittest.TestCase):
 
         s = sprites.VectorSprite(self.canvas, UnitSquare())
 
-        s.rotate(math.pi, around=(1, 1))
+        s.rotate(180, around=(1, 1))
         self.assertAlmostEqual(s.y, 2, places=5)
 
 
@@ -199,7 +199,7 @@ class TestVectorSprite(unittest.TestCase):
 
         s = sprites.VectorSprite(self.canvas, UnitSquare())
 
-        s.rotate(math.pi, around=(1, 1))
+        s.rotate(180, around=(1, 1))
         # Half-circle rotated coords around (1, 1) are these.
         expected_coords = [1.5, 2.5, 1.5, 1.5, 2.5, 1.5, 2.5, 2.5]
         for orig, new in zip(expected_coords, s.coords):
