@@ -79,6 +79,12 @@ class Shape(base.Shape):
                  line_color=_LINE_COLOR, line_width=_LINE_WIDTH, rotations=360,
                  pre_rotate=False):
 
+        if not isinstance(coords, (list, tuple)):
+            raise TypeError('coords must be a list or a tuple')
+
+        if len(coords) % 2:
+            raise ValueError('coords must have an even number of coordinates')
+
         super().__init__(
             coords,
             anchor=anchor,
@@ -141,7 +147,7 @@ class RegularPolygon(Shape):
     """
     A regular polygon vector shape with as many sides as specified in `sides`,
     and either the specified `radius` or with sides with length `side`. The
-    `angle` argument, in radians, rotates the polygon points by that amount.
+    `angle` argument, in degrees, rotates the polygon points by that amount.
 
     See the `Shape` base class docs for info on the other __init__ arguments.
     """
@@ -149,6 +155,9 @@ class RegularPolygon(Shape):
     def __init__(self, *, sides, radius=None, side=None, angle=0, anchor=(0, 0),
                  fill_color=_FILL_COLOR, line_color=_LINE_COLOR,
                  line_width=_LINE_WIDTH, rotations=360, pre_rotate=False):
+
+        if sides < 3:
+            raise ValueError('Must have more than two sides.')
 
         if not radius and not side:
             raise ValueError('Need radius or side to be non-zero.')
@@ -160,9 +169,10 @@ class RegularPolygon(Shape):
 
         coords = []
         for step in range(sides):
-            theta = math.pi * 2 * (step / sides) - angle
-            x = radius * math.cos(theta)
-            y = radius * math.sin(theta)
+            theta = (360 * step / sides) - angle
+            theta_rad = theta * math.pi / 180
+            x = radius * math.cos(theta_rad)
+            y = radius * math.sin(theta_rad)
             coords.extend((x, y))
 
         super().__init__(
@@ -182,21 +192,17 @@ def _create_regular_polygon_classes():
     # Called at import time (see below), dynamically creates classes for all
     # the regular poligons with 3-12 sides.
 
-    half_pi = math.pi / 2
-    quarter_pi = math.pi / 4
-    eight_pi = math.pi / 8
-
     regular_polygons = [
-        dict(name='Triangle', sides=3, angle=half_pi),
-        dict(name='Square', sides=4, angle=quarter_pi),
-        dict(name='Pentagon', sides=5, angle=half_pi),
-        dict(name='Hexagon', sides=6, angle=half_pi),
-        dict(name='Heptagon', sides=7, angle=half_pi),
-        dict(name='Octagon', sides=8, angle=eight_pi),
-        dict(name='Nonagon', sides=9, angle=half_pi),
-        dict(name='Decagon', sides=10, angle=half_pi),
-        dict(name='Undecagon', sides=11, angle=half_pi),
-        dict(name='Dodecagon', sides=12, angle=half_pi),
+        dict(name='Triangle', sides=3, angle=90),
+        dict(name='Square', sides=4, angle=45),
+        dict(name='Pentagon', sides=5, angle=90),
+        dict(name='Hexagon', sides=6, angle=90),
+        dict(name='Heptagon', sides=7, angle=90),
+        dict(name='Octagon', sides=8, angle=22.5),
+        dict(name='Nonagon', sides=9, angle=90),
+        dict(name='Decagon', sides=10, angle=90),
+        dict(name='Undecagon', sides=11, angle=90),
+        dict(name='Dodecagon', sides=12, angle=90),
     ]
 
     for polygon_spec in regular_polygons:
@@ -273,6 +279,6 @@ class Star(Shape):
             fill_color=fill_color,
             line_color=line_color,
             line_width=line_width,
-            rotations=360,
-            pre_rotate=False,
+            rotations=rotations,
+            pre_rotate=pre_rotate,
         )
