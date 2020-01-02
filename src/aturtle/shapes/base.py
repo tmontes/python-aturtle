@@ -12,9 +12,6 @@ Shapes.
 import math
 
 
-_CIRCLE_RADIANS = math.pi * 2
-
-
 
 class Shape:
     """
@@ -33,6 +30,9 @@ class Shape:
     """
 
     def __init__(self, image, *, anchor, rotations, pre_rotate=True):
+
+        if rotations < 1:
+            raise ValueError('rotations must be strictly positive')
 
         self._image_source = image
         self._rotations = rotations
@@ -77,12 +77,12 @@ class Shape:
         raise NotImplementedError
 
 
-    def __getitem__(self, radians):
+    def __getitem__(self, angle):
         """
-        Image data at the given angle.
+        Image data at the given angle, in degrees.
         """
         rotations = self._rotations
-        step = int(radians * rotations / _CIRCLE_RADIANS) % rotations
+        step = int(angle * rotations / 360) % rotations
 
         rotated_data = self._rotated_data
         if not step in rotated_data and not self._pre_rotate:
