@@ -34,6 +34,12 @@ class Shape(base.Shape):
     the name of a bitmap image file on disk; the second is taken as a base-64
     encoded representation of such a file's in-memory payload.
 
+    If the (x, y) anchor is int-based, the anchor is taken as an absolute
+    position, starting from the bitmap's top left corner. When float-based,
+    it is taken as a width/height relative position, with (0.0, 0.0) being the
+    bitmap's top left corner and, for example, (0.5, 0.5) being the center of
+    the bitmap.
+
     Creates rotated variations of the bitmap, accessible via indexing with an
     angle, where the source image is taken as angle 0. Rotated images are pre-
     computed by default, but can be created on demand if `pre_rotate` is false.
@@ -52,10 +58,20 @@ class Shape(base.Shape):
         if tkinter:
             kwargs = {'file': filename} if filename else {'data': data}
             image = tkinter.PhotoImage(**kwargs)
+            width = image.width()
+            height = image.height()
         else:
             # No tkinter, PIL was imported successfully.
             source = filename if filename else io.BytesIO(base64.b64decode(data))
             image = Image.open(source)
+            width = image.width
+            height = image.height
+
+        ax, ay = anchor
+        anchor = (
+            int(ax * width) if isinstance(ax, float) else ax,
+            int(ay * height) if isinstance(ay, float) else ay,
+        )
 
         super().__init__(
             image=image,

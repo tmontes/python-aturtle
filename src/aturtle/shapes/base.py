@@ -35,24 +35,13 @@ class Shape:
             raise ValueError('rotations must be strictly positive')
 
         self._image_source = image
+        self._anchor = anchor
         self._rotations = rotations
         self._pre_rotate = pre_rotate
 
         self._rotated_data = {}
-
-        # Must compute at least this one to determine width and height,
-        # in order to support floating point based anchors.
-        unrotated = self.rotated_data(image, anchor, 0, rotations)
-        self._rotated_data[0] = unrotated
-
-        ax, ay = anchor
-        self._anchor = (
-            int(ax * unrotated.width()) if isinstance(ax, float) else ax,
-            int(ay * unrotated.height()) if isinstance(ay, float) else ay,
-        )
-
         if pre_rotate:
-            for step in range(1, rotations):
+            for step in range(rotations):
                 self._rotated_data[step] = self.rotated_data(
                     image=image,
                     around=self._anchor,
