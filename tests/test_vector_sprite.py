@@ -5,12 +5,12 @@
 # See LICENSE for details.
 # ----------------------------------------------------------------------------
 
-import math
 import unittest
 
 from aturtle import sprites, shapes
 
 from . import fake_tkinter
+
 
 
 class UnitSquare(shapes.vector.Square):
@@ -25,6 +25,7 @@ class UnitSquare(shapes.vector.Square):
         )
 
 
+
 class TestVectorSprite(unittest.TestCase):
 
     def setUp(self):
@@ -37,16 +38,10 @@ class TestVectorSprite(unittest.TestCase):
         s = sprites.VectorSprite(self.canvas, UnitSquare())
 
 
-    def test_default_x_anchor(self):
+    def test_default_anchor(self):
 
         s = sprites.VectorSprite(self.canvas, UnitSquare())
-        self.assertEqual(s.x, 0)
-
-
-    def test_default_y_anchor(self):
-
-        s = sprites.VectorSprite(self.canvas, UnitSquare())
-        self.assertEqual(s.y, 0)
+        self.assertEqual(s.anchor, (0, 0))
 
 
     def test_shape_fill_color_passed_to_create_polygon(self):
@@ -73,16 +68,10 @@ class TestVectorSprite(unittest.TestCase):
         self.assertEqual(create_polygon_kwargs['width'], 2)
 
 
-    def test_create_custom_anchor_x(self):
+    def test_create_custom_anchor(self):
 
         s = sprites.VectorSprite(self.canvas, UnitSquare(), anchor=(2, 1))
-        self.assertEqual(s.x, 2)
-
-
-    def test_create_custom_anchor_y(self):
-
-        s = sprites.VectorSprite(self.canvas, UnitSquare(), anchor=(2, 1))
-        self.assertEqual(s.y, 1)
+        self.assertEqual(s.anchor, (2, 1))
 
 
     def test_create_custom_anchor_coords(self):
@@ -93,78 +82,69 @@ class TestVectorSprite(unittest.TestCase):
         self.assertEqual(s.coords, shape_coords_after_offset)
 
 
-    def test_horizontal_move_moves_anchor_x(self):
+    def test_horizontal_move_moves_anchor(self):
 
         s = sprites.VectorSprite(self.canvas, UnitSquare())
         s.move(20, 0)
-        self.assertEqual(s.x, 20)
+        self.assertEqual(s.anchor, (20, 0))
 
 
-    def test_vertical_move_moves_anchor_y(self):
-
-        s = sprites.VectorSprite(self.canvas, UnitSquare())
-        s.move(0, 10)
-        self.assertEqual(s.y, 10)
-
-
-    def test_move_does_not_call_canvas_update(self):
+    def test_vertical_move_moves_anchor(self):
 
         s = sprites.VectorSprite(self.canvas, UnitSquare())
         s.move(0, 10)
-        self.canvas.update.assert_not_called()
+        self.assertEqual(s.anchor, (0, 10))
 
 
-    def test_move_with_update_calls_calls_canvas_update(self):
+    def test_move_does_not_call_canvas_update_idletasks(self):
+
+        s = sprites.VectorSprite(self.canvas, UnitSquare())
+        s.move(0, 10)
+        self.canvas.update_idletasks.assert_not_called()
+
+
+    def test_move_with_update_calls_canvas_update_idletasks(self):
 
         s = sprites.VectorSprite(self.canvas, UnitSquare())
         s.move(0, 10, update=True)
-        self.canvas.update.assert_called_once_with()
+        self.canvas.update_idletasks.assert_called_once_with()
 
 
-    def test_horizontal_moveto_moves_anchor_x(self):
-
-        s = sprites.VectorSprite(self.canvas, UnitSquare())
-        s.moveto(20, 0)
-        self.assertEqual(s.x, 20)
-
-
-    def test_vertical_moveto_moves_anchor_y(self):
+    def test_horizontal_move_to_moves_anchor(self):
 
         s = sprites.VectorSprite(self.canvas, UnitSquare())
-        s.moveto(0, 10)
-        self.assertEqual(s.y, 10)
+        s.move_to(20, 0)
+        self.assertEqual(s.anchor, (20, 0))
 
 
-    def test_moveto_does_not_call_canvas_update(self):
-
-        s = sprites.VectorSprite(self.canvas, UnitSquare())
-        s.moveto(0, 10)
-        self.canvas.update.assert_not_called()
-
-
-    def test_moveto_with_update_calls_calls_canvas_update(self):
+    def test_vertical_move_to_moves_anchor(self):
 
         s = sprites.VectorSprite(self.canvas, UnitSquare())
-        s.moveto(0, 10, update=True)
-        self.canvas.update.assert_called_once_with()
+        s.move_to(0, 10)
+        self.assertEqual(s.anchor, (0, 10))
 
 
-    def test_rotate_does_not_change_anchor_x(self):
+    def test_move_to_does_not_call_canvas_update_idletasks(self):
 
         s = sprites.VectorSprite(self.canvas, UnitSquare())
-        original_x = s.x
+        s.move_to(0, 10)
+        self.canvas.update_idletasks.assert_not_called()
+
+
+    def test_move_to_with_update_calls_canvas_update_idletasks(self):
+
+        s = sprites.VectorSprite(self.canvas, UnitSquare())
+        s.move_to(0, 10, update=True)
+        self.canvas.update_idletasks.assert_called_once_with()
+
+
+    def test_rotate_does_not_change_anchor(self):
+
+        s = sprites.VectorSprite(self.canvas, UnitSquare())
+        original_anchor = s.anchor
 
         s.rotate(1)
-        self.assertEqual(original_x, s.x)
-
-
-    def test_rotate_does_not_change_anchor_y(self):
-
-        s = sprites.VectorSprite(self.canvas, UnitSquare())
-        original_y = s.y
-
-        s.rotate(1)
-        self.assertEqual(original_y, s.y)
+        self.assertEqual(original_anchor, s.anchor)
 
 
     def test_rotate_updates_coords(self):
@@ -179,20 +159,12 @@ class TestVectorSprite(unittest.TestCase):
             self.assertAlmostEqual(orig, new, places=5)
 
 
-    def test_rotate_around_point_rotates_anchor_x(self):
+    def test_rotate_around_point_rotates_anchor(self):
 
         s = sprites.VectorSprite(self.canvas, UnitSquare())
 
         s.rotate(180, around=(1, 1))
-        self.assertAlmostEqual(s.x, 2, places=5)
-
-
-    def test_rotate_around_point_rotates_anchor_y(self):
-
-        s = sprites.VectorSprite(self.canvas, UnitSquare())
-
-        s.rotate(180, around=(1, 1))
-        self.assertAlmostEqual(s.y, 2, places=5)
+        self.assertEqual(s.anchor, (2, 2))
 
 
     def test_rotate_around_point_updates_coords(self):
@@ -206,58 +178,49 @@ class TestVectorSprite(unittest.TestCase):
             self.assertAlmostEqual(orig, new, places=5)
 
 
-    def test_rotate_does_not_call_canvas_update(self):
+    def test_rotate_does_not_call_canvas_update_idletasks(self):
 
         s = sprites.VectorSprite(self.canvas, UnitSquare())
         s.rotate(1)
-        self.canvas.update.assert_not_called()
+        self.canvas.update_idletasks.assert_not_called()
 
 
-    def test_rotate_with_update_calls_calls_canvas_update(self):
+    def test_rotate_with_update_calls_canvas_update_idletasks(self):
 
         s = sprites.VectorSprite(self.canvas, UnitSquare())
         s.rotate(1, update=True)
-        self.canvas.update.assert_called_once_with()
+        self.canvas.update_idletasks.assert_called_once_with()
 
 
-    def test_unrotate_does_not_change_anchor_x(self):
-
-        s = sprites.VectorSprite(self.canvas, UnitSquare())
-        original_x = s.x
-
-        s.unrotate()
-        self.assertEqual(original_x, s.x)
-
-
-    def test_unrotate_does_not_change_anchor_y(self):
+    def test_rotate_to_does_not_change_anchor(self):
 
         s = sprites.VectorSprite(self.canvas, UnitSquare())
-        original_y = s.y
+        original_anchor = s.anchor
 
-        s.unrotate()
-        self.assertEqual(original_y, s.y)
-
-
-    def test_unrotate_does_not_call_canvas_update(self):
-
-        s = sprites.VectorSprite(self.canvas, UnitSquare())
-        s.unrotate()
-        self.canvas.update.assert_not_called()
+        s.rotate_to()
+        self.assertEqual(original_anchor, s.anchor)
 
 
-    def test_unrotate_with_update_calls_calls_canvas_update(self):
+    def test_rotate_to_does_not_call_canvas_update_idletasks(self):
 
         s = sprites.VectorSprite(self.canvas, UnitSquare())
-        s.unrotate(update=True)
-        self.canvas.update.assert_called_once_with()
+        s.rotate_to()
+        self.canvas.update_idletasks.assert_not_called()
 
 
-    def test_update_calls_canvas_update(self):
+    def test_rotate_to_with_update_calls_canvas_update_idletasks(self):
+
+        s = sprites.VectorSprite(self.canvas, UnitSquare())
+        s.rotate_to(update=True)
+        self.canvas.update_idletasks.assert_called_once_with()
+
+
+    def test_update_calls_canvas_update_idletasks(self):
 
         s = sprites.VectorSprite(self.canvas, UnitSquare())
 
         s.update()
-        self.canvas.update.assert_called_once_with()
+        self.canvas.update_idletasks.assert_called_once_with()
 
 
     def test_delete_calls_canvas_delete(self):

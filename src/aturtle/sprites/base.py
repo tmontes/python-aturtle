@@ -55,7 +55,7 @@ class Sprite:
             self.update()
 
 
-    def moveto(self, x=0, y=0, *, update=False):
+    def move_to(self, x=0, y=0, *, update=False):
         """
         Move the Sprite to the given absolute (`x`, `y`) position.
         Update the output if `update` is true.
@@ -87,20 +87,23 @@ class Sprite:
             self.update()
 
 
-    def unrotate(self, update=False):
+    def rotate_to(self, angle=0, around=None, update=False):
         """
-        Undo any previous rotation. Update the output if `update` is true.
+        Rotate the Sprite anchor to `angle` degrees, with 0 being the
+        underlying shape's original orientation. If `anchor` is None,
+        the anchor is left unchanged. Otherwise, it is rotated around
+        it, assumed to be a (cx, cy) two-tuple defining the center of
+        rotation.
+        Update the output if `update` is true.
         """
-        self.rotate(-self._angle, update=update)
+        self.rotate(angle-self._angle, around=around, update=update)
 
 
     def update(self):
         """
         Update the the output by redrawing pending movements or rotations.
         """
-        # TODO: Use update_idletasks, instead?
-        #       http://www.tcl.tk/man/tcl8.6/TclCmd/update.htm
-        self._canvas.update()
+        self._canvas.update_idletasks()
 
 
     def delete(self):
