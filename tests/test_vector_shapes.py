@@ -158,6 +158,54 @@ class TestRegularPolygonAccess(_Base):
         )
 
 
+    _UP_TO_N = 36
+
+    def test_N_sided_polygon_has_N_points(self):
+
+        for n_sides in range(3, self._UP_TO_N+1):
+            with self.subTest(n_sides=n_sides):
+                shape = vector.RegularPolygon(sides=n_sides, radius=42)
+                # Two items (x, y) per point.
+                n_points = len(shape[0]) // 2
+                self.assertEqual(n_points, n_sides)
+
+
+    def _distance(self, x1, y1, x2, y2):
+
+        dx_squared = (x1 - x2) ** 2
+        dy_squared = (y1 - y2) ** 2
+        return (dx_squared + dy_squared) ** 0.5
+
+
+
+    def test_all_points_equidistant_to_origin(self):
+
+        radius = 42
+        for n_sides in range(3, self._UP_TO_N+1):
+            with self.subTest(n_sides=n_sides):
+                shape = vector.RegularPolygon(sides=n_sides, radius=radius)
+                coords = shape[0]
+                for i in range(0, len(coords) // 2, 2):
+                    distance = self._distance(coords[i], coords[i+1], 0, 0)
+                    self.assertAlmostEqual(distance, radius)
+
+
+    def test_all_points_at_side_distance_from_each_other(self):
+
+        side = 42
+        for n_sides in range(3, self._UP_TO_N+1):
+            with self.subTest(n_sides=n_sides):
+                shape = vector.RegularPolygon(sides=n_sides, side=side)
+                coords = shape[0]
+                for i in range(0, len(coords) // 2, 2):
+                    distance = self._distance(*coords[i:i+4])
+                    self.assertAlmostEqual(distance, side)
+                # Also assert distance from last to first.
+                distance = self._distance(*coords[-2:], *coords[:2])
+                self.assertAlmostEqual(distance, side)
+
+
+
 
 class TestSquare(_Base):
 
