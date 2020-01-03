@@ -18,43 +18,60 @@ from . import fake_tkinter
 class _PILBasedTests(unittest.TestCase):
 
     def setUp(self):
-        if bitmap.tkinter:
-            # PIL is not available: force PIL codepath, nonetheless.
-            self.saved_tkinter = bitmap.tkinter
-            bitmap.tkinter = None
-        else:
-            self.saved_tkinter = None
-        # PIL codepath tests run against fake_pil.
-        self.save_pil_image = bitmap.Image
-        self.save_pil_image_tk = bitmap.ImageTk
+
+        # PIL code path tests run against fake_pil objects.
         self.pil_image = fake_pil.FakePILImage
         self.pil_image_tk = fake_pil.FakePILImageTk
+
+        if bitmap.tkinter:
+            self.save_pil_image = None
+            self.save_pil_image_tk = None
+        else:
+            self.save_pil_image = bitmap.Image
+            self.save_pil_image_tk = bitmap.ImageTk
+
+        # Force PIL code path.
+        self.save_tkinter = bitmap.tkinter
+        bitmap.tkinter = None
+
+        # Replace PIL objects with fake ones.
         bitmap.Image = self.pil_image
         bitmap.ImageTk = self.pil_image_tk
 
+
     def tearDown(self):
+
         self.pil_image.reset_after_tests()
+
+        # Restore PIL objects in module, or remove them.
         bitmap.Image = self.save_pil_image
+        if not self.save_pil_image:
+            del bitmap.Image
         bitmap.ImageTk = self.save_pil_image_tk
-        if self.saved_tkinter:
-            bitmap.tkinter = self.saved_tkinter
+        if not self.save_pil_image_tk:
+            del bitmap.ImageTk
+
+        # Restore the module's tkinter reference.
+        bitmap.tkinter = self.save_tkinter
 
 
 
 class _TkBasedTests(unittest.TestCase):
 
     def setUp(self):
-        if not bitmap.tkinter:
-            # PIL is available: force tkinter code paths with fake_tkinter.
-            self.tkinter = fake_tkinter.FakeTkinter(640, 480)
-            bitmap.tkinter = self.tkinter
-        else:
-            self.tkinter = None
+
+        # PIL code path tests run against fake_tkinter.
+        self.tkinter = fake_tkinter.FakeTkinter(640, 480)
+
+        # Replace tkinter with the fake one.
+        self.save_tkinter = bitmap.tkinter
+        bitmap.tkinter = self.tkinter
 
 
     def tearDown(self):
-        if self.tkinter:
-            bitmap.tkinter = None
+
+        # Restore the module's tkinter reference.
+        bitmap.tkinter = self.save_tkinter
 
 
 
