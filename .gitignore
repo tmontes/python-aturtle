@@ -2,3 +2,4 @@ xplore/
 *.egg-info/
 .coverage
 htmlcov/
+.hypothesis/

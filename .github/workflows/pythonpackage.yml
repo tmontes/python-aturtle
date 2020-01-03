@@ -22,7 +22,7 @@ jobs:
     - name: Install package
       run: |
         python -m pip install --upgrade pip
-        pip install .
+        pip install .[tests]
     - name: Run tests
       run: |
         python -m unittest discover
@@ -45,7 +45,7 @@ jobs:
     - name: Install package with the [pillow] extra
       run: |
         python -m pip install --upgrade pip
-        pip install .[pillow]
+        pip install .[pillow,tests]
     - name: Run tests
       run: |
         python -m unittest discover

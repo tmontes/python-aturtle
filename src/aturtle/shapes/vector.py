@@ -5,6 +5,10 @@
 # See LICENSE for details.
 # ----------------------------------------------------------------------------
 
+"""
+Vector Shapes.
+"""
+
 import math
 
 from . import base
@@ -54,10 +58,32 @@ _LINE_WIDTH = 2
 
 @export_class
 class Shape(base.Shape):
+    """
+    A vector shape, created from `coords`, with an `anchor` at the given (x, y)
+    tuple. Visual attributes are set with `fill_color`, `line_color`, and
+    `line_width`.
+
+    The `coords` argument should be a list/tuple with an even count of numbers,
+    consisting of alternating x and y canvas coordinates that define a sequence
+    polygon points.
+
+    Creates rotated variations of the polygon, accessible via indexing with
+    an angle, where the source polygon is taken as angle 0. Rotated data is
+    computed on demand, but can be pre-computed if `pre_rotate` is true.
+
+    The number of supported rotations is given by `rotations`, which must be
+    a strictly positive integer.
+    """
 
     def __init__(self, coords, *, anchor=(0, 0), fill_color=_FILL_COLOR,
                  line_color=_LINE_COLOR, line_width=_LINE_WIDTH, rotations=360,
                  pre_rotate=False):
+
+        if not isinstance(coords, (list, tuple)):
+            raise TypeError('coords must be a list or a tuple')
+
+        if len(coords) % 2:
+            raise ValueError('coords must have an even number of coordinates')
 
         super().__init__(
             coords,
@@ -73,24 +99,33 @@ class Shape(base.Shape):
 
     @property
     def fill_color(self):
-
+        """
+        The polygon's fill color.
+        """
         return self._fill_color
 
 
     @property
     def line_color(self):
-
+        """
+        The polygon's line color.
+        """
         return self._line_color
 
 
     @property
     def line_width(self):
-
+        """
+        The polygon's line width.
+        """
         return self._line_width
 
 
-    def rotated_sprite_data(self, image, around, step, rotations):
-
+    def rotated_data(self, image, around, step, rotations):
+        """
+        Returns a list with the coordinates in the `image` list rotated
+        `step` * 360 degrees / `rotations`, around the `around` (x, y) tuple.
+        """
         theta = math.pi * 2 * step / rotations
         sin_theta = math.sin(theta)
         cos_theta = math.cos(theta)
@@ -109,10 +144,20 @@ class Shape(base.Shape):
 
 @export_class
 class RegularPolygon(Shape):
+    """
+    A regular polygon vector shape with as many sides as specified in `sides`,
+    and either the specified `radius` or with sides with length `side`. The
+    `angle` argument, in degrees, rotates the polygon points by that amount.
+
+    See the `Shape` base class docs for info on the other __init__ arguments.
+    """
 
     def __init__(self, *, sides, radius=None, side=None, angle=0, anchor=(0, 0),
                  fill_color=_FILL_COLOR, line_color=_LINE_COLOR,
-                 line_width=_LINE_WIDTH):
+                 line_width=_LINE_WIDTH, rotations=360, pre_rotate=False):
+
+        if sides < 3:
+            raise ValueError('Must have more than two sides.')
 
         if not radius and not side:
             raise ValueError('Need radius or side to be non-zero.')
@@ -124,9 +169,10 @@ class RegularPolygon(Shape):
 
         coords = []
         for step in range(sides):
-            theta = math.pi * 2 * (step / sides) - angle
-            x = radius * math.cos(theta)
-            y = radius * math.sin(theta)
+            theta = (360 * step / sides) - angle
+            theta_rad = theta * math.pi / 180
+            x = radius * math.cos(theta_rad)
+            y = radius * math.sin(theta_rad)
             coords.extend((x, y))
 
         super().__init__(
@@ -135,27 +181,28 @@ class RegularPolygon(Shape):
             fill_color=fill_color,
             line_color=line_color,
             line_width=line_width,
+            rotations=rotations,
+            pre_rotate=pre_rotate,
         )
 
 
 
 def _create_regular_polygon_classes():
 
-    half_pi = math.pi / 2
-    quarter_pi = math.pi / 4
-    eight_pi = math.pi / 8
+    # Called at import time (see below), dynamically creates classes for all
+    # the regular poligons with 3-12 sides.
 
     regular_polygons = [
-        dict(name='Triangle', sides=3, angle=half_pi),
-        dict(name='Square', sides=4, angle=quarter_pi),
-        dict(name='Pentagon', sides=5, angle=half_pi),
-        dict(name='Hexagon', sides=6, angle=half_pi),
-        dict(name='Heptagon', sides=7, angle=half_pi),
-        dict(name='Octagon', sides=8, angle=eight_pi),
-        dict(name='Nonagon', sides=9, angle=half_pi),
-        dict(name='Decagon', sides=10, angle=half_pi),
-        dict(name='Undecagon', sides=11, angle=half_pi),
-        dict(name='Dodecagon', sides=12, angle=half_pi),
+        dict(name='Triangle', sides=3, angle=90),
+        dict(name='Square', sides=4, angle=45),
+        dict(name='Pentagon', sides=5, angle=90),
+        dict(name='Hexagon', sides=6, angle=90),
+        dict(name='Heptagon', sides=7, angle=90),
+        dict(name='Octagon', sides=8, angle=22.5),
+        dict(name='Nonagon', sides=9, angle=90),
+        dict(name='Decagon', sides=10, angle=90),
+        dict(name='Undecagon', sides=11, angle=90),
+        dict(name='Dodecagon', sides=12, angle=90),
     ]
 
     for polygon_spec in regular_polygons:
@@ -167,7 +214,8 @@ def _create_regular_polygon_classes():
         def init_creator(number_of_sides, default_angle):
             def __init__(self, *, side=None, radius=42, angle=default_angle,
                          anchor=(0, 0), fill_color=_FILL_COLOR,
-                         line_color=_LINE_COLOR, line_width=_LINE_WIDTH):
+                         line_color=_LINE_COLOR, line_width=_LINE_WIDTH,
+                         rotations=360, pre_rotate=False):
                 radius = None if side else radius
                 RegularPolygon.__init__(
                     self,
@@ -179,11 +227,18 @@ def _create_regular_polygon_classes():
                     fill_color=fill_color,
                     line_color=line_color,
                     line_width=line_width,
+                    rotations=rotations,
+                    pre_rotate=pre_rotate,
                 )
             return __init__
 
         class_dict = dict(__init__=init_creator(sides, angle))
         Class = type(class_name, (RegularPolygon,), class_dict)
+        Class.__doc__ = f"""
+            A {class_name} vector shape.
+
+            See the `RegularPolygon` class docs for info the __init__ arguments.
+        """
         _VECTOR_SHAPE_CLASSES[class_name] = Class
         export_class(Class)
 
@@ -193,10 +248,20 @@ _create_regular_polygon_classes()
 
 @export_class
 class Star(Shape):
+    """
+    A star vector shape with points, radius, and inner-radius given by the
+    equally named arguments. The `angle` argument, in radians, rotates the star
+    points by that amount.
+
+    See the `Shape` base class docs for info on the other __init__ arguments.
+    """
 
     def __init__(self, *, points=5, radius=42, inner_radius=0.5, angle=0,
                  anchor=(0, 0), fill_color=_FILL_COLOR, line_color=_LINE_COLOR,
-                 line_width=_LINE_WIDTH):
+                 line_width=_LINE_WIDTH, rotations=360, pre_rotate=False):
+
+        if points < 2:
+            raise ValueError('Must have at least two points.')
 
         if isinstance(inner_radius, float):
             inner_radius = inner_radius * radius
@@ -217,4 +282,6 @@ class Star(Shape):
             fill_color=fill_color,
             line_color=line_color,
             line_width=line_width,
+            rotations=rotations,
+            pre_rotate=pre_rotate,
         )

@@ -24,9 +24,9 @@ class Sprite(base.Sprite):
         )
 
 
-    def _offset_coords(self, theta):
+    def _offset_coords(self, angle):
 
-        shape_coords = self._shape[theta]
+        shape_coords = self._shape[angle]
         anchor_cycle = it.cycle(self._anchor)
         return [
             value + offset
@@ -37,18 +37,18 @@ class Sprite(base.Sprite):
     @property
     def coords(self):
 
-        return self._offset_coords(self._theta)
+        return self._offset_coords(self._angle)
 
 
-    def rotate(self, theta=0, *, around=None, update=False):
+    def rotate(self, angle=0, *, around=None, update=False):
 
         # Rotate anchor point if needed.
-        super().rotate(theta, around=around, update=False)
+        super().rotate(angle, around=around, update=False)
 
         # Use the shape for the new orientation.
         self._canvas.coords(
             self._id,
-            self._offset_coords(self._theta),
+            self._offset_coords(self._angle),
         )
         if update:
             self.update()

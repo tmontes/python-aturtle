@@ -24,7 +24,7 @@ class Sprite:
 
         self._shape = shape
         self._anchor = anchor
-        self._theta = 0
+        self._angle = 0
 
 
     @property
@@ -72,21 +72,22 @@ class Sprite:
         self.move(x - sprite_x, y - sprite_y, update=update)
 
 
-    def rotate(self, theta=0, *, around=None, update=False):
+    def rotate(self, angle=0, *, around=None, update=False):
         """
-        Rotate the Sprite anchor by `theta` radians. If `around` is None, the
+        Rotate the Sprite anchor by `angle` degrees. If `around` is None, the
         anchor is left unchanged. Otherwise, rotate it about `around`, assumed
         to be a (cx, cy) two-tuple defining the center of rotation.
         Update the output if `update` is true.
         """
-        self._theta = (self._theta + theta) % (math.pi * 2)
+        self._angle = (self._angle + angle) % 360
+        angle_rad = angle * math.pi / 180.0
         if around:
             sprite_x, sprite_y = self._anchor
             cx, cy = around
             sprite_x -= cx
             sprite_y -= cy
-            sin_theta = math.sin(theta)
-            cos_theta = math.cos(theta)
+            sin_theta = math.sin(angle_rad)
+            cos_theta = math.cos(angle_rad)
             new_x = sprite_x * cos_theta - sprite_y * sin_theta + cx
             new_y = sprite_x * sin_theta + sprite_y * cos_theta + cy
             self._anchor = (new_x, new_y)
@@ -98,7 +99,7 @@ class Sprite:
         """
         Undo any previous rotation. Update the output if `update` is true.
         """
-        self.rotate(-self._theta, update=update)
+        self.rotate(-self._angle, update=update)
 
 
     def update(self):
