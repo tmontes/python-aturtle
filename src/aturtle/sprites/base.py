@@ -14,17 +14,17 @@ class Sprite:
     Base class.
     """
 
-    def __init__(self, canvas, shape, *, anchor=(0, 0)):
+    def __init__(self, canvas, shape, *, anchor=(0, 0), angle=0):
         """
         Initialize a Sprite with the given `shape` and place it on the output
-        `canvas` at the given `x`, `y` coordinates.
+        `canvas` at the given `x`, `y` coordinates, rotated `angle` degrees.
         """
         self._canvas = canvas
         self._id = None
 
         self._shape = shape
         self._anchor = anchor
-        self._angle = 0
+        self._angle = angle
 
 
     @property
@@ -36,19 +36,11 @@ class Sprite:
 
 
     @property
-    def x(self):
+    def angle(self):
         """
-        The Sprite's `x` anchor position in the canvas.
+        The Sprite's rotation angle, in degrees.
         """
-        return self._anchor[0]
-
-
-    @property
-    def y(self):
-        """
-        The Sprite's `y` anchor position in the canvas.
-        """
-        return self._anchor[1]
+        return self._angle
 
 
     def move(self, dx=0, dy=0, *, update=False):
