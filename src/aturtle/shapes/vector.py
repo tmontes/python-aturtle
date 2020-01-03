@@ -260,6 +260,9 @@ class Star(Shape):
                  anchor=(0, 0), fill_color=_FILL_COLOR, line_color=_LINE_COLOR,
                  line_width=_LINE_WIDTH, rotations=360, pre_rotate=False):
 
+        if points < 2:
+            raise ValueError('Must have at least two points.')
+
         if isinstance(inner_radius, float):
             inner_radius = inner_radius * radius
 

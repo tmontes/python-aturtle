@@ -71,6 +71,13 @@ class TestShapeAttributes(unittest.TestCase):
 
 class _Base(unittest.TestCase):
 
+    def distance(self, x1, y1, x2, y2):
+
+        dx_squared = (x1 - x2) ** 2
+        dy_squared = (y1 - y2) ** 2
+        return (dx_squared + dy_squared) ** 0.5
+
+
     def assert_equal_rounded_list_values(self, list_a, list_b):
 
         for a, b in zip(list_a, list_b):
@@ -175,14 +182,6 @@ class TestRegularPolygonAccess(_Base):
         self.assertEqual(n_points, n_sides)
 
 
-    def _distance(self, x1, y1, x2, y2):
-
-        dx_squared = (x1 - x2) ** 2
-        dy_squared = (y1 - y2) ** 2
-        return (dx_squared + dy_squared) ** 0.5
-
-
-
     @given(
         n_sides=st.integers(min_value=3, max_value=3600),
         radius=st.floats(min_value=0, exclude_min=True, max_value=1_000_000),
@@ -194,7 +193,7 @@ class TestRegularPolygonAccess(_Base):
         shape = vector.RegularPolygon(sides=n_sides, radius=radius, anchor=(ax, ay))
         coords = shape[0]
         for i in range(0, len(coords) // 2, 2):
-            distance = self._distance(coords[i], coords[i+1], -ax, -ay)
+            distance = self.distance(coords[i], coords[i+1], -ax, -ay)
             self.assertAlmostEqual(distance, radius, places=1)
 
 
@@ -209,46 +208,97 @@ class TestRegularPolygonAccess(_Base):
         shape = vector.RegularPolygon(sides=n_sides, side=side, anchor=(ax, ay))
         coords = shape[0]
         for i in range(0, len(coords) // 2, 2):
-            distance = self._distance(*coords[i:i+4])
+            distance = self.distance(*coords[i:i+4])
             self.assertAlmostEqual(distance, side, places=1)
         # Also assert distance from last to first.
-        distance = self._distance(*coords[-2:], *coords[:2])
+        distance = self.distance(*coords[-2:], *coords[:2])
         self.assertAlmostEqual(distance, side, places=1)
 
 
 
-class TestSquare(_Base):
+class TestNamedRegularPolygons(unittest.TestCase):
+
+    KNOWN_NAMED_POLYGONS = set((
+        'Triangle',
+        'Square',
+        'Pentagon',
+        'Hexagon',
+        'Heptagon',
+        'Octagon',
+        'Nonagon',
+        'Decagon',
+        'Undecagon',
+        'Dodecagon',
+    ))
+
+    def test_classes_are_discoverable(self):
+
+        class_names = set(dir(vector))
+        intersection = self.KNOWN_NAMED_POLYGONS.intersection(class_names)
+        self.assertEqual(intersection, self.KNOWN_NAMED_POLYGONS)
+
+
+    def test_classes_create_shapes(self):
+
+        for class_name in self.KNOWN_NAMED_POLYGONS:
+            with self.subTest(class_name=class_name):
+                NamedPolygon = getattr(vector, class_name)
+                _shape = NamedPolygon()
+
+
+
+class TestBadStarCreation(unittest.TestCase):
+
+    def test_less_than_2_points_raises_ValueError(self):
+
+        with self.assertRaises(ValueError):
+            _shape = vector.Star(points=1)
+
+
+
+class TestStar(_Base):
 
     def test_create(self):
 
-        shape = vector.Square()
+        shape = vector.Star()
 
 
-    def test_default_coords(self):
+    @given(
+        points=st.integers(min_value=2, max_value=36),
+    )
+    def test_N_point_star_has_2N_points(self, points):
 
-        shape = vector.Square()
-        self.assert_equal_rounded_list_values(
-            shape[0],
-            [30, -30, 30, 30, -30, 30, -30, -30],
-        )
-
-
-    def test_default_anchor(self):
-
-        shape = vector.Square()
-        self.assertEqual(shape.anchor, (0, 0))
+        shape = vector.Star(points=points)
+        # Two items (x, y) per point.
+        n_points = len(shape[0]) // 2
+        self.assertEqual(n_points, points * 2)
 
 
-    def test_custom_size_coords(self):
+    def test_integer_inner_radius_is_taken_as_is(self):
 
-        shape = vector.Square(side=42)
-        self.assert_equal_rounded_list_values(
-            shape[0],
-            [21, -21, 21, 21, -21, 21, -21, -21]
-        )
+        shape = vector.Star(radius=42, inner_radius=24)
+        coords = shape[0]
+
+        # First point is radius away from origin.
+        distance = self.distance(*coords[:2], 0, 0)
+        self.assertAlmostEqual(distance, 42, places=1)
+
+        # Last point is inner_radius away from origin
+        distance = self.distance(*coords[-2:], 0, 0)
+        self.assertAlmostEqual(distance, 24, places=1)
 
 
-    def test_custom_size_anchor(self):
+    def test_float_inner_radius_is_ratio_of_radius(self):
 
-        shape = vector.Square(side=42)
-        self.assertEqual(shape.anchor, (0, 0))
+        shape = vector.Star(radius=1000, inner_radius=0.25)
+        coords = shape[0]
+
+        # First point is radius away from origin.
+        distance = self.distance(*coords[:2], 0, 0)
+        self.assertAlmostEqual(distance, 1000, places=1)
+
+        # Last point is inner_radius away from origin
+        distance = self.distance(*coords[-2:], 0, 0)
+        self.assertAlmostEqual(distance, 250, places=1)
+
+
