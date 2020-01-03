@@ -21,7 +21,7 @@ class _PILBasedTests(unittest.TestCase):
 
         # PIL code path tests run against fake_pil objects.
         self.pil_image = fake_pil.FakePILImage
-        self.pil_image_tk = fake_pil.FakePILImageTk
+        self.pil_image_tk = fake_pil.FakePILImageTk()
 
         if bitmap.tkinter:
             self.save_pil_image = None
@@ -182,3 +182,65 @@ class TestShapeCreationNoPreRotatePIL(_PILBasedTests):
         file_data = first_call_first_arg.read()
 
         self.assertEqual(file_data, binay_data)
+
+
+
+class TestShapeCreationPreRotateTk(_TkBasedTests):
+
+    def test_create_generates_rotation_minus_one_PhotoImage_copies(self):
+
+        rotations = 8
+        shape = bitmap.Shape(filename='filename', rotations=rotations)
+        straight = shape[0]
+
+        self.assertEqual(straight.copies, rotations-1)
+
+
+    def test_copy_creation_calls_PhotoImage_get_and_transparency_get(self):
+
+        rotations = 2
+        shape = bitmap.Shape(filename='filename', rotations=rotations)
+        straight = shape[0]
+
+        # PhotoImage.get and .transparency_get called:
+        # - More than once...
+        # - ...and, at most, width x height x (rotations - 1).
+        max_calls = straight.width() * straight.height() * (rotations-1)
+        get_calls = straight.get.call_count
+        self.assertGreater(get_calls, 0)
+        self.assertLessEqual(get_calls, max_calls)
+
+
+    def test_copy_creation_calls_PhotoImage_put_and_transparency_set(self):
+
+        rotations = 2
+        shape = bitmap.Shape(filename='filename', rotations=rotations)
+        inverted = shape[180]
+
+        # PhotoImage.put called once.
+        # PhotoImage.transparency_set called width x height.
+        self.assertEqual(inverted.put.call_count, 1)
+        tset_calls = inverted.width() * inverted.height()
+        self.assertEqual(inverted.transparency_set.call_count, tset_calls)
+
+
+
+class TestShapeCreationPreRotatePIL(_PILBasedTests):
+
+    def test_create_leads_to_rotation_PhotoImage_calls(self):
+
+        rotations = 8
+        _shape = bitmap.Shape(filename='filename', rotations=rotations)
+
+        self.assertEqual(
+            len(self.pil_image_tk.photoimage_calls),
+            rotations,
+        )
+
+
+    def test_create_calls_Image_rotate_rotation_minus_one_times(self):
+
+        rotations = 4
+        _shape = bitmap.Shape(filename='filename', rotations=rotations)
+
+        self.assertEqual(self.pil_image.rotate.call_count, rotations-1)

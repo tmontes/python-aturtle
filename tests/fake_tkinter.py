@@ -88,8 +88,19 @@ class FakeToplevel(FakeWindow):
 
 class FakePhotoImage:
 
-    width = mock.Mock(return_value=42)
-    height = mock.Mock(return_value=24)
+    def __init__(self):
+        self.copies = 0
+        self.width = mock.Mock(return_value=42)
+        self.height = mock.Mock(return_value=24)
+        self.get = mock.Mock(return_value=(10, 20, 30))
+        self.put = mock.Mock()
+        self.transparency_get = mock.Mock(return_value=False)
+        self.transparency_set = mock.Mock()
+
+    def copy(self):
+        self.copies += 1
+        return FakePhotoImage()
+
 
 
 class FakeTkinter:
