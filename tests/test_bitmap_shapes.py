@@ -244,3 +244,29 @@ class TestShapeCreationPreRotatePIL(_PILBasedTests):
         _shape = bitmap.Shape(filename='filename', rotations=rotations)
 
         self.assertEqual(self.pil_image.rotate.call_count, rotations-1)
+
+
+class ShapeAnchorTestsMixin:
+
+    def test_int_anchor_is_taken_as_is(self):
+
+        anchor = (20, 10)
+        shape = bitmap.Shape(filename='filename', anchor=anchor, pre_rotate=False)
+        self.assertEqual(shape.anchor, anchor)
+
+
+    def test_float_anchor_is_relative_to_width_height(self):
+
+        anchor = (0.5, 0.5)
+        shape = bitmap.Shape(filename='filename', anchor=anchor, pre_rotate=False)
+
+        # The underlying fake images are 42 x 24.
+        expected_anchor = (21, 12)
+        self.assertEqual(shape.anchor, expected_anchor)
+
+
+class TestShapeAnchorTestsTk(_TkBasedTests, ShapeAnchorTestsMixin):
+    pass
+
+class TestShapeAnchorTestsPIL(_PILBasedTests, ShapeAnchorTestsMixin):
+    pass
