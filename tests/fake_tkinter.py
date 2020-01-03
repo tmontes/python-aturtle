@@ -9,6 +9,7 @@ import re
 from unittest import mock
 
 
+
 class FakeCanvas:
 
     def __init__(self):
@@ -32,6 +33,7 @@ class FakeCanvas:
         if coords is None:
             return self._polygon_coords
         self._polygon_coords = coords
+
 
 
 class FakeWindow:
@@ -76,7 +78,6 @@ class FakeWindow:
         return self._h
 
 
-
 class FakeTk(FakeWindow):
     pass
 
@@ -85,12 +86,19 @@ class FakeToplevel(FakeWindow):
     pass
 
 
+class FakePhotoImage:
+
+    width = mock.Mock(return_value=42)
+    height = mock.Mock(return_value=24)
+
+
 class FakeTkinter:
 
     def __init__(self, screen_width, screen_height):
         self.screen_width = screen_width
         self.screen_height = screen_height
         self.canvas_init_calls = []
+        self.photoimage_init_calls = []
 
     def Tk(self):
         return FakeTk(self.screen_width, self.screen_height)
@@ -101,3 +109,7 @@ class FakeTkinter:
     def Canvas(self, *args, **kwargs):
         self.canvas_init_calls.append((args, kwargs))
         return FakeCanvas()
+
+    def PhotoImage(self, *args, **kwargs):
+        self.photoimage_init_calls.append((args, kwargs))
+        return FakePhotoImage()
