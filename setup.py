@@ -35,6 +35,7 @@ EXTRAS_REQUIRE = {
     "tests": [
         "coverage",
         "pylint",
+        "hypothesis",
     ],
     "docs": [],
 }
