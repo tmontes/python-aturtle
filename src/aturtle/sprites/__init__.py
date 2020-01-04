@@ -7,8 +7,8 @@
 
 import pathlib
 
-from ..shapes.bitmap import Shape as BitmapShape
-from ..shapes.vector import Shape as VectorShape
+from ..shapes.bitmap import Shape as _BitmapShape
+from ..shapes.vector import Shape as _VectorShape
 
 from . bitmap import Sprite as BitmapSprite
 from . vector import Sprite as VectorSprite
@@ -37,17 +37,17 @@ def create_sprite(canvas, shape_source, *, anchor=(0, 0), **kwargs):
     explicitly via `shape_source`.
     """
     if isinstance(shape_source, (str, pathlib.Path)):
-        shape = BitmapShape(filename=shape_source, **kwargs)
+        shape = _BitmapShape(filename=shape_source, **kwargs)
         sprite = BitmapSprite(canvas, shape, anchor=anchor)
     elif isinstance(shape_source, bytes):
-        shape = BitmapShape(data=shape_source, **kwargs)
+        shape = _BitmapShape(data=shape_source, **kwargs)
         sprite = BitmapSprite(canvas, shape, anchor=anchor)
     elif isinstance(shape_source, list):
-        shape = VectorShape(shape_source, **kwargs)
+        shape = _VectorShape(shape_source, **kwargs)
         sprite = VectorSprite(canvas, shape, anchor=anchor)
-    elif isinstance(shape_source, VectorShape):
+    elif isinstance(shape_source, _VectorShape):
         sprite = VectorSprite(canvas, shape_source, anchor=anchor)
-    elif isinstance(shape_source, BitmapShape):
+    elif isinstance(shape_source, _BitmapShape):
         sprite = BitmapSprite(canvas, shape_source, anchor=anchor)
     else:
         raise ValueError(f'Unhandled shape_source type: {type(shape_source)}.')
