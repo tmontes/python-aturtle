@@ -40,13 +40,13 @@ class TestDefaultSprite(sprite_test_helpers.TestCase):
     def test_default_anchor(self):
 
         sprite = sprites.VectorSprite(self.canvas, UnitSquare())
-        self.assertEqual(sprite.anchor, (0, 0))
+        self.assert_almost_equal_anchor(sprite.anchor, (0, 0), places=1)
 
 
     def test_default_angle(self):
 
         sprite = sprites.VectorSprite(self.canvas, UnitSquare())
-        self.assertEqual(sprite.angle, 0)
+        self.assertAlmostEqual(sprite.angle, 0, places=1)
 
 
     def test_shape_fill_color_passed_to_create_polygon_fill_kwarg(self):
@@ -78,7 +78,7 @@ class TestDefaultSprite(sprite_test_helpers.TestCase):
         square = UnitSquare()
         sprite = sprites.VectorSprite(self.canvas, square)
         expected_coords = square[0]
-        self.assertEqual(sprite.coords, expected_coords)
+        self.assert_almost_equal_coords(sprite.coords, expected_coords, places=1)
 
 
     def test_move_moves_coords(self):
@@ -126,7 +126,7 @@ class TestDefaultSprite(sprite_test_helpers.TestCase):
         sprite = sprites.VectorSprite(self.canvas, UnitSquare())
 
         sprite.rotate(180, around=(1, 1))
-        self.assertEqual(sprite.anchor, (2, 2))
+        self.assert_almost_equal_anchor(sprite.anchor, (2, 2), places=1)
 
 
     def test_rotate_around_point_updates_coords(self):
@@ -146,7 +146,7 @@ class TestDefaultSprite(sprite_test_helpers.TestCase):
         original_anchor = sprite.anchor
 
         sprite.rotate_to()
-        self.assertEqual(original_anchor, sprite.anchor)
+        self.assert_almost_equal_anchor(original_anchor, sprite.anchor, places=1)
 
 
     def test_move_does_not_call_canvas_update_idletasks(self):
@@ -241,13 +241,13 @@ class TestNonDefaultSprite(sprite_test_helpers.TestCase):
     def test_custom_anchor(self):
 
         sprite = sprites.VectorSprite(self.canvas, UnitSquare(), anchor=(2, 1))
-        self.assertEqual(sprite.anchor, (2, 1))
+        self.assert_almost_equal_anchor(sprite.anchor, (2, 1), places=1)
 
 
     def test_custom_angle(self):
 
         sprite = sprites.VectorSprite(self.canvas, UnitSquare(), angle=42)
-        self.assertEqual(sprite.angle, 42)
+        self.assertAlmostEqual(sprite.angle, 42, places=1)
 
 
     def test_custom_anchor_coords(self):
@@ -341,5 +341,5 @@ class TestNonDefaultSprite(sprite_test_helpers.TestCase):
         original_anchor = sprite.anchor
 
         sprite.rotate_to()
-        self.assertEqual(original_anchor, sprite.anchor)
+        self.assert_almost_equal_anchor(original_anchor, sprite.anchor, places=1)
 

@@ -37,13 +37,13 @@ class TestDefaultSprite(sprite_test_helpers.TestCase):
     def test_default_anchor(self):
 
         sprite = sprites.BitmapSprite(self.canvas, FakeBitmapShape())
-        self.assertEqual(sprite.anchor, (0, 0))
+        self.assert_almost_equal_anchor(sprite.anchor, (0, 0), places=1)
 
 
     def test_default_angle(self):
 
         sprite = sprites.BitmapSprite(self.canvas, FakeBitmapShape())
-        self.assertEqual(sprite.angle, 0)
+        self.assertAlmostEqual(sprite.angle, 0, places=1)
 
 
     def test_create_calls_canvas_create_image(self):
@@ -77,7 +77,7 @@ class TestDefaultSprite(sprite_test_helpers.TestCase):
         sprite = sprites.BitmapSprite(self.canvas, FakeBitmapShape())
 
         sprite.rotate(180, around=(1, 1))
-        self.assertEqual(sprite.anchor, (2, 2))
+        self.assert_almost_equal_anchor(sprite.anchor, (2, 2), places=1)
 
 
     def test_rotate_around_point_calls_canvas_itemconfig(self):
