@@ -20,19 +20,19 @@ class FakeCanvas:
         self.move = mock.Mock()
         self.update_idletasks = mock.Mock()
         self.delete = mock.Mock()
-        self._polygon_coords = None
-        self._polygon_kwargs = None
+        self.create_polygon_coords = None
+        self.create_polygon_kwargs = None
 
     def create_polygon(self, coords, **kwargs):
-        self._polygon_coords = coords
-        self._polygon_kwargs = kwargs
+        self.create_polygon_coords = coords
+        self.create_polygon_kwargs = kwargs
         # Return some numeric id.
         return 42
 
     def coords(self, _id, coords=None):
         if coords is None:
-            return self._polygon_coords
-        self._polygon_coords = coords
+            return self.create_polygon_coords
+        self.create_polygon_coords = coords
 
 
 
