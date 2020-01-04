@@ -50,6 +50,6 @@ def create_sprite(canvas, shape_source, *, anchor=(0, 0), angle=0, **kwargs):
     elif isinstance(shape_source, _BitmapShape):
         sprite = BitmapSprite(canvas, shape_source, anchor=anchor, angle=angle)
     else:
-        raise ValueError(f'Unhandled shape_source type: {type(shape_source)}.')
+        raise TypeError(f'Unhandled shape_source type: {type(shape_source)}.')
 
     return sprite
