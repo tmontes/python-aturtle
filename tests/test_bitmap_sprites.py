@@ -7,7 +7,7 @@
 
 from aturtle import sprites
 
-from . import sprite_test_helpers
+from . import base
 from . import fake_tkinter
 
 
@@ -22,7 +22,7 @@ class FakeBitmapShape:
 
 
 
-class TestDefaultSprite(sprite_test_helpers.TestCase):
+class TestDefaultSprite(base.TestCase):
 
     def setUp(self):
 

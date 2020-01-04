@@ -7,7 +7,7 @@
 
 from aturtle import sprites, shapes
 
-from . import sprite_test_helpers
+from . import base
 from . import fake_tkinter
 
 
@@ -25,7 +25,7 @@ class UnitSquare(shapes.vector.Square):
 
 
 
-class TestDefaultSprite(sprite_test_helpers.TestCase):
+class TestDefaultSprite(base.TestCase):
 
     def setUp(self):
 
@@ -231,7 +231,7 @@ class TestDefaultSprite(sprite_test_helpers.TestCase):
 
 
 
-class TestNonDefaultSprite(sprite_test_helpers.TestCase):
+class TestNonDefaultSprite(base.TestCase):
 
     def setUp(self):
 

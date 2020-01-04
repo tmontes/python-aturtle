@@ -5,16 +5,16 @@
 # See LICENSE for details.
 # ----------------------------------------------------------------------------
 
-import unittest
-
 from hypothesis import given
 from hypothesis import strategies as st
 
 from aturtle.shapes import vector
 
+from . import base
 
 
-class TestBadShapeCreation(unittest.TestCase):
+
+class TestBadShapeCreation(base.TestCase):
 
     def test_create_with_bad_typed_coords_raises_TypeError(self):
 
@@ -33,7 +33,7 @@ class TestBadShapeCreation(unittest.TestCase):
 
 
 
-class TestShapeAttributes(unittest.TestCase):
+class TestShapeAttributes(base.TestCase):
 
     def test_shape_anchor_is_tracked(self):
 
@@ -69,23 +69,7 @@ class TestShapeAttributes(unittest.TestCase):
 
 
 
-class _Base(unittest.TestCase):
-
-    def distance(self, x1, y1, x2, y2):
-
-        dx_squared = (x1 - x2) ** 2
-        dy_squared = (y1 - y2) ** 2
-        return (dx_squared + dy_squared) ** 0.5
-
-
-    def assert_equal_rounded_list_values(self, list_a, list_b):
-
-        for a, b in zip(list_a, list_b):
-            self.assertEqual(round(a), round(b))
-
-
-
-class TestShapeAccess(_Base):
+class TestShapeAccess(base.TestCase):
 
     def test_shape_at_angle_0_has_source_coords(self):
 
@@ -93,7 +77,7 @@ class TestShapeAccess(_Base):
         shape = vector.Shape(coords)
 
         result = shape[0]
-        self.assert_equal_rounded_list_values(result, coords)
+        self.assert_almost_equal_coords(result, coords, places=1)
 
 
     def test_shape_coords_at_angle_90(self):
@@ -101,7 +85,7 @@ class TestShapeAccess(_Base):
         shape = vector.Shape([0, 0, 2, 0, 1, 1])
 
         result = shape[90]
-        self.assert_equal_rounded_list_values(result, [0, 0, 0, 2, -1, 1])
+        self.assert_almost_equal_coords(result, [0, 0, 0, 2, -1, 1], places=1)
 
 
     def test_shape_coords_at_angle_180(self):
@@ -109,7 +93,7 @@ class TestShapeAccess(_Base):
         shape = vector.Shape([0, 0, 2, 0, 1, 1])
 
         result = shape[180]
-        self.assert_equal_rounded_list_values(result, [0, 0, -2, 0, -1, -1])
+        self.assert_almost_equal_coords(result, [0, 0, -2, 0, -1, -1], places=1)
 
 
     def test_shape_coords_at_angle_270(self):
@@ -117,11 +101,11 @@ class TestShapeAccess(_Base):
         shape = vector.Shape([0, 0, 2, 0, 1, 1])
 
         result = shape[270]
-        self.assert_equal_rounded_list_values(result, [0, 0, 0, -2, 1, -1])
+        self.assert_almost_equal_coords(result, [0, 0, 0, -2, 1, -1], places=1)
 
 
 
-class TestBadRegularPolygonCreation(unittest.TestCase):
+class TestBadRegularPolygonCreation(base.TestCase):
 
     def test_create_with_less_than_three_sides_raises_ValueError(self):
 
@@ -144,16 +128,17 @@ class TestBadRegularPolygonCreation(unittest.TestCase):
 
 
 
-class TestRegularPolygonAccess(_Base):
+class TestRegularPolygonAccess(base.TestCase):
 
     def test_4_sided_polygon_at_angle_0(self):
 
         shape = vector.RegularPolygon(sides=4, radius=10, angle=0)
 
         coords = shape[0]
-        self.assert_equal_rounded_list_values(
+        self.assert_almost_equal_coords(
             coords,
             [10, 0, 0, 10, -10, 0, 0, -10],
+            places=1,
         )
 
 
@@ -162,9 +147,10 @@ class TestRegularPolygonAccess(_Base):
         shape = vector.RegularPolygon(sides=4, side=10, angle=45)
 
         coords = shape[0]
-        self.assert_equal_rounded_list_values(
+        self.assert_almost_equal_coords(
             coords,
             [5, -5, 5, 5, -5, 5, -5, -5],
+            places=1,
         )
 
 
@@ -216,7 +202,7 @@ class TestRegularPolygonAccess(_Base):
 
 
 
-class TestNamedRegularPolygons(unittest.TestCase):
+class TestNamedRegularPolygons(base.TestCase):
 
     KNOWN_NAMED_POLYGONS = set((
         'Triangle',
@@ -247,7 +233,7 @@ class TestNamedRegularPolygons(unittest.TestCase):
 
 
 
-class TestBadStarCreation(unittest.TestCase):
+class TestBadStarCreation(base.TestCase):
 
     def test_less_than_2_points_raises_ValueError(self):
 
@@ -256,11 +242,11 @@ class TestBadStarCreation(unittest.TestCase):
 
 
 
-class TestStar(_Base):
+class TestStar(base.TestCase):
 
     def test_create(self):
 
-        shape = vector.Star()
+        _shape = vector.Star()
 
 
     @given(

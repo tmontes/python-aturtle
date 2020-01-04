@@ -7,12 +7,12 @@
 
 from aturtle.sprites import base
 
-from . import sprite_test_helpers
+from . import base as test_base
 from . import fake_tkinter
 
 
 
-class TestDefaultSprite(sprite_test_helpers.TestCase):
+class TestDefaultSprite(test_base.TestCase):
 
     def setUp(self):
 
@@ -232,7 +232,7 @@ class TestDefaultSprite(sprite_test_helpers.TestCase):
 
 
 
-class TestNonDefaultSprite(sprite_test_helpers.TestCase):
+class TestNonDefaultSprite(test_base.TestCase):
 
     def setUp(self):
 

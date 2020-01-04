@@ -10,6 +10,13 @@ import unittest
 
 class TestCase(unittest.TestCase):
 
+    def distance(self, x1, y1, x2, y2):
+
+        dx_squared = (x1 - x2) ** 2
+        dy_squared = (y1 - y2) ** 2
+        return (dx_squared + dy_squared) ** 0.5
+
+
     def assert_almost_equal_anchor(self, left, right, places):
 
         lx, ly = left
