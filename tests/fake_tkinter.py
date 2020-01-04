@@ -18,6 +18,7 @@ class FakeCanvas:
         self.xview_scroll = mock.Mock()
         self.yview_scroll = mock.Mock()
         self.move = mock.Mock()
+        self.coords = mock.Mock()
         self.update_idletasks = mock.Mock()
         self.delete = mock.Mock()
         self.create_polygon_coords = None
@@ -31,11 +32,6 @@ class FakeCanvas:
         self.create_polygon_kwargs = kwargs
         # Return some numeric id.
         return 42
-
-    def coords(self, _id, coords=None):
-        if coords is None:
-            return self.create_polygon_coords
-        self.create_polygon_coords = coords
 
 
 
