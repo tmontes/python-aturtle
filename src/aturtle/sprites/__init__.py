@@ -15,7 +15,7 @@ from . vector import Sprite as VectorSprite
 
 
 
-def create_sprite(canvas, shape_source, *, anchor=(0, 0), **kwargs):
+def create_sprite(canvas, shape_source, *, anchor=(0, 0), angle=0, **kwargs):
     """
     Returns a newly created sprite from `shape_source`, placed at the `anchor`
     position in the given `canvas`.
@@ -38,17 +38,17 @@ def create_sprite(canvas, shape_source, *, anchor=(0, 0), **kwargs):
     """
     if isinstance(shape_source, (str, pathlib.Path)):
         shape = _BitmapShape(filename=shape_source, **kwargs)
-        sprite = BitmapSprite(canvas, shape, anchor=anchor)
+        sprite = BitmapSprite(canvas, shape, anchor=anchor, angle=angle)
     elif isinstance(shape_source, bytes):
         shape = _BitmapShape(data=shape_source, **kwargs)
-        sprite = BitmapSprite(canvas, shape, anchor=anchor)
+        sprite = BitmapSprite(canvas, shape, anchor=anchor, angle=angle)
     elif isinstance(shape_source, list):
         shape = _VectorShape(shape_source, **kwargs)
-        sprite = VectorSprite(canvas, shape, anchor=anchor)
+        sprite = VectorSprite(canvas, shape, anchor=anchor, angle=angle)
     elif isinstance(shape_source, _VectorShape):
-        sprite = VectorSprite(canvas, shape_source, anchor=anchor)
+        sprite = VectorSprite(canvas, shape_source, anchor=anchor, angle=angle)
     elif isinstance(shape_source, _BitmapShape):
-        sprite = BitmapSprite(canvas, shape_source, anchor=anchor)
+        sprite = BitmapSprite(canvas, shape_source, anchor=anchor, angle=angle)
     else:
         raise ValueError(f'Unhandled shape_source type: {type(shape_source)}.')
 
