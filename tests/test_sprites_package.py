@@ -53,19 +53,12 @@ class TestFullyPatched(unittest.TestCase):
         # One shape was created with filename keyword argument.
         self.bitmap_shape_mock.assert_called_once_with(filename='filename')
 
-        # Sprite created once.
-        self.bitmap_sprite_mock.assert_called_once()
-
-        # Positional arguments are the canvas, and created shape.
-        self.assertEqual(
-            self.bitmap_sprite_mock.call_args.args,
-            (canvas, shape),
-        )
-
-        # Keyword arguments are the default anchor and angle.
-        self.assertEqual(
-            self.bitmap_sprite_mock.call_args.kwargs,
-            dict(anchor=(0, 0), angle=0),
+        # One sprite was created with the expected arguments.
+        self.bitmap_sprite_mock.assert_called_once_with(
+            canvas,
+            shape,
+            anchor=(0, 0),
+            angle=0,
         )
 
 
@@ -82,19 +75,12 @@ class TestFullyPatched(unittest.TestCase):
         # One shape was created with filename keyword argument.
         self.bitmap_shape_mock.assert_called_once_with(filename=path)
 
-        # Sprite created once.
-        self.bitmap_sprite_mock.assert_called_once()
-
-        # Positional arguments are the canvas, and created shape.
-        self.assertEqual(
-            self.bitmap_sprite_mock.call_args.args,
-            (canvas, shape),
-        )
-
-        # Keyword arguments are the default anchor and angle.
-        self.assertEqual(
-            self.bitmap_sprite_mock.call_args.kwargs,
-            dict(anchor=(0, 0), angle=0),
+        # One sprite was created with the expected arguments.
+        self.bitmap_sprite_mock.assert_called_once_with(
+            canvas,
+            shape,
+            anchor=(0, 0),
+            angle=0,
         )
 
 
@@ -109,19 +95,12 @@ class TestFullyPatched(unittest.TestCase):
         # One shape was created with filename keyword argument.
         self.bitmap_shape_mock.assert_called_once_with(data=b'image-payload')
 
-        # Sprite created once.
-        self.bitmap_sprite_mock.assert_called_once()
-
-        # Positional arguments are the canvas, and created shape.
-        self.assertEqual(
-            self.bitmap_sprite_mock.call_args.args,
-            (canvas, shape),
-        )
-
-        # Keyword arguments are the default anchor and angle.
-        self.assertEqual(
-            self.bitmap_sprite_mock.call_args.kwargs,
-            dict(anchor=(0, 0), angle=0),
+        # One sprite was created with the expected arguments.
+        self.bitmap_sprite_mock.assert_called_once_with(
+            canvas,
+            shape,
+            anchor=(0, 0),
+            angle=0,
         )
 
 
@@ -137,19 +116,12 @@ class TestFullyPatched(unittest.TestCase):
         # One shape was created with filename keyword argument.
         self.vector_shape_mock.assert_called_once_with(the_list)
 
-        # Sprite created once.
-        self.vector_sprite_mock.assert_called_once()
-
-        # Positional arguments are the canvas, and created shape.
-        self.assertEqual(
-            self.vector_sprite_mock.call_args.args,
-            (canvas, shape),
-        )
-
-        # Keyword arguments are the default anchor and angle.
-        self.assertEqual(
-            self.vector_sprite_mock.call_args.kwargs,
-            dict(anchor=(0, 0), angle=0),
+        # One sprite was created with the expected arguments.
+        self.vector_sprite_mock.assert_called_once_with(
+            canvas,
+            shape,
+            anchor=(0, 0),
+            angle=0,
         )
 
 
@@ -184,19 +156,12 @@ class TestPartiallyPatched(unittest.TestCase):
 
         _sprite = sprites.create_sprite(canvas, shape)
 
-        # Sprite created once.
-        self.vector_sprite_mock.assert_called_once()
-
-        # Positional arguments are the canvas, and created shape.
-        self.assertEqual(
-            self.vector_sprite_mock.call_args.args,
-            (canvas, shape),
-        )
-
-        # Keyword arguments are the default anchor and angle.
-        self.assertEqual(
-            self.vector_sprite_mock.call_args.kwargs,
-            dict(anchor=(0, 0), angle=0),
+        # One sprite was created with the expected arguments.
+        self.vector_sprite_mock.assert_called_once_with(
+            canvas,
+            shape,
+            anchor=(0, 0),
+            angle=0,
         )
 
 
@@ -212,19 +177,12 @@ class TestPartiallyPatched(unittest.TestCase):
 
         _sprite = sprites.create_sprite(canvas, shape)
 
-        # Sprite created once.
-        self.bitmap_sprite_mock.assert_called_once()
-
-        # Positional arguments are the canvas, and created shape.
-        self.assertEqual(
-            self.bitmap_sprite_mock.call_args.args,
-            (canvas, shape),
-        )
-
-        # Keyword arguments are the default anchor and angle.
-        self.assertEqual(
-            self.bitmap_sprite_mock.call_args.kwargs,
-            dict(anchor=(0, 0), angle=0),
+        # One sprite was created with the expected arguments.
+        self.bitmap_sprite_mock.assert_called_once_with(
+            canvas,
+            shape,
+            anchor=(0, 0),
+            angle=0,
         )
 
 
