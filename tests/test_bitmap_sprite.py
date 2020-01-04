@@ -1,0 +1,130 @@
+# ----------------------------------------------------------------------------
+# Python A-Turtle
+# ----------------------------------------------------------------------------
+# Copyright (c) Tiago Montes.
+# See LICENSE for details.
+# ----------------------------------------------------------------------------
+
+import unittest
+
+from aturtle import sprites
+
+from . import fake_tkinter
+
+
+
+class FakeBitmapShape:
+
+    def __init__(self, anchor=(42, 24)):
+        self.anchor = anchor
+
+    def __getitem__(self, angle):
+        return f'image-at-angle-{angle}'
+
+
+
+class _TestBase(unittest.TestCase):
+
+    def assert_anchor_almost_equal(self, a1, a2, places):
+
+        a1_x, a1_y = a1
+        a2_x, a2_y = a2
+        self.assertAlmostEqual(a1_x, a2_x, places=places)
+        self.assertAlmostEqual(a1_y, a2_y, places=places)
+
+
+
+class TestDefaultSprite(_TestBase):
+
+    def setUp(self):
+
+        self.canvas = fake_tkinter.FakeCanvas()
+
+
+    def test_create(self):
+
+        _sprite = sprites.BitmapSprite(self.canvas, FakeBitmapShape())
+
+
+    def test_default_anchor(self):
+
+        sprite = sprites.BitmapSprite(self.canvas, FakeBitmapShape())
+        self.assertEqual(sprite.anchor, (0, 0))
+
+
+    def test_default_angle(self):
+
+        sprite = sprites.BitmapSprite(self.canvas, FakeBitmapShape())
+        self.assertEqual(sprite.angle, 0)
+
+
+    def test_create_calls_canvas_create_image(self):
+
+        shape = FakeBitmapShape(anchor=(10, 10))
+        _sprite = sprites.BitmapSprite(self.canvas, shape)
+
+        create_image = self.canvas.create_image
+        create_image.assert_called_once_with(
+            -10,
+            -10,
+            image='image-at-angle-0',
+            anchor='nw',
+        )
+
+
+    def test_rotate_calls_canvas_itemconfig_with_rotated_shape(self):
+
+        sprite = sprites.BitmapSprite(self.canvas, FakeBitmapShape())
+        sprite.rotate(180)
+
+        canvas_itemconfig = self.canvas.itemconfig
+        canvas_itemconfig.assert_called_once_with(
+            24,
+            image='image-at-angle-180',
+        )
+
+
+    def test_rotate_around_point_rotates_anchor(self):
+
+        sprite = sprites.BitmapSprite(self.canvas, FakeBitmapShape())
+
+        sprite.rotate(180, around=(1, 1))
+        self.assertEqual(sprite.anchor, (2, 2))
+
+
+    def test_rotate_around_point_calls_canvas_itemconfig(self):
+
+        sprite = sprites.BitmapSprite(self.canvas, FakeBitmapShape())
+
+        sprite.rotate(180, around=(1, 1))
+
+        canvas_itemconfig = self.canvas.itemconfig
+        canvas_itemconfig.assert_called_once_with(
+            24,
+            image='image-at-angle-180',
+        )
+
+
+    def test_rotate_around_point_calls_canvas_moveto(self):
+
+        shape = FakeBitmapShape(anchor=(0, 0))
+        sprite = sprites.BitmapSprite(self.canvas, shape)
+
+        sprite.rotate(180, around=(1, 1))
+
+        canvas_moveto = self.canvas.moveto
+        canvas_moveto.assert_called_once_with(24, 2, 2)
+
+
+    def test_rotate_does_not_call_canvas_update_idletasks(self):
+
+        sprite = sprites.BitmapSprite(self.canvas, FakeBitmapShape())
+        sprite.rotate(1)
+        self.canvas.update_idletasks.assert_not_called()
+
+
+    def test_rotate_with_update_calls_canvas_update_idletasks(self):
+
+        sprite = sprites.BitmapSprite(self.canvas, FakeBitmapShape())
+        sprite.rotate(1, update=True)
+        self.canvas.update_idletasks.assert_called_once_with()

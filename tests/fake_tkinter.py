@@ -22,6 +22,9 @@ class FakeCanvas:
         self.delete = mock.Mock()
         self.create_polygon_coords = None
         self.create_polygon_kwargs = None
+        self.create_image = mock.Mock(return_value=24)
+        self.itemconfig = mock.Mock()
+        self.moveto = mock.Mock()
 
     def create_polygon(self, coords, **kwargs):
         self.create_polygon_coords = coords
