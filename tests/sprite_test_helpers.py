@@ -1,0 +1,25 @@
+# ----------------------------------------------------------------------------
+# Python A-Turtle
+# ----------------------------------------------------------------------------
+# Copyright (c) Tiago Montes.
+# See LICENSE for details.
+# ----------------------------------------------------------------------------
+
+import unittest
+
+
+class TestCase(unittest.TestCase):
+
+    def assert_almost_equal_anchor(self, left, right, places):
+
+        lx, ly = left
+        rx, ry = right
+        self.assertAlmostEqual(lx, rx, places=places, msg='f{left=} != {right=}')
+        self.assertAlmostEqual(ly, ry, places=places, msg='f{left=} != {right=}')
+
+
+    def assert_almost_equal_coords(self, left, right, places):
+
+        for offset, (l, r) in enumerate(zip(left, right)):
+            msg = f'{left=} != {right=} at {offset=}'
+            self.assertAlmostEqual(l, r, places=places, msg=msg)

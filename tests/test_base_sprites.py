@@ -5,26 +5,14 @@
 # See LICENSE for details.
 # ----------------------------------------------------------------------------
 
-import unittest
-
 from aturtle.sprites import base
 
+from . import sprite_test_helpers
 from . import fake_tkinter
 
 
 
-class _TestBase(unittest.TestCase):
-
-    def assert_anchor_almost_equal(self, a1, a2, places):
-
-        a1_x, a1_y = a1
-        a2_x, a2_y = a2
-        self.assertAlmostEqual(a1_x, a2_x, places=places)
-        self.assertAlmostEqual(a1_y, a2_y, places=places)
-
-
-
-class TestDefaultSprite(_TestBase):
+class TestDefaultSprite(sprite_test_helpers.TestCase):
 
     def setUp(self):
 
@@ -39,7 +27,7 @@ class TestDefaultSprite(_TestBase):
     def test_default_anchor(self):
 
         sprite = base.Sprite(canvas=self.canvas, shape=None)
-        self.assert_anchor_almost_equal(sprite.anchor, (0, 0), places=1)
+        self.assert_almost_equal_anchor(sprite.anchor, (0, 0), places=1)
 
 
     def test_default_angle(self):
@@ -52,7 +40,7 @@ class TestDefaultSprite(_TestBase):
 
         sprite = base.Sprite(canvas=self.canvas, shape=None)
         sprite.move(42, 24)
-        self.assert_anchor_almost_equal(sprite.anchor, (42, 24), places=1)
+        self.assert_almost_equal_anchor(sprite.anchor, (42, 24), places=1)
 
 
     def test_move_moves_anchor_relative(self):
@@ -60,7 +48,7 @@ class TestDefaultSprite(_TestBase):
         sprite = base.Sprite(canvas=self.canvas, shape=None)
         sprite.move(42, 0)
         sprite.move(0, 24)
-        self.assert_anchor_almost_equal(sprite.anchor, (42, 24), places=1)
+        self.assert_almost_equal_anchor(sprite.anchor, (42, 24), places=1)
 
 
     def test_move_does_not_change_angle(self):
@@ -74,7 +62,7 @@ class TestDefaultSprite(_TestBase):
 
         sprite = base.Sprite(canvas=self.canvas, shape=None)
         sprite.move_to(42, 24)
-        self.assert_anchor_almost_equal(sprite.anchor, (42, 24), places=1)
+        self.assert_almost_equal_anchor(sprite.anchor, (42, 24), places=1)
 
 
     def test_move_to_moves_anchor_absolute(self):
@@ -82,7 +70,7 @@ class TestDefaultSprite(_TestBase):
         sprite = base.Sprite(canvas=self.canvas, shape=None)
         sprite.move_to(42, 0)
         sprite.move_to(0, 24)
-        self.assert_anchor_almost_equal(sprite.anchor, (0, 24), places=1)
+        self.assert_almost_equal_anchor(sprite.anchor, (0, 24), places=1)
 
 
     def test_move_to_does_not_change_angle(self):
@@ -96,14 +84,14 @@ class TestDefaultSprite(_TestBase):
 
         sprite = base.Sprite(canvas=self.canvas, shape=None)
         sprite.rotate(90)
-        self.assert_anchor_almost_equal(sprite.anchor, (0, 0), places=1)
+        self.assert_almost_equal_anchor(sprite.anchor, (0, 0), places=1)
 
 
     def test_rotate_around_moves_anchor(self):
 
         sprite = base.Sprite(canvas=self.canvas, shape=None)
         sprite.rotate(180, around=(1, 1))
-        self.assert_anchor_almost_equal(sprite.anchor, (2, 2), places=1)
+        self.assert_almost_equal_anchor(sprite.anchor, (2, 2), places=1)
 
 
     def test_rotate_around_moves_anchor_relative(self):
@@ -111,7 +99,7 @@ class TestDefaultSprite(_TestBase):
         sprite = base.Sprite(canvas=self.canvas, shape=None)
         sprite.rotate(90, around=(1, 1))
         sprite.rotate(90, around=(1, 1))
-        self.assert_anchor_almost_equal(sprite.anchor, (2, 2), places=1)
+        self.assert_almost_equal_anchor(sprite.anchor, (2, 2), places=1)
 
 
     def test_rotate_changes_angle(self):
@@ -140,14 +128,14 @@ class TestDefaultSprite(_TestBase):
 
         sprite = base.Sprite(canvas=self.canvas, shape=None)
         sprite.rotate_to(90)
-        self.assert_anchor_almost_equal(sprite.anchor, (0, 0), places=1)
+        self.assert_almost_equal_anchor(sprite.anchor, (0, 0), places=1)
 
 
     def test_rotate_to_around_moves_anchor(self):
 
         sprite = base.Sprite(canvas=self.canvas, shape=None)
         sprite.rotate_to(180, around=(1, 1))
-        self.assert_anchor_almost_equal(sprite.anchor, (2, 2), places=1)
+        self.assert_almost_equal_anchor(sprite.anchor, (2, 2), places=1)
 
 
     def test_rotate_to_around_moves_anchor_absolute(self):
@@ -155,7 +143,7 @@ class TestDefaultSprite(_TestBase):
         sprite = base.Sprite(canvas=self.canvas, shape=None)
         sprite.rotate_to(90, around=(1, 1))
         sprite.rotate_to(180, around=(1, 1))
-        self.assert_anchor_almost_equal(sprite.anchor, (2, 2), places=1)
+        self.assert_almost_equal_anchor(sprite.anchor, (2, 2), places=1)
 
 
     def test_rotate_to_changes_angle(self):
@@ -244,7 +232,7 @@ class TestDefaultSprite(_TestBase):
 
 
 
-class TestNonDefaultSprite(_TestBase):
+class TestNonDefaultSprite(sprite_test_helpers.TestCase):
 
     def setUp(self):
 
@@ -259,7 +247,7 @@ class TestNonDefaultSprite(_TestBase):
 
     def test_anchor(self):
 
-        self.assert_anchor_almost_equal(self.sprite.anchor, (42, 24), places=1)
+        self.assert_almost_equal_anchor(self.sprite.anchor, (42, 24), places=1)
 
 
     def test_angle(self):
@@ -270,20 +258,20 @@ class TestNonDefaultSprite(_TestBase):
     def test_move_with_no_args_does_not_move_anchor(self):
 
         self.sprite.move()
-        self.assert_anchor_almost_equal(self.sprite.anchor, (42, 24), places=1)
+        self.assert_almost_equal_anchor(self.sprite.anchor, (42, 24), places=1)
 
 
     def test_move_moves_anchor(self):
 
         self.sprite.move(-42, -24)
-        self.assert_anchor_almost_equal(self.sprite.anchor, (0, 0), places=1)
+        self.assert_almost_equal_anchor(self.sprite.anchor, (0, 0), places=1)
 
 
     def test_move_moves_anchor_relative(self):
 
         self.sprite.move(-42, 0)
         self.sprite.move(0, -24)
-        self.assert_anchor_almost_equal(self.sprite.anchor, (0, 0), places=1)
+        self.assert_almost_equal_anchor(self.sprite.anchor, (0, 0), places=1)
 
 
     def test_move_does_not_change_angle(self):
@@ -295,14 +283,14 @@ class TestNonDefaultSprite(_TestBase):
     def test_move_to_moves_anchor(self):
 
         self.sprite.move_to(20, 10)
-        self.assert_anchor_almost_equal(self.sprite.anchor, (20, 10), places=1)
+        self.assert_almost_equal_anchor(self.sprite.anchor, (20, 10), places=1)
 
 
     def test_move_to_moves_anchor_absolute(self):
 
         self.sprite.move_to(42, 0)
         self.sprite.move_to(0, 24)
-        self.assert_anchor_almost_equal(self.sprite.anchor, (0, 24), places=1)
+        self.assert_almost_equal_anchor(self.sprite.anchor, (0, 24), places=1)
 
 
     def test_move_to_does_not_change_angle(self):
@@ -314,20 +302,20 @@ class TestNonDefaultSprite(_TestBase):
     def test_rotate_does_not_move_anchor(self):
 
         self.sprite.rotate(90)
-        self.assert_anchor_almost_equal(self.sprite.anchor, (42, 24), places=1)
+        self.assert_almost_equal_anchor(self.sprite.anchor, (42, 24), places=1)
 
 
     def test_rotate_around_moves_anchor(self):
 
         self.sprite.rotate(180, around=(0, 0))
-        self.assert_anchor_almost_equal(self.sprite.anchor, (-42, -24), places=1)
+        self.assert_almost_equal_anchor(self.sprite.anchor, (-42, -24), places=1)
 
 
     def test_rotate_around_moves_anchor_relative(self):
 
         self.sprite.rotate(90, around=(0, 0))
         self.sprite.rotate(90, around=(0, 0))
-        self.assert_anchor_almost_equal(self.sprite.anchor, (-42, -24), places=1)
+        self.assert_almost_equal_anchor(self.sprite.anchor, (-42, -24), places=1)
 
 
     def test_rotate_changes_angle(self):
@@ -352,20 +340,20 @@ class TestNonDefaultSprite(_TestBase):
     def test_rotate_to_does_not_move_anchor(self):
 
         self.sprite.rotate_to(90)
-        self.assert_anchor_almost_equal(self.sprite.anchor, (42, 24), places=1)
+        self.assert_almost_equal_anchor(self.sprite.anchor, (42, 24), places=1)
 
 
     def test_rotate_to_around_moves_anchor(self):
 
         self.sprite.rotate_to(42+180, around=(0, 0))
-        self.assert_anchor_almost_equal(self.sprite.anchor, (-42, -24), places=1)
+        self.assert_almost_equal_anchor(self.sprite.anchor, (-42, -24), places=1)
 
 
     def test_rotate_to_around_moves_anchor_absolute(self):
 
         self.sprite.rotate_to(90, around=(0, 0))
         self.sprite.rotate_to(42+180, around=(0, 0))
-        self.assert_anchor_almost_equal(self.sprite.anchor, (-42, -24), places=1)
+        self.assert_almost_equal_anchor(self.sprite.anchor, (-42, -24), places=1)
 
 
     def test_rotate_to_changes_angle(self):

@@ -5,10 +5,9 @@
 # See LICENSE for details.
 # ----------------------------------------------------------------------------
 
-import unittest
-
 from aturtle import sprites, shapes
 
+from . import sprite_test_helpers
 from . import fake_tkinter
 
 
@@ -26,25 +25,7 @@ class UnitSquare(shapes.vector.Square):
 
 
 
-class _TestBase(unittest.TestCase):
-
-    def assert_almost_equal_coords(self, left, right, places):
-
-        for offset, (l, r) in enumerate(zip(left, right)):
-            msg = f'{left=} != {right=} at {offset=}'
-            self.assertAlmostEqual(l, r, places=places, msg=msg)
-
-
-    def assert_anchor_almost_equal(self, a1, a2, places):
-
-        a1_x, a1_y = a1
-        a2_x, a2_y = a2
-        self.assertAlmostEqual(a1_x, a2_x, places=places)
-        self.assertAlmostEqual(a1_y, a2_y, places=places)
-
-
-
-class TestDefaultSprite(_TestBase):
+class TestDefaultSprite(sprite_test_helpers.TestCase):
 
     def setUp(self):
 
@@ -250,7 +231,7 @@ class TestDefaultSprite(_TestBase):
 
 
 
-class TestNonDefaultSprite(_TestBase):
+class TestNonDefaultSprite(sprite_test_helpers.TestCase):
 
     def setUp(self):
 
@@ -338,7 +319,7 @@ class TestNonDefaultSprite(_TestBase):
         sprite = sprites.VectorSprite(self.canvas, UnitSquare(), anchor=(2, 1))
 
         sprite.rotate(180, around=(0, 0))
-        self.assert_anchor_almost_equal(sprite.anchor, (-2, -1), places=1)
+        self.assert_almost_equal_anchor(sprite.anchor, (-2, -1), places=1)
 
 
     def test_rotate_around_point_updates_coords(self):

@@ -5,10 +5,9 @@
 # See LICENSE for details.
 # ----------------------------------------------------------------------------
 
-import unittest
-
 from aturtle import sprites
 
+from . import sprite_test_helpers
 from . import fake_tkinter
 
 
@@ -23,18 +22,7 @@ class FakeBitmapShape:
 
 
 
-class _TestBase(unittest.TestCase):
-
-    def assert_anchor_almost_equal(self, a1, a2, places):
-
-        a1_x, a1_y = a1
-        a2_x, a2_y = a2
-        self.assertAlmostEqual(a1_x, a2_x, places=places)
-        self.assertAlmostEqual(a1_y, a2_y, places=places)
-
-
-
-class TestDefaultSprite(_TestBase):
+class TestDefaultSprite(sprite_test_helpers.TestCase):
 
     def setUp(self):
 
