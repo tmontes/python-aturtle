@@ -48,7 +48,7 @@ class TestFullyPatchedNoArgs(unittest.TestCase):
         shape = object()
         self.bitmap_shape_mock.return_value = shape
 
-        _sprite = sprites.create_sprite(canvas, 'filename')
+        sprite = sprites.create_sprite(canvas, 'filename')
 
         # One shape was created with filename keyword argument.
         self.bitmap_shape_mock.assert_called_once_with(filename='filename')
@@ -61,6 +61,9 @@ class TestFullyPatchedNoArgs(unittest.TestCase):
             angle=0,
         )
 
+        # Result is what calling the Sprite class produced.
+        self.assertIs(sprite, self.bitmap_sprite_mock.return_value)
+
 
     def test_create_sprite_from_path(self):
 
@@ -70,7 +73,7 @@ class TestFullyPatchedNoArgs(unittest.TestCase):
 
         path = pathlib.Path()
 
-        _sprite = sprites.create_sprite(canvas, path)
+        sprite = sprites.create_sprite(canvas, path)
 
         # One shape was created with filename keyword argument.
         self.bitmap_shape_mock.assert_called_once_with(filename=path)
@@ -83,6 +86,9 @@ class TestFullyPatchedNoArgs(unittest.TestCase):
             angle=0,
         )
 
+        # Result is what calling the Sprite class produced.
+        self.assertIs(sprite, self.bitmap_sprite_mock.return_value)
+
 
     def test_create_sprite_from_bytes(self):
 
@@ -90,7 +96,7 @@ class TestFullyPatchedNoArgs(unittest.TestCase):
         shape = object()
         self.bitmap_shape_mock.return_value = shape
 
-        _sprite = sprites.create_sprite(canvas, b'image-payload')
+        sprite = sprites.create_sprite(canvas, b'image-payload')
 
         # One shape was created with filename keyword argument.
         self.bitmap_shape_mock.assert_called_once_with(data=b'image-payload')
@@ -103,6 +109,9 @@ class TestFullyPatchedNoArgs(unittest.TestCase):
             angle=0,
         )
 
+        # Result is what calling the Sprite class produced.
+        self.assertIs(sprite, self.bitmap_sprite_mock.return_value)
+
 
     def test_create_sprite_from_list(self):
 
@@ -111,7 +120,7 @@ class TestFullyPatchedNoArgs(unittest.TestCase):
         self.vector_shape_mock.return_value = shape
 
         the_list = [1, 2, 3, 4]
-        _sprite = sprites.create_sprite(canvas, the_list)
+        sprite = sprites.create_sprite(canvas, the_list)
 
         # One shape was created with filename keyword argument.
         self.vector_shape_mock.assert_called_once_with(the_list)
@@ -123,6 +132,9 @@ class TestFullyPatchedNoArgs(unittest.TestCase):
             anchor=(0, 0),
             angle=0,
         )
+
+        # Result is what calling the Sprite class produced.
+        self.assertIs(sprite, self.vector_sprite_mock.return_value)
 
 
 
@@ -159,7 +171,7 @@ class TestFullyPatchedWithArgs(unittest.TestCase):
         shape = object()
         self.bitmap_shape_mock.return_value = shape
 
-        _sprite = sprites.create_sprite(
+        sprite = sprites.create_sprite(
             canvas,
             'filename',
             anchor=(42, 24),
@@ -183,6 +195,9 @@ class TestFullyPatchedWithArgs(unittest.TestCase):
             angle=180,
         )
 
+        # Result is what calling the Sprite class produced.
+        self.assertIs(sprite, self.bitmap_sprite_mock.return_value)
+
 
     def test_create_sprite_from_path(self):
 
@@ -192,7 +207,7 @@ class TestFullyPatchedWithArgs(unittest.TestCase):
 
         path = pathlib.Path()
 
-        _sprite = sprites.create_sprite(
+        sprite = sprites.create_sprite(
             canvas,
             path,
             anchor=(42, 24),
@@ -216,6 +231,9 @@ class TestFullyPatchedWithArgs(unittest.TestCase):
             angle=180,
         )
 
+        # Result is what calling the Sprite class produced.
+        self.assertIs(sprite, self.bitmap_sprite_mock.return_value)
+
 
     def test_create_sprite_from_bytes(self):
 
@@ -223,7 +241,7 @@ class TestFullyPatchedWithArgs(unittest.TestCase):
         shape = object()
         self.bitmap_shape_mock.return_value = shape
 
-        _sprite = sprites.create_sprite(
+        sprite = sprites.create_sprite(
             canvas,
             b'image-payload',
             anchor=(42, 24),
@@ -247,6 +265,9 @@ class TestFullyPatchedWithArgs(unittest.TestCase):
             angle=180,
         )
 
+        # Result is what calling the Sprite class produced.
+        self.assertIs(sprite, self.bitmap_sprite_mock.return_value)
+
 
     def test_create_sprite_from_list(self):
 
@@ -255,7 +276,7 @@ class TestFullyPatchedWithArgs(unittest.TestCase):
         self.vector_shape_mock.return_value = shape
 
         the_list = [1, 2, 3, 4]
-        _sprite = sprites.create_sprite(
+        sprite = sprites.create_sprite(
             canvas,
             the_list,
             anchor=(42, 24),
@@ -284,6 +305,9 @@ class TestFullyPatchedWithArgs(unittest.TestCase):
             anchor=(42, 24),
             angle=180,
         )
+
+        # Result is what calling the Sprite class produced.
+        self.assertIs(sprite, self.vector_sprite_mock.return_value)
 
 
 
@@ -315,7 +339,7 @@ class TestPartiallyPatchedNoArgs(unittest.TestCase):
         canvas = object()
         shape = vector.Shape([1, 2, 3, 4])
 
-        _sprite = sprites.create_sprite(canvas, shape)
+        sprite = sprites.create_sprite(canvas, shape)
 
         # One sprite was created with the expected arguments.
         self.vector_sprite_mock.assert_called_once_with(
@@ -324,6 +348,9 @@ class TestPartiallyPatchedNoArgs(unittest.TestCase):
             anchor=(0, 0),
             angle=0,
         )
+
+        # Result is what calling the Sprite class produced.
+        self.assertIs(sprite, self.vector_sprite_mock.return_value)
 
 
     def test_create_sprite_from_bitmap_shape(self):
@@ -336,7 +363,7 @@ class TestPartiallyPatchedNoArgs(unittest.TestCase):
 
         shape = TestBitmapShape()
 
-        _sprite = sprites.create_sprite(canvas, shape)
+        sprite = sprites.create_sprite(canvas, shape)
 
         # One sprite was created with the expected arguments.
         self.bitmap_sprite_mock.assert_called_once_with(
@@ -345,6 +372,9 @@ class TestPartiallyPatchedNoArgs(unittest.TestCase):
             anchor=(0, 0),
             angle=0,
         )
+
+        # Result is what calling the Sprite class produced.
+        self.assertIs(sprite, self.bitmap_sprite_mock.return_value)
 
 
 
@@ -376,7 +406,7 @@ class TestPartiallyPatchedWithArgs(unittest.TestCase):
         canvas = object()
         shape = vector.Shape([1, 2, 3, 4])
 
-        _sprite = sprites.create_sprite(
+        sprite = sprites.create_sprite(
             canvas,
             shape,
             anchor=(42, 24),
@@ -391,6 +421,9 @@ class TestPartiallyPatchedWithArgs(unittest.TestCase):
             angle=180,
         )
 
+        # Result is what calling the Sprite class produced.
+        self.assertIs(sprite, self.vector_sprite_mock.return_value)
+
 
     def test_create_sprite_from_bitmap_shape(self):
 
@@ -402,7 +435,7 @@ class TestPartiallyPatchedWithArgs(unittest.TestCase):
 
         shape = TestBitmapShape()
 
-        _sprite = sprites.create_sprite(
+        sprite = sprites.create_sprite(
             canvas,
             shape,
             anchor=(42, 24),
@@ -416,6 +449,9 @@ class TestPartiallyPatchedWithArgs(unittest.TestCase):
             anchor=(42, 24),
             angle=180,
         )
+
+        # Result is what calling the Sprite class produced.
+        self.assertIs(sprite, self.bitmap_sprite_mock.return_value)
 
 
 
