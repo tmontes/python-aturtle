@@ -14,17 +14,17 @@ class Sprite:
     Base class.
     """
 
-    def __init__(self, canvas, shape, *, anchor=(0, 0)):
+    def __init__(self, canvas, shape, *, anchor=(0, 0), angle=0):
         """
         Initialize a Sprite with the given `shape` and place it on the output
-        `canvas` at the given `x`, `y` coordinates.
+        `canvas` at the given `x`, `y` coordinates, rotated `angle` degrees.
         """
         self._canvas = canvas
         self._id = None
 
         self._shape = shape
         self._anchor = anchor
-        self._angle = 0
+        self._angle = angle
 
 
     @property
@@ -36,19 +36,11 @@ class Sprite:
 
 
     @property
-    def x(self):
+    def angle(self):
         """
-        The Sprite's `x` anchor position in the canvas.
+        The Sprite's rotation angle, in degrees.
         """
-        return self._anchor[0]
-
-
-    @property
-    def y(self):
-        """
-        The Sprite's `y` anchor position in the canvas.
-        """
-        return self._anchor[1]
+        return self._angle
 
 
     def move(self, dx=0, dy=0, *, update=False):
@@ -63,7 +55,7 @@ class Sprite:
             self.update()
 
 
-    def moveto(self, x=0, y=0, *, update=False):
+    def move_to(self, x=0, y=0, *, update=False):
         """
         Move the Sprite to the given absolute (`x`, `y`) position.
         Update the output if `update` is true.
@@ -95,20 +87,23 @@ class Sprite:
             self.update()
 
 
-    def unrotate(self, update=False):
+    def rotate_to(self, angle=0, around=None, update=False):
         """
-        Undo any previous rotation. Update the output if `update` is true.
+        Rotate the Sprite anchor to `angle` degrees, with 0 being the
+        underlying shape's original orientation. If `anchor` is None,
+        the anchor is left unchanged. Otherwise, it is rotated around
+        it, assumed to be a (cx, cy) two-tuple defining the center of
+        rotation.
+        Update the output if `update` is true.
         """
-        self.rotate(-self._angle, update=update)
+        self.rotate(angle-self._angle, around=around, update=update)
 
 
     def update(self):
         """
         Update the the output by redrawing pending movements or rotations.
         """
-        # TODO: Use update_idletasks, instead?
-        #       http://www.tcl.tk/man/tcl8.6/TclCmd/update.htm
-        self._canvas.update()
+        self._canvas.update_idletasks()
 
 
     def delete(self):

@@ -10,16 +10,16 @@ from . import base
 
 class Sprite(base.Sprite):
 
-    def __init__(self, canvas, shape, *, anchor=(0, 0)):
+    def __init__(self, canvas, shape, *, anchor=(0, 0), angle=0):
 
-        super().__init__(canvas, shape, anchor=anchor)
+        super().__init__(canvas, shape, anchor=anchor, angle=angle)
 
         sprite_x, sprite_y = anchor
         shape_x, shape_y = shape.anchor
         self._id = self._canvas.create_image(
             sprite_x - shape_x,
             sprite_y - shape_y,
-            image=shape[0],
+            image=shape[angle],
             anchor='nw',
         )
 

@@ -47,13 +47,13 @@ class TestCreateWithBadArguments(unittest.TestCase):
     def test_negative_rotations_raises_ValueError(self):
 
         with self.assertRaises(ValueError):
-            shape = _TestShape(image=None, anchor=(0, 0), rotations=-1)
+            _shape = _TestShape(image=None, anchor=(0, 0), rotations=-1)
 
 
     def test_zero_rotations_raises_ValueError(self):
 
         with self.assertRaises(ValueError):
-            shape = _TestShape(image=None, anchor=(0, 0), rotations=0)
+            _shape = _TestShape(image=None, anchor=(0, 0), rotations=0)
 
 
 
