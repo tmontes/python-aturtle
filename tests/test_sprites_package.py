@@ -15,7 +15,7 @@ from aturtle.shapes import bitmap, vector
 
 
 
-class TestFullyPatched(unittest.TestCase):
+class TestFullyPatchedNoArgs(unittest.TestCase):
 
     def setUp(self):
 
@@ -126,7 +126,168 @@ class TestFullyPatched(unittest.TestCase):
 
 
 
-class TestPartiallyPatched(unittest.TestCase):
+class TestFullyPatchedWithArgs(unittest.TestCase):
+
+    def setUp(self):
+
+        self.bitmap_shape_mock = mock.Mock()
+        self.vector_shape_mock = mock.Mock()
+        self.bitmap_sprite_mock = mock.Mock()
+        self.vector_sprite_mock = mock.Mock()
+
+        self.exit_stack = contextlib.ExitStack()
+
+        patches = (
+            mock.patch('aturtle.sprites._BitmapShape', self.bitmap_shape_mock),
+            mock.patch('aturtle.sprites._VectorShape', self.vector_shape_mock),
+            mock.patch('aturtle.sprites.BitmapSprite', self.bitmap_sprite_mock),
+            mock.patch('aturtle.sprites.VectorSprite', self.vector_sprite_mock),
+
+        )
+        for patch in patches:
+            self.exit_stack.enter_context(patch)
+
+
+    def tearDown(self):
+
+        self.exit_stack.close()
+
+
+    def test_create_sprite_from_str(self):
+
+        canvas = object()
+        shape = object()
+        self.bitmap_shape_mock.return_value = shape
+
+        _sprite = sprites.create_sprite(
+            canvas,
+            'filename',
+            anchor=(42, 24),
+            angle=180,
+            rotations=18,
+            pre_rotate=False,
+        )
+
+        # One shape was created with filename, rotations, and pre_rotate args.
+        self.bitmap_shape_mock.assert_called_once_with(
+            filename='filename',
+            rotations=18,
+            pre_rotate=False,
+        )
+
+        # One sprite was created with the expected arguments.
+        self.bitmap_sprite_mock.assert_called_once_with(
+            canvas,
+            shape,
+            anchor=(42, 24),
+            angle=180,
+        )
+
+
+    def test_create_sprite_from_path(self):
+
+        canvas = object()
+        shape = object()
+        self.bitmap_shape_mock.return_value = shape
+
+        path = pathlib.Path()
+
+        _sprite = sprites.create_sprite(
+            canvas,
+            path,
+            anchor=(42, 24),
+            angle=180,
+            rotations=18,
+            pre_rotate=False,
+        )
+
+        # One shape was created with filename, rotations, and pre_rotate args.
+        self.bitmap_shape_mock.assert_called_once_with(
+            filename=path,
+            rotations=18,
+            pre_rotate=False,
+        )
+
+        # One sprite was created with the expected arguments.
+        self.bitmap_sprite_mock.assert_called_once_with(
+            canvas,
+            shape,
+            anchor=(42, 24),
+            angle=180,
+        )
+
+
+    def test_create_sprite_from_bytes(self):
+
+        canvas = object()
+        shape = object()
+        self.bitmap_shape_mock.return_value = shape
+
+        _sprite = sprites.create_sprite(
+            canvas,
+            b'image-payload',
+            anchor=(42, 24),
+            angle=180,
+            rotations=18,
+            pre_rotate=False,
+        )
+
+        # One shape was created with filename, rotations, and pre_rotate args.
+        self.bitmap_shape_mock.assert_called_once_with(
+            data=b'image-payload',
+            rotations=18,
+            pre_rotate=False,
+        )
+
+        # One sprite was created with the expected arguments.
+        self.bitmap_sprite_mock.assert_called_once_with(
+            canvas,
+            shape,
+            anchor=(42, 24),
+            angle=180,
+        )
+
+
+    def test_create_sprite_from_list(self):
+
+        canvas = object()
+        shape = object()
+        self.vector_shape_mock.return_value = shape
+
+        the_list = [1, 2, 3, 4]
+        _sprite = sprites.create_sprite(
+            canvas,
+            the_list,
+            anchor=(42, 24),
+            angle=180,
+            fill_color='fill-color',
+            line_color='line-color',
+            line_width='line-width',
+            rotations=18,
+            pre_rotate=True,
+        )
+
+        # One shape was created with the expected arguments.
+        self.vector_shape_mock.assert_called_once_with(
+            the_list,
+            fill_color='fill-color',
+            line_color='line-color',
+            line_width='line-width',
+            rotations=18,
+            pre_rotate=True,
+        )
+
+        # One sprite was created with the expected arguments.
+        self.vector_sprite_mock.assert_called_once_with(
+            canvas,
+            shape,
+            anchor=(42, 24),
+            angle=180,
+        )
+
+
+
+class TestPartiallyPatchedNoArgs(unittest.TestCase):
 
     def setUp(self):
 
@@ -183,6 +344,77 @@ class TestPartiallyPatched(unittest.TestCase):
             shape,
             anchor=(0, 0),
             angle=0,
+        )
+
+
+
+class TestPartiallyPatchedWithArgs(unittest.TestCase):
+
+    def setUp(self):
+
+        self.bitmap_sprite_mock = mock.Mock()
+        self.vector_sprite_mock = mock.Mock()
+
+        self.exit_stack = contextlib.ExitStack()
+
+        patches = (
+            mock.patch('aturtle.sprites.BitmapSprite', self.bitmap_sprite_mock),
+            mock.patch('aturtle.sprites.VectorSprite', self.vector_sprite_mock),
+
+        )
+        for patch in patches:
+            self.exit_stack.enter_context(patch)
+
+
+    def tearDown(self):
+
+        self.exit_stack.close()
+
+
+    def test_create_sprite_from_vector_shape(self):
+
+        canvas = object()
+        shape = vector.Shape([1, 2, 3, 4])
+
+        _sprite = sprites.create_sprite(
+            canvas,
+            shape,
+            anchor=(42, 24),
+            angle=180,
+        )
+
+        # One sprite was created with the expected arguments.
+        self.vector_sprite_mock.assert_called_once_with(
+            canvas,
+            shape,
+            anchor=(42, 24),
+            angle=180,
+        )
+
+
+    def test_create_sprite_from_bitmap_shape(self):
+
+        canvas = object()
+
+        class TestBitmapShape(bitmap.Shape):
+            def __init__(self):
+                pass
+
+        shape = TestBitmapShape()
+
+        _sprite = sprites.create_sprite(
+            canvas,
+            shape,
+            anchor=(42, 24),
+            angle=180,
+        )
+
+        # One sprite was created with the expected arguments.
+        self.bitmap_sprite_mock.assert_called_once_with(
+            canvas,
+            shape,
+            anchor=(42, 24),
+            angle=180,
         )
 
 
