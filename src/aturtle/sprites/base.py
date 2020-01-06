@@ -5,6 +5,7 @@
 # See LICENSE for details.
 # ----------------------------------------------------------------------------
 
+import asyncio
 import math
 
 
@@ -62,6 +63,49 @@ class Sprite:
         """
         sprite_x, sprite_y = self._anchor
         self.move(x - sprite_x, y - sprite_y, update=update)
+
+
+    async def a_move(self, dx, dy, *, speed=100, fps=50, easing=None, update=False):
+        """
+        `speed` in units per second
+        `fps` how many updates/moves per second
+        `easing` callable mapping time to progress, both in the [0, 1] range
+        """
+        start_x, start_y = self._anchor
+        await self.a_move_to(
+            start_x+dx,
+            start_y+dy,
+            speed=speed,
+            fps=fps,
+            easing=easing,
+            update=update,
+        )
+
+
+    async def a_move_to(self, x, y, *, speed=100, fps=50, easing=None, update=False):
+        """
+        `speed` in units per second
+        `fps` how many updates/moves per second
+        `easing` callable mapping time to progress, both in the [0, 1] range
+        """
+        start_x, start_y = self._anchor
+        dx = x - start_x
+        dy = y - start_y
+
+        distance = (dx ** 2 + dy ** 2) ** 0.5
+        total_seconds = distance / speed
+        total_frames = round(total_seconds * fps)
+        frame_seconds = 1 / fps
+
+        for frame in range(1, total_frames+1):
+            progress = frame / total_frames
+            eased_progress = easing(progress) if easing else progress
+            frame_x = start_x + dx * eased_progress
+            frame_y = start_y + dy * eased_progress
+            self.move_to(frame_x, frame_y, update=update)
+            await asyncio.sleep(frame_seconds)
+
+        # TODO: Need a final "move_to"?
 
 
     def rotate(self, angle=0, *, around=None, update=False):
