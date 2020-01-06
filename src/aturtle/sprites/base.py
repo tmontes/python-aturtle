@@ -71,15 +71,23 @@ class Sprite:
         `fps` how many updates/moves per second
         `easing` callable mapping time to progress, both in the [0, 1] range
         """
-        start_x, start_y = self._anchor
-        await self.a_move_to(
-            start_x+dx,
-            start_y+dy,
-            speed=speed,
-            fps=fps,
-            easing=easing,
-            update=update,
-        )
+
+        distance = (dx ** 2 + dy ** 2) ** 0.5
+        total_seconds = distance / speed
+        total_frames = total_seconds * fps
+        frame_seconds = 1 / fps
+
+        frame_dx = dx / total_frames
+        frame_dy = dy / total_frames
+
+        prev_eased_progress = 0
+        for frame in range(1, round(total_frames)+1):
+            progress = frame / total_frames
+            eased_progress = easing(progress) if easing else progress
+            eased_delta = (eased_progress - prev_eased_progress) * total_frames
+            self.move(frame_dx * eased_delta, frame_dy * eased_delta, update=update)
+            await asyncio.sleep(frame_seconds)
+            prev_eased_progress = eased_progress
 
 
     async def a_move_to(self, x, y, *, speed=100, fps=50, easing=None, update=False):
