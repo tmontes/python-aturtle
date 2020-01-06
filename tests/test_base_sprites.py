@@ -168,67 +168,67 @@ class TestDefaultSprite(test_base.TestCase):
         self.assertAlmostEqual(sprite.angle, 90, places=1)
 
 
-    def test_update_calls_canvas_update_idletasks(self):
+    def test_update_calls_canvas_update(self):
 
         sprite = base.Sprite(canvas=self.canvas, shape=None)
         sprite.update()
-        self.canvas.update_idletasks.assert_called_once_with()
+        self.canvas.update.assert_called_once_with()
 
 
-    def test_move_with_no_update_calls_canvas_update_idletasks(self):
+    def test_move_with_no_update_calls_canvas_update(self):
 
         sprite = base.Sprite(canvas=self.canvas, shape=None)
         sprite.move(42, 24)
-        self.canvas.update_idletasks.assert_not_called()
+        self.canvas.update.assert_not_called()
 
 
-    def test_move_with_update_calls_canvas_update_idletasks(self):
+    def test_move_with_update_calls_canvas_update(self):
 
         sprite = base.Sprite(canvas=self.canvas, shape=None)
         sprite.move(42, 24, update=True)
-        self.canvas.update_idletasks.assert_called_once_with()
+        self.canvas.update.assert_called_once_with()
 
 
-    def test_move_to_with_no_update_calls_canvas_update_idletasks(self):
+    def test_move_to_with_no_update_calls_canvas_update(self):
 
         sprite = base.Sprite(canvas=self.canvas, shape=None)
         sprite.move_to(42, 24)
-        self.canvas.update_idletasks.assert_not_called()
+        self.canvas.update.assert_not_called()
 
 
-    def test_move_to_with_update_calls_canvas_update_idletasks(self):
+    def test_move_to_with_update_calls_canvas_update(self):
 
         sprite = base.Sprite(canvas=self.canvas, shape=None)
         sprite.move_to(42, 24, update=True)
-        self.canvas.update_idletasks.assert_called_once_with()
+        self.canvas.update.assert_called_once_with()
 
 
-    def test_rotate_with_no_update_calls_canvas_update_idletasks(self):
+    def test_rotate_with_no_update_calls_canvas_update(self):
 
         sprite = base.Sprite(canvas=self.canvas, shape=None)
         sprite.rotate(42)
-        self.canvas.update_idletasks.assert_not_called()
+        self.canvas.update.assert_not_called()
 
 
-    def test_rotate_with_update_calls_canvas_update_idletasks(self):
+    def test_rotate_with_update_calls_canvas_update(self):
 
         sprite = base.Sprite(canvas=self.canvas, shape=None)
         sprite.rotate(42, update=True)
-        self.canvas.update_idletasks.assert_called_once_with()
+        self.canvas.update.assert_called_once_with()
 
 
-    def test_rotate_to_with_no_update_calls_canvas_update_idletasks(self):
+    def test_rotate_to_with_no_update_calls_canvas_update(self):
 
         sprite = base.Sprite(canvas=self.canvas, shape=None)
         sprite.rotate_to(42)
-        self.canvas.update_idletasks.assert_not_called()
+        self.canvas.update.assert_not_called()
 
 
-    def test_rotate_to_with_update_calls_canvas_update_idletasks(self):
+    def test_rotate_to_with_update_calls_canvas_update(self):
 
         sprite = base.Sprite(canvas=self.canvas, shape=None)
         sprite.rotate_to(42, update=True)
-        self.canvas.update_idletasks.assert_called_once_with()
+        self.canvas.update.assert_called_once_with()
 
 
 
@@ -375,56 +375,56 @@ class TestNonDefaultSprite(test_base.TestCase):
         self.assertAlmostEqual(self.sprite.angle, 90, places=1)
 
 
-    def test_update_calls_canvas_update_idletasks(self):
+    def test_update_calls_canvas_update(self):
 
         self.sprite.update()
-        self.canvas.update_idletasks.assert_called_once_with()
+        self.canvas.update.assert_called_once_with()
 
 
-    def test_move_with_no_update_calls_canvas_update_idletasks(self):
+    def test_move_with_no_update_calls_canvas_update(self):
 
         self.sprite.move(42, 24)
-        self.canvas.update_idletasks.assert_not_called()
+        self.canvas.update.assert_not_called()
 
 
-    def test_move_with_update_calls_canvas_update_idletasks(self):
+    def test_move_with_update_calls_canvas_update(self):
 
         self.sprite.move(42, 24, update=True)
-        self.canvas.update_idletasks.assert_called_once_with()
+        self.canvas.update.assert_called_once_with()
 
 
-    def test_move_to_with_no_update_calls_canvas_update_idletasks(self):
+    def test_move_to_with_no_update_calls_canvas_update(self):
 
         self.sprite.move_to(42, 24)
-        self.canvas.update_idletasks.assert_not_called()
+        self.canvas.update.assert_not_called()
 
 
-    def test_move_to_with_update_calls_canvas_update_idletasks(self):
+    def test_move_to_with_update_calls_canvas_update(self):
 
         self.sprite.move_to(42, 24, update=True)
-        self.canvas.update_idletasks.assert_called_once_with()
+        self.canvas.update.assert_called_once_with()
 
 
-    def test_rotate_with_no_update_calls_canvas_update_idletasks(self):
+    def test_rotate_with_no_update_calls_canvas_update(self):
 
         self.sprite.rotate(42)
-        self.canvas.update_idletasks.assert_not_called()
+        self.canvas.update.assert_not_called()
 
 
-    def test_rotate_with_update_calls_canvas_update_idletasks(self):
+    def test_rotate_with_update_calls_canvas_update(self):
 
         self.sprite.rotate(42, update=True)
-        self.canvas.update_idletasks.assert_called_once_with()
+        self.canvas.update.assert_called_once_with()
 
 
-    def test_rotate_to_with_no_update_calls_canvas_update_idletasks(self):
+    def test_rotate_to_with_no_update_calls_canvas_update(self):
 
         self.sprite.rotate_to(42)
-        self.canvas.update_idletasks.assert_not_called()
+        self.canvas.update.assert_not_called()
 
 
-    def test_rotate_to_with_update_calls_canvas_update_idletasks(self):
+    def test_rotate_to_with_update_calls_canvas_update(self):
 
         self.sprite.rotate_to(42, update=True)
-        self.canvas.update_idletasks.assert_called_once_with()
+        self.canvas.update.assert_called_once_with()
 

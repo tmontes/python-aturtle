@@ -103,7 +103,7 @@ class Sprite:
         """
         Update the the output by redrawing pending movements or rotations.
         """
-        self._canvas.update_idletasks()
+        self._canvas.update()
 
 
     def delete(self):
