@@ -68,11 +68,13 @@ class Sprite:
         self.move(x - sprite_x, y - sprite_y, update=update)
 
 
-    async def a_move(self, dx, dy, *, speed=100, fps=50, easing=None, update=False):
+    async def a_move(self, dx, dy, *, speed=100, fps=50, easing=None,
+                     callback=None, update=False):
         """
         `speed` in units per second
         `fps` how many updates/moves per second
         `easing` callable mapping time to progress, both in the [0, 1] range
+        `callback` called once per frame, with current (progress, anchor).
         """
         if self._running_move_tos:
             raise RuntimeError('running move_tos')
@@ -92,6 +94,8 @@ class Sprite:
             eased_progress = easing(progress) if easing else progress
             eased_delta = (eased_progress - prev_eased_progress) * total_frames
             self.move(frame_dx * eased_delta, frame_dy * eased_delta, update=update)
+            if callback:
+                callback(eased_progress, self._anchor)
             try:
                 await asyncio.sleep(frame_seconds)
             except asyncio.CancelledError:
@@ -101,7 +105,8 @@ class Sprite:
         self._running_moves -= 1
 
 
-    async def a_move_to(self, x, y, *, speed=100, fps=50, easing=None, update=False):
+    async def a_move_to(self, x, y, *, speed=100, fps=50, easing=None,
+                        callback=None, update=False):
         """
         `speed` in units per second
         `fps` how many updates/moves per second
@@ -128,6 +133,8 @@ class Sprite:
             frame_x = start_x + dx * eased_progress
             frame_y = start_y + dy * eased_progress
             self.move_to(frame_x, frame_y, update=update)
+            if callback:
+                callback(eased_progress, self._anchor)
             try:
                 await asyncio.sleep(frame_seconds)
             except asyncio.CancelledError:
