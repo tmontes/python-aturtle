@@ -27,6 +27,9 @@ class Sprite:
         self._anchor = anchor
         self._angle = angle
 
+        self._running_moves = 0
+        self._running_move_tos = 0
+
 
     @property
     def anchor(self):
@@ -71,6 +74,9 @@ class Sprite:
         `fps` how many updates/moves per second
         `easing` callable mapping time to progress, both in the [0, 1] range
         """
+        if self._running_move_tos:
+            raise RuntimeError('running move_tos')
+        self._running_moves += 1
 
         distance = (dx ** 2 + dy ** 2) ** 0.5
         total_seconds = distance / speed
@@ -89,6 +95,8 @@ class Sprite:
             await asyncio.sleep(frame_seconds)
             prev_eased_progress = eased_progress
 
+        self._running_moves -= 1
+
 
     async def a_move_to(self, x, y, *, speed=100, fps=50, easing=None, update=False):
         """
@@ -96,6 +104,12 @@ class Sprite:
         `fps` how many updates/moves per second
         `easing` callable mapping time to progress, both in the [0, 1] range
         """
+        if self._running_moves:
+            raise RuntimeError('running moves')
+        if self._running_move_tos:
+            raise RuntimeError('running move_tos')
+        self._running_move_tos += 1
+
         start_x, start_y = self._anchor
         dx = x - start_x
         dy = y - start_y
@@ -114,6 +128,7 @@ class Sprite:
             await asyncio.sleep(frame_seconds)
 
         # TODO: Need a final "move_to"?
+        self._running_move_tos -= 1
 
 
     def rotate(self, angle=0, *, around=None, update=False):
