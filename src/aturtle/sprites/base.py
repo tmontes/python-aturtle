@@ -92,7 +92,10 @@ class Sprite:
             eased_progress = easing(progress) if easing else progress
             eased_delta = (eased_progress - prev_eased_progress) * total_frames
             self.move(frame_dx * eased_delta, frame_dy * eased_delta, update=update)
-            await asyncio.sleep(frame_seconds)
+            try:
+                await asyncio.sleep(frame_seconds)
+            except asyncio.CancelledError:
+                break
             prev_eased_progress = eased_progress
 
         self._running_moves -= 1
@@ -125,7 +128,10 @@ class Sprite:
             frame_x = start_x + dx * eased_progress
             frame_y = start_y + dy * eased_progress
             self.move_to(frame_x, frame_y, update=update)
-            await asyncio.sleep(frame_seconds)
+            try:
+                await asyncio.sleep(frame_seconds)
+            except asyncio.CancelledError:
+                break
 
         # TODO: Need a final "move_to"?
         self._running_move_tos -= 1
