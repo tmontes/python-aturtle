@@ -82,7 +82,7 @@ class Sprite:
         self._anchor = anchor
         self._angle = angle
 
-        self._concurrent_moves = _ConcurrentAnimationContexts('moves')
+        self._movement = _ConcurrentAnimationContexts('moves')
 
 
     @property
@@ -130,7 +130,7 @@ class Sprite:
         `easing` callable mapping time to progress, both in the [0, 1] range
         `callback` called once per frame, with current (progress, anchor).
         """
-        with self._concurrent_moves.relative():
+        with self._movement.relative(), contextlib.suppress(asyncio.CancelledError):
 
             if speed is None:
                 self.move(dx, dy, update=update)
@@ -152,10 +152,7 @@ class Sprite:
                 self.move(frame_dx * eased_delta, frame_dy * eased_delta, update=update)
                 if callback:
                     callback(eased_progress, self._anchor)
-                try:
-                    await asyncio.sleep(frame_seconds)
-                except asyncio.CancelledError:
-                    break
+                await asyncio.sleep(frame_seconds)
                 prev_eased_progress = eased_progress
 
 
@@ -166,7 +163,7 @@ class Sprite:
         `fps` how many updates/moves per second
         `easing` callable mapping time to progress, both in the [0, 1] range
         """
-        with self._concurrent_moves.absolute():
+        with self._movement.absolute(), contextlib.suppress(asyncio.CancelledError):
 
             if speed is None:
                 self.move_to(x, y, update=update)
@@ -189,10 +186,7 @@ class Sprite:
                 self.move_to(frame_x, frame_y, update=update)
                 if callback:
                     callback(eased_progress, self._anchor)
-                try:
-                    await asyncio.sleep(frame_seconds)
-                except asyncio.CancelledError:
-                    break
+                await asyncio.sleep(frame_seconds)
 
             # TODO: Need a final "move_to"?
 
