@@ -6,7 +6,62 @@
 # ----------------------------------------------------------------------------
 
 import asyncio
+import contextlib
 import math
+
+
+
+class AnimationError(Exception):
+    pass
+
+
+
+class _ConcurrentAnimationContexts:
+    """
+    Provides two concurrent animation controlling context managers:
+    one for relative animation, and another for absolute animation.
+
+    Supporting concurrent / cumulative relative animations, while preventing
+    any concurrency when absolute based animations are active.
+    """
+    def __init__(self, name):
+
+        self._name = name
+        self._relative_count = 0
+        self._absolute_count = 0
+
+
+    @contextlib.contextmanager
+    def relative(self):
+        """
+        Raises `AnimationError` when entering if absolute animations are active.
+        """
+        if self._absolute_count:
+            raise AnimationError(f'{self._absolute_count} active absolute {self._name}')
+
+        self._relative_count += 1
+        try:
+            yield
+        finally:
+            self._relative_count -= 1
+
+
+    @contextlib.contextmanager
+    def absolute(self):
+        """
+        Raises `AnimationError` when entering if any animations are active.
+        """
+        if self._relative_count:
+            raise AnimationError(f'{self._relative_count} active relative {self._name}')
+        if self._absolute_count:
+            raise AnimationError(f'{self._absolute_count} active absolute {self._name}')
+
+        self._absolute_count += 1
+        try:
+            yield
+        finally:
+            self._absolute_count -= 1
+
 
 
 class Sprite:
@@ -27,8 +82,7 @@ class Sprite:
         self._anchor = anchor
         self._angle = angle
 
-        self._running_moves = 0
-        self._running_move_tos = 0
+        self._concurrent_moves = _ConcurrentAnimationContexts('moves')
 
 
     @property
@@ -76,33 +130,29 @@ class Sprite:
         `easing` callable mapping time to progress, both in the [0, 1] range
         `callback` called once per frame, with current (progress, anchor).
         """
-        if self._running_move_tos:
-            raise RuntimeError('running move_tos')
-        self._running_moves += 1
+        with self._concurrent_moves.relative():
 
-        distance = (dx ** 2 + dy ** 2) ** 0.5
-        total_seconds = distance / speed
-        total_frames = total_seconds * fps
-        frame_seconds = 1 / fps
+            distance = (dx ** 2 + dy ** 2) ** 0.5
+            total_seconds = distance / speed
+            total_frames = total_seconds * fps
+            frame_seconds = 1 / fps
 
-        frame_dx = dx / total_frames
-        frame_dy = dy / total_frames
+            frame_dx = dx / total_frames
+            frame_dy = dy / total_frames
 
-        prev_eased_progress = 0
-        for frame in range(1, round(total_frames)+1):
-            progress = frame / total_frames
-            eased_progress = easing(progress) if easing else progress
-            eased_delta = (eased_progress - prev_eased_progress) * total_frames
-            self.move(frame_dx * eased_delta, frame_dy * eased_delta, update=update)
-            if callback:
-                callback(eased_progress, self._anchor)
-            try:
-                await asyncio.sleep(frame_seconds)
-            except asyncio.CancelledError:
-                break
-            prev_eased_progress = eased_progress
-
-        self._running_moves -= 1
+            prev_eased_progress = 0
+            for frame in range(1, round(total_frames)+1):
+                progress = frame / total_frames
+                eased_progress = easing(progress) if easing else progress
+                eased_delta = (eased_progress - prev_eased_progress) * total_frames
+                self.move(frame_dx * eased_delta, frame_dy * eased_delta, update=update)
+                if callback:
+                    callback(eased_progress, self._anchor)
+                try:
+                    await asyncio.sleep(frame_seconds)
+                except asyncio.CancelledError:
+                    break
+                prev_eased_progress = eased_progress
 
 
     async def a_move_to(self, x, y, *, speed=100, fps=50, easing=None,
@@ -112,36 +162,31 @@ class Sprite:
         `fps` how many updates/moves per second
         `easing` callable mapping time to progress, both in the [0, 1] range
         """
-        if self._running_moves:
-            raise RuntimeError('running moves')
-        if self._running_move_tos:
-            raise RuntimeError('running move_tos')
-        self._running_move_tos += 1
+        with self._concurrent_moves.absolute():
 
-        start_x, start_y = self._anchor
-        dx = x - start_x
-        dy = y - start_y
+            start_x, start_y = self._anchor
+            dx = x - start_x
+            dy = y - start_y
 
-        distance = (dx ** 2 + dy ** 2) ** 0.5
-        total_seconds = distance / speed
-        total_frames = round(total_seconds * fps)
-        frame_seconds = 1 / fps
+            distance = (dx ** 2 + dy ** 2) ** 0.5
+            total_seconds = distance / speed
+            total_frames = round(total_seconds * fps)
+            frame_seconds = 1 / fps
 
-        for frame in range(1, total_frames+1):
-            progress = frame / total_frames
-            eased_progress = easing(progress) if easing else progress
-            frame_x = start_x + dx * eased_progress
-            frame_y = start_y + dy * eased_progress
-            self.move_to(frame_x, frame_y, update=update)
-            if callback:
-                callback(eased_progress, self._anchor)
-            try:
-                await asyncio.sleep(frame_seconds)
-            except asyncio.CancelledError:
-                break
+            for frame in range(1, total_frames+1):
+                progress = frame / total_frames
+                eased_progress = easing(progress) if easing else progress
+                frame_x = start_x + dx * eased_progress
+                frame_y = start_y + dy * eased_progress
+                self.move_to(frame_x, frame_y, update=update)
+                if callback:
+                    callback(eased_progress, self._anchor)
+                try:
+                    await asyncio.sleep(frame_seconds)
+                except asyncio.CancelledError:
+                    break
 
-        # TODO: Need a final "move_to"?
-        self._running_move_tos -= 1
+            # TODO: Need a final "move_to"?
 
 
     def rotate(self, angle=0, *, around=None, update=False):
