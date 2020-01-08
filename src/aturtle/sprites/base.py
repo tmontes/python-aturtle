@@ -132,6 +132,10 @@ class Sprite:
         """
         with self._concurrent_moves.relative():
 
+            if speed is None:
+                self.move(dx, dy, update=update)
+                return
+
             distance = (dx ** 2 + dy ** 2) ** 0.5
             total_seconds = distance / speed
             total_frames = total_seconds * fps
@@ -163,6 +167,10 @@ class Sprite:
         `easing` callable mapping time to progress, both in the [0, 1] range
         """
         with self._concurrent_moves.absolute():
+
+            if speed is None:
+                self.move_to(x, y, update=update)
+                return
 
             start_x, start_y = self._anchor
             dx = x - start_x
