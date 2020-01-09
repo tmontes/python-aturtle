@@ -737,3 +737,193 @@ class TestAsyncMoveToAnimation(AsyncAnimationBase):
 
         with self.assertRaises(base.AnimationError):
             self._run_coroutines(coro_a_move, coro_a_move_to)
+
+
+
+class TestAsyncRotateAnimation(AsyncAnimationBase):
+
+    def setUp(self):
+
+        super().setUp()
+        self.sprite = base.Sprite(canvas=self.canvas, shape=None)
+
+
+    def test_a_rotate_with_speed_None_moves_anchor(self):
+
+        coro = self.sprite.a_rotate(30, speed=None, fps=10)
+        self._run_coroutines(coro)
+
+        self.assertAlmostEqual(self.sprite.angle, 30, places=1)
+
+
+    def test_a_rotate_with_speed_None_is_single_step_and_synchronous(self):
+
+        coro = self.sprite.a_rotate(30, speed=None, fps=10)
+        self._run_coroutines(coro)
+
+        self.assertAlmostEqual(self.sprite.angle, 30, places=1)
+        self.assertFalse(self.asyncio.sleep_call_args, 'asyncio sleep call args')
+
+
+    def test_a_rotate_with_speed_updates_angle(self):
+
+        coro = self.sprite.a_rotate(30, speed=30, fps=10)
+        self._run_coroutines(coro)
+
+        self.assertAlmostEqual(self.sprite.angle, 30, places=1)
+
+
+    def test_a_rotate_with_speed_calls_asyncio_sleep(self):
+
+        coro = self.sprite.a_rotate(30, speed=30, fps=10)
+        self._run_coroutines(coro)
+
+        # Given that the move distance is 30 and the speed is 50, animation
+        # duration is 1 second. At 10 fps, 10 frames must be generated: each
+        # with a an await of asyncio.sleep of 1/10th the duration.
+
+        asyncio_sleep_call_args = self.asyncio.sleep_call_args
+        self.assertEqual(len(asyncio_sleep_call_args), 10, 'asyncio.sleep await count')
+        for sleep_duration in asyncio_sleep_call_args:
+            self.assertAlmostEqual(sleep_duration, 0.1, places=3)
+
+
+    def test_a_rotate_with_speed_calls_callback(self):
+
+        data = []
+
+        coro = self.sprite.a_rotate(30, speed=30, fps=10,
+                                    callback=lambda *args: data.append(args))
+        self._run_coroutines(coro)
+
+        # Data should have 10 (progress, (x, y)) tuples:
+        self.assertEqual(len(data), 10, 'callback count')
+        for i, (progress, angle) in enumerate(data, start=1):
+            self.assertAlmostEqual(progress, i/10, places=3)
+            self.assertAlmostEqual(angle, 30*progress, places=1)
+
+
+    def test_a_rotate_with_speed_None_does_not_call_callback(self):
+
+        data = []
+
+        coro = self.sprite.a_rotate(30, speed=None, fps=10,
+                                    callback=lambda *args: data.append(args))
+        self._run_coroutines(coro)
+
+        self.assertFalse(data, 'no callbacks expected')
+
+
+    def test_concurrent_a_rotate_works(self):
+
+
+        coro_one = self.sprite.a_rotate(20, speed=20, fps=10)
+        coro_two = self.sprite.a_rotate(10, speed=10, fps=10)
+
+        self._run_coroutines(coro_one, coro_two)
+
+        self.assertAlmostEqual(self.sprite.angle, 30, places=1)
+
+
+
+class TestAsyncRotateToAnimation(AsyncAnimationBase):
+
+    def setUp(self):
+
+        super().setUp()
+        self.sprite = base.Sprite(canvas=self.canvas, shape=None, angle=40)
+
+
+    def test_a_rotate_to_with_speed_None_moves_anchor(self):
+
+        coro = self.sprite.a_rotate_to(30, speed=None, fps=10)
+        self._run_coroutines(coro)
+
+        self.assertAlmostEqual(self.sprite.angle, 30, places=1)
+
+
+    def test_a_rotate_to_with_speed_None_is_single_step_and_synchronous(self):
+
+        coro = self.sprite.a_rotate_to(30, speed=None, fps=10)
+        self._run_coroutines(coro)
+
+        self.assertFalse(self.asyncio.sleep_call_args, 'asyncio sleep call args')
+
+
+    def test_a_rotate_to_with_speed_updates_angle(self):
+
+        coro = self.sprite.a_rotate_to(30, speed=10, fps=10)
+        self._run_coroutines(coro)
+
+        self.assertAlmostEqual(self.sprite.angle, 30, places=1)
+
+
+    def test_a_rotate_to_with_speed_calls_canvas_move_and_asyncio_sleep(self):
+
+        coro = self.sprite.a_rotate_to(30, speed=10, fps=10)
+        self._run_coroutines(coro)
+
+        # Given that the move distance is 10 and the speed is 10, animation
+        # duration is 1 second. At 10 fps, 10 frames must be generated: each
+        # with a call to asyncio.sleep of 1/10th the duration.
+
+        asyncio_sleep_call_args = self.asyncio.sleep_call_args
+        self.assertEqual(len(asyncio_sleep_call_args), 10, 'asyncio.sleep await count')
+        for sleep_duration in asyncio_sleep_call_args:
+            self.assertAlmostEqual(sleep_duration, 0.1, places=3)
+
+
+    def test_a_rotate_to_with_speed_calls_callback(self):
+
+        data = []
+
+        coro = self.sprite.a_rotate_to(30, speed=10, fps=10,
+                                       callback=lambda *args: data.append(args))
+        self._run_coroutines(coro)
+
+        # Data should have 10 (progress, (x, y)) tuples:
+        self.assertEqual(len(data), 10, 'callback count')
+        for i, (progress, angle) in enumerate(data, start=1):
+            self.assertAlmostEqual(progress, i/10, places=3)
+            self.assertAlmostEqual(angle, 40-10*progress, places=1)
+
+
+    def test_a_rotate_to_with_speed_None_does_not_call_callback(self):
+
+        data = []
+
+        coro = self.sprite.a_rotate_to(30, speed=None, fps=10,
+                                       callback=lambda *args: data.append(args))
+        self._run_coroutines(coro)
+
+        self.assertFalse(data, 'no callbacks expected')
+
+
+    def test_concurrent_a_rotate_to_fails(self):
+
+
+        coro_one = self.sprite.a_rotate_to(10, speed=10, fps=10)
+        coro_two = self.sprite.a_rotate_to(20, speed=20, fps=10)
+
+        with self.assertRaises(base.AnimationError):
+            self._run_coroutines(coro_one, coro_two)
+
+
+    def test_a_rotate_fails_with_running_a_rotate_to(self):
+
+        coro_a_rotate_to = self.sprite.a_rotate_to(30, speed=10, fps=10)
+        coro_a_rotate = self.sprite.a_rotate(10, speed=10, fps=10)
+
+        with self.assertRaises(base.AnimationError):
+            self._run_coroutines(coro_a_rotate_to, coro_a_rotate)
+
+
+    def test_a_rotate_to_fails_with_running_a_rotate(self):
+
+        coro_a_rotate = self.sprite.a_rotate(10, speed=10, fps=10)
+        coro_a_rotate_to = self.sprite.a_rotate_to(30, speed=10, fps=10)
+
+        with self.assertRaises(base.AnimationError):
+            self._run_coroutines(coro_a_rotate, coro_a_rotate_to)
+
+
