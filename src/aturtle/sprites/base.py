@@ -138,14 +138,14 @@ class Sprite:
 
             distance = (dx ** 2 + dy ** 2) ** 0.5
             total_seconds = distance / speed
-            total_frames = total_seconds * fps
+            total_frames = int(total_seconds * fps)
             frame_seconds = 1 / fps
 
             frame_dx = dx / total_frames
             frame_dy = dy / total_frames
 
             prev_eased_progress = 0
-            for frame in range(1, int(total_frames)+1):
+            for frame in range(1, total_frames+1):
                 progress = frame / total_frames
                 eased_progress = easing(progress) if easing else progress
                 eased_delta = (eased_progress - prev_eased_progress) * total_frames
@@ -154,13 +154,6 @@ class Sprite:
                     callback(eased_progress, self._anchor)
                 await asyncio.sleep(frame_seconds)
                 prev_eased_progress = eased_progress
-
-            # TODO: The last sleep duration should be adjusted.
-
-            eased_delta = (1 - prev_eased_progress) * total_frames
-            self.move(frame_dx * eased_delta, frame_dy * eased_delta, update=update)
-            if callback:
-                callback(1, self._anchor)
 
 
     async def a_move_to(self, x, y, *, speed=100, fps=50, easing=None,
