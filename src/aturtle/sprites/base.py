@@ -175,7 +175,7 @@ class Sprite:
 
             distance = (dx ** 2 + dy ** 2) ** 0.5
             total_seconds = distance / speed
-            total_frames = round(total_seconds * fps)
+            total_frames = int(total_seconds * fps)
             frame_seconds = 1 / fps
 
             for frame in range(1, total_frames+1):
@@ -187,8 +187,6 @@ class Sprite:
                 if callback:
                     callback(eased_progress, self._anchor)
                 await asyncio.sleep(frame_seconds)
-
-            # TODO: Need a final "move_to"?
 
 
     def rotate(self, angle=0, *, around=None, update=False):
