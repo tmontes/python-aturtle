@@ -271,7 +271,9 @@ class Sprite:
                 return
 
             start_angle = self._angle
-            dangle = angle - start_angle
+            dangle = (angle - start_angle) % 360
+            if dangle > 180:
+                dangle = dangle - 360
 
             total_seconds = abs(dangle / speed)
             total_frames = int(total_seconds * fps)
