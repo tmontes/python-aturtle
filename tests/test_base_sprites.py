@@ -435,12 +435,11 @@ class TestNonDefaultSprite(test_base.TestCase):
 
 
 
-class TestAsyncAnimation(test_base.TestCase):
+class AsyncAnimationBase(test_base.TestCase):
 
     def setUp(self):
 
         self.canvas = fake_tkinter.FakeCanvas()
-        self.sprite = base.Sprite(canvas=self.canvas, shape=None)
 
         self.asyncio = fake_asyncio.FakeAsyncio()
         self._exit_stack = contextlib.ExitStack()
@@ -465,6 +464,15 @@ class TestAsyncAnimation(test_base.TestCase):
                 pass
             else:
                 ready.append(coro)
+
+
+
+class TestAsyncMoveAnimation(AsyncAnimationBase):
+
+    def setUp(self):
+
+        super().setUp()
+        self.sprite = base.Sprite(canvas=self.canvas, shape=None)
 
 
     def test_a_move_with_speed_None_moves_anchor(self):
