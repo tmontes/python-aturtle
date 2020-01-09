@@ -849,6 +849,32 @@ class TestAsyncRotateToAnimation(AsyncAnimationBase):
         self.assertFalse(data, 'no callbacks expected')
 
 
+    def test_a_rotate_to_takes_the_shortest_path_350_to_10(self):
+
+        sprite = base.Sprite(canvas=self.canvas, shape=None, angle=350)
+
+        angles = []
+        coro = sprite.a_rotate_to(10, speed=1, fps=1,
+                                  callback=lambda _p, a: angles.append(a))
+        self._run_coroutines(coro)
+
+        # Stored angles should grow from 351 to 359, then from 0 to 10
+        self.assertEqual(angles, [*range(351, 360), *range(11)])
+
+
+    def test_a_rotate_to_takes_the_shortest_path_10_to_350(self):
+
+        sprite = base.Sprite(canvas=self.canvas, shape=None, angle=10)
+
+        angles = []
+        coro = sprite.a_rotate_to(350, speed=1, fps=1,
+                                  callback=lambda _p, a: angles.append(a))
+        self._run_coroutines(coro)
+
+        # Stored angles should decrease from 9 to 0, then from 359 to 350.
+        self.assertEqual(angles, [*range(9, -1, -1), *range(359, 349, -1)])
+
+
 
 class TestAsyncAnimationConcurrency(AsyncAnimationBase):
 
