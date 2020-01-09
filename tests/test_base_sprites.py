@@ -911,7 +911,7 @@ class TestAsyncAnimationConcurrency(AsyncAnimationBase):
 
         coros = (
             self.sprite.a_move_to(40, 30, speed=50, fps=10),
-            self.sprite.a_rotate_to(30, speed=20, fps=10),
+            self.sprite.a_rotate_to(30, speed=30, fps=10),
         )
 
         self._run_coroutines(*coros)
@@ -972,7 +972,7 @@ class TestAsyncAnimationConcurrency(AsyncAnimationBase):
 
     def test_a_rotate_fails_with_running_a_rotate_to(self):
 
-        coro_a_rotate_to = self.sprite.a_rotate_to(30, speed=10, fps=10)
+        coro_a_rotate_to = self.sprite.a_rotate_to(30, speed=30, fps=10)
         coro_a_rotate = self.sprite.a_rotate(10, speed=10, fps=10)
 
         with self.assertRaises(base.AnimationError):
@@ -982,7 +982,7 @@ class TestAsyncAnimationConcurrency(AsyncAnimationBase):
     def test_a_rotate_to_fails_with_running_a_rotate(self):
 
         coro_a_rotate = self.sprite.a_rotate(10, speed=10, fps=10)
-        coro_a_rotate_to = self.sprite.a_rotate_to(30, speed=10, fps=10)
+        coro_a_rotate_to = self.sprite.a_rotate_to(30, speed=30, fps=10)
 
         with self.assertRaises(base.AnimationError):
             self._run_coroutines(coro_a_rotate, coro_a_rotate_to)
