@@ -878,6 +878,62 @@ class TestAsyncAnimationConcurrency(AsyncAnimationBase):
         self.assertAlmostEqual(self.sprite.angle, 30, places=1)
 
 
+    def test_concurrent_a_move_and_a_rotate_works(self):
+
+        coros = (
+            self.sprite.a_move(40, 0, speed=40, fps=10),
+            self.sprite.a_move(0, 30, speed=30, fps=10),
+            self.sprite.a_rotate(10, speed=10, fps=10),
+            self.sprite.a_rotate(20, speed=20, fps=10),
+        )
+
+        self._run_coroutines(*coros)
+
+        self.assert_almost_equal_anchor(self.sprite.anchor, (40, 30), places=1)
+        self.assertAlmostEqual(self.sprite.angle, 30, places=1)
+
+
+    def test_concurrent_a_move_and_a_rotate_to_works(self):
+
+        coros = (
+            self.sprite.a_move(40, 0, speed=40, fps=10),
+            self.sprite.a_move(0, 30, speed=30, fps=10),
+            self.sprite.a_rotate_to(30, speed=30, fps=10),
+        )
+
+        self._run_coroutines(*coros)
+
+        self.assert_almost_equal_anchor(self.sprite.anchor, (40, 30), places=1)
+        self.assertAlmostEqual(self.sprite.angle, 30, places=1)
+
+
+    def test_concurrent_a_move_to_and_a_rotate_to_works(self):
+
+        coros = (
+            self.sprite.a_move_to(40, 30, speed=50, fps=10),
+            self.sprite.a_rotate_to(30, speed=20, fps=10),
+        )
+
+        self._run_coroutines(*coros)
+
+        self.assert_almost_equal_anchor(self.sprite.anchor, (40, 30), places=1)
+        self.assertAlmostEqual(self.sprite.angle, 30, places=1)
+
+
+    def test_concurrent_a_move_to_and_a_rotate_works(self):
+
+        coros = (
+            self.sprite.a_move_to(40, 30, speed=50, fps=10),
+            self.sprite.a_rotate(10, speed=10, fps=10),
+            self.sprite.a_rotate(20, speed=20, fps=10),
+        )
+
+        self._run_coroutines(*coros)
+
+        self.assert_almost_equal_anchor(self.sprite.anchor, (40, 30), places=1)
+        self.assertAlmostEqual(self.sprite.angle, 30, places=1)
+
+
     def test_concurrent_a_move_to_fails(self):
 
         coro_h = self.sprite.a_move_to(40, 0, speed=40, fps=10)
@@ -930,4 +986,3 @@ class TestAsyncAnimationConcurrency(AsyncAnimationBase):
 
         with self.assertRaises(base.AnimationError):
             self._run_coroutines(coro_a_rotate, coro_a_rotate_to)
-
