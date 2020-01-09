@@ -462,6 +462,14 @@ class TestAsyncAnimation(test_base.TestCase):
                 break
 
 
+    def test_a_move_with_speed_None_moves_anchor(self):
+
+        coro = self.sprite.a_move(40, 30, speed=None, fps=10)
+        self._run_coroutine(coro)
+
+        self.assert_almost_equal_anchor(self.sprite.anchor, (40, 30), places=1)
+
+
     def test_a_move_with_speed_None_is_single_step_and_synchronous(self):
 
         coro = self.sprite.a_move(40, 30, speed=None, fps=10)
@@ -469,6 +477,14 @@ class TestAsyncAnimation(test_base.TestCase):
 
         self.canvas.move.assert_called_once_with(None, 40, 30)
         self.asyncio.sleep.assert_not_awaited()
+
+
+    def test_a_move_with_speed_moves_anchor(self):
+
+        coro = self.sprite.a_move(40, 30, speed=50, fps=10)
+        self._run_coroutine(coro)
+
+        self.assert_almost_equal_anchor(self.sprite.anchor, (40, 30), places=1)
 
 
     def test_a_move_with_speed_calls_canvas_move_and_asyncio_sleep(self):
@@ -493,3 +509,63 @@ class TestAsyncAnimation(test_base.TestCase):
         for sleep_await in asyncio_sleep_awaits:
             sleep_duration, = sleep_await.args
             self.assertAlmostEqual(sleep_duration, 0.1, places=3)
+
+        # TODO: A more correct test would check that canvas.move calls and
+        # asyncio.sleep awaits are called in alternating turns.
+
+
+    def test_a_move_with_speed_and_easing_progresses_non_linearly(self):
+
+        def easing(progress):
+            return 0 if progress < 0.5 else 1
+
+        coro = self.sprite.a_move(40, 30, speed=50, fps=10, easing=easing)
+        self._run_coroutine(coro)
+
+        # canvas.move should have been called 10 times:
+        # - First 4 with no movement.
+        # - 5th with the whole movement.
+        # - Remaining with no movement.
+
+        canvas_move_calls = self.canvas.move.call_args_list
+        self.assertEqual(len(canvas_move_calls), 10, 'canvas.move call count')
+        for call in canvas_move_calls[:4]:
+            _shape_id, dx, dy = call.args
+            self.assertAlmostEqual(dx, 0, places=1)
+            self.assertAlmostEqual(dy, 0, places=1)
+
+        _shape_id, dx, dy = canvas_move_calls[4].args
+        self.assertAlmostEqual(dx, 40, places=1)
+        self.assertAlmostEqual(dy, 30, places=1)
+
+        for call in canvas_move_calls[5:]:
+            _shape_id, dx, dy = call.args
+            self.assertAlmostEqual(dx, 0, places=1)
+            self.assertAlmostEqual(dy, 0, places=1)
+
+
+    def test_a_move_with_speed_calls_callback(self):
+
+        data = []
+
+        coro = self.sprite.a_move(40, 30, speed=50, fps=10,
+                                  callback=lambda *args: data.append(args))
+        self._run_coroutine(coro)
+
+        # Data should have 10 (progress, (x, y)) tuples:
+        self.assertEqual(len(data), 10, 'callback count')
+        for i, (progress, (x, y)) in enumerate(data, start=1):
+            self.assertAlmostEqual(progress, i/10, places=3)
+            self.assertAlmostEqual(x, 40*progress, places=1)
+            self.assertAlmostEqual(y, 30*progress, places=1)
+
+
+    def test_a_move_with_speed_None_does_not_call_callback(self):
+
+        data = []
+
+        coro = self.sprite.a_move(40, 30, speed=None, fps=10,
+                                  callback=lambda *args: data.append(args))
+        self._run_coroutine(coro)
+
+        self.assertFalse(data, 'no callbacks expected')
