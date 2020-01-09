@@ -5,6 +5,7 @@
 # See LICENSE for details.
 # ----------------------------------------------------------------------------
 
+import collections
 import contextlib
 from unittest import mock
 
@@ -453,19 +454,23 @@ class TestAsyncAnimation(test_base.TestCase):
         self._exit_stack.close()
 
 
-    def _run_coroutine(self, coro):
+    def _run_coroutines(self, *coros):
 
-        while True:
+        ready = collections.deque(coros)
+        while ready:
+            coro = ready.popleft()
             try:
                 coro.send(None)
             except StopIteration:
-                break
+                pass
+            else:
+                ready.append(coro)
 
 
     def test_a_move_with_speed_None_moves_anchor(self):
 
         coro = self.sprite.a_move(40, 30, speed=None, fps=10)
-        self._run_coroutine(coro)
+        self._run_coroutines(coro)
 
         self.assert_almost_equal_anchor(self.sprite.anchor, (40, 30), places=1)
 
@@ -473,7 +478,7 @@ class TestAsyncAnimation(test_base.TestCase):
     def test_a_move_with_speed_None_is_single_step_and_synchronous(self):
 
         coro = self.sprite.a_move(40, 30, speed=None, fps=10)
-        self._run_coroutine(coro)
+        self._run_coroutines(coro)
 
         self.canvas.move.assert_called_once_with(None, 40, 30)
         self.asyncio.sleep.assert_not_awaited()
@@ -482,7 +487,7 @@ class TestAsyncAnimation(test_base.TestCase):
     def test_a_move_with_speed_moves_anchor(self):
 
         coro = self.sprite.a_move(40, 30, speed=50, fps=10)
-        self._run_coroutine(coro)
+        self._run_coroutines(coro)
 
         self.assert_almost_equal_anchor(self.sprite.anchor, (40, 30), places=1)
 
@@ -490,7 +495,7 @@ class TestAsyncAnimation(test_base.TestCase):
     def test_a_move_with_speed_calls_canvas_move_and_asyncio_sleep(self):
 
         coro = self.sprite.a_move(40, 30, speed=50, fps=10)
-        self._run_coroutine(coro)
+        self._run_coroutines(coro)
 
         # Given that the move distance is 50 and the speed is 50, animation
         # duration is 1 second. At 10 fps, 10 frames must be generated: each
@@ -520,7 +525,7 @@ class TestAsyncAnimation(test_base.TestCase):
             return 0 if progress < 0.5 else 1
 
         coro = self.sprite.a_move(40, 30, speed=50, fps=10, easing=easing)
-        self._run_coroutine(coro)
+        self._run_coroutines(coro)
 
         # canvas.move should have been called 10 times:
         # - First 4 with no movement.
@@ -550,7 +555,7 @@ class TestAsyncAnimation(test_base.TestCase):
 
         coro = self.sprite.a_move(40, 30, speed=50, fps=10,
                                   callback=lambda *args: data.append(args))
-        self._run_coroutine(coro)
+        self._run_coroutines(coro)
 
         # Data should have 10 (progress, (x, y)) tuples:
         self.assertEqual(len(data), 10, 'callback count')
@@ -566,6 +571,17 @@ class TestAsyncAnimation(test_base.TestCase):
 
         coro = self.sprite.a_move(40, 30, speed=None, fps=10,
                                   callback=lambda *args: data.append(args))
-        self._run_coroutine(coro)
+        self._run_coroutines(coro)
 
         self.assertFalse(data, 'no callbacks expected')
+
+
+    def test_concurrent_a_move_works(self):
+
+
+        coro_h = self.sprite.a_move(40, 0, speed=40, fps=10)
+        coro_v = self.sprite.a_move(0, 30, speed=30, fps=10)
+
+        self._run_coroutines(coro_h, coro_v)
+
+        self.assert_almost_equal_anchor(self.sprite.anchor, (40, 30), places=1)

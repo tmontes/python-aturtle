@@ -21,8 +21,8 @@ class TestCase(unittest.TestCase):
 
         lx, ly = left
         rx, ry = right
-        self.assertAlmostEqual(lx, rx, places=places, msg='f{left=} != {right=}')
-        self.assertAlmostEqual(ly, ry, places=places, msg='f{left=} != {right=}')
+        self.assertAlmostEqual(lx, rx, places=places, msg=f'{left=} != {right=}')
+        self.assertAlmostEqual(ly, ry, places=places, msg=f'{left=} != {right=}')
 
 
     def assert_almost_equal_coords(self, left, right, places):
