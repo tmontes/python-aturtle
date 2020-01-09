@@ -83,6 +83,7 @@ class Sprite:
         self._angle = angle
 
         self._movement = _ConcurrentAnimationContexts('moves')
+        self._rotation = _ConcurrentAnimationContexts('rotates')
 
 
     @property
@@ -222,6 +223,68 @@ class Sprite:
         Update the output if `update` is true.
         """
         self.rotate(angle-self._angle, around=around, update=update)
+
+
+    async def a_rotate(self, dangle, *, speed=360, fps=50, easing=None,
+                       callback=None, update=False):
+        """
+        `speed` in degrees per second
+        `fps` how many updates/rotations per second
+        `easing` callable mapping time to progress, both in the [0, 1] range
+        `callback` called once per frame, with current (progress, angle).
+        """
+        with self._rotation.relative(), contextlib.suppress(asyncio.CancelledError):
+
+            if speed is None:
+                self.rotate(dangle, update=update)
+                return
+
+            total_seconds = abs(dangle / speed)
+            total_frames = int(total_seconds * fps)
+            frame_seconds = 1 / fps
+
+            frame_dangle = dangle / total_frames
+
+            prev_eased_progress = 0
+            for frame in range(1, total_frames+1):
+                progress = frame / total_frames
+                eased_progress = easing(progress) if easing else progress
+                eased_delta = (eased_progress - prev_eased_progress) * total_frames
+                self.rotate(frame_dangle * eased_delta, update=update)
+                if callback:
+                    callback(eased_progress, self._angle)
+                await asyncio.sleep(frame_seconds)
+                prev_eased_progress = eased_progress
+
+
+    async def a_rotate_to(self, angle, *, speed=360, fps=50, easing=None,
+                          callback=None, update=False):
+        """
+        `speed` in degrees per second
+        `fps` how many updates/rotations per second
+        `easing` callable mapping time to progress, both in the [0, 1] range
+        """
+        with self._rotation.absolute(), contextlib.suppress(asyncio.CancelledError):
+
+            if speed is None:
+                self.rotate_to(angle, update=update)
+                return
+
+            start_angle = self._angle
+            dangle = angle - start_angle
+
+            total_seconds = abs(dangle / speed)
+            total_frames = int(total_seconds * fps)
+            frame_seconds = 1 / fps
+
+            for frame in range(1, total_frames+1):
+                progress = frame / total_frames
+                eased_progress = easing(progress) if easing else progress
+                frame_angle = start_angle + dangle * eased_progress
+                self.rotate_to(frame_angle, update=update)
+                if callback:
+                    callback(eased_progress, self._angle)
+                await asyncio.sleep(frame_seconds)
 
 
     def update(self):
