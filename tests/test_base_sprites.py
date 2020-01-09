@@ -472,7 +472,7 @@ class TestAsyncMoveAnimation(AsyncAnimationBase):
     def setUp(self):
 
         super().setUp()
-        self.sprite = base.Sprite(canvas=self.canvas, shape=None)
+        self.sprite = base.Sprite(canvas=self.canvas, shape=None, anchor=(0, 0))
 
 
     def test_a_move_with_speed_None_moves_anchor(self):
@@ -592,3 +592,139 @@ class TestAsyncMoveAnimation(AsyncAnimationBase):
         self._run_coroutines(coro_h, coro_v)
 
         self.assert_almost_equal_anchor(self.sprite.anchor, (40, 30), places=1)
+
+
+
+class TestAsyncMoveToAnimation(AsyncAnimationBase):
+
+    def setUp(self):
+
+        super().setUp()
+        self.sprite = base.Sprite(canvas=self.canvas, shape=None, anchor=(80, 60))
+
+
+    def test_a_move_to_with_speed_None_moves_anchor(self):
+
+        coro = self.sprite.a_move_to(40, 30, speed=None, fps=10)
+        self._run_coroutines(coro)
+
+        self.assert_almost_equal_anchor(self.sprite.anchor, (40, 30), places=1)
+
+
+    def test_a_move_to_with_speed_None_is_single_step_and_synchronous(self):
+
+        coro = self.sprite.a_move_to(40, 30, speed=None, fps=10)
+        self._run_coroutines(coro)
+
+        self.canvas.move.assert_called_once_with(None, -40, -30)
+        self.assertFalse(self.asyncio.sleep_call_args, 'asyncio sleep call args')
+
+
+    def test_a_move_to_with_speed_moves_anchor(self):
+
+        coro = self.sprite.a_move_to(40, 30, speed=50, fps=10)
+        self._run_coroutines(coro)
+
+        self.assert_almost_equal_anchor(self.sprite.anchor, (40, 30), places=1)
+
+
+    def test_a_move_to_with_speed_calls_canvas_move_and_asyncio_sleep(self):
+
+        coro = self.sprite.a_move_to(40, 30, speed=50, fps=10)
+        self._run_coroutines(coro)
+
+        # Given that the move distance is 50 and the speed is 50, animation
+        # duration is 1 second. At 10 fps, 10 frames must be generated: each
+        # with a call to canvas.move of 1/10th the distance and an await of
+        # asyncio.sleep of 1/10th the duration.
+
+        canvas_move_calls = self.canvas.move.call_args_list
+        self.assertEqual(len(canvas_move_calls), 10, 'canvas.move call count')
+        for call in canvas_move_calls:
+            _shape_id, dx, dy = call.args
+            self.assertAlmostEqual(dx, -4, places=1)
+            self.assertAlmostEqual(dy, -3, places=1)
+
+        asyncio_sleep_call_args = self.asyncio.sleep_call_args
+        self.assertEqual(len(asyncio_sleep_call_args), 10, 'asyncio.sleep await count')
+        for sleep_duration in asyncio_sleep_call_args:
+            self.assertAlmostEqual(sleep_duration, 0.1, places=3)
+
+        # TODO: A more correct test would check that canvas.move calls and
+        # asyncio.sleep awaits are called in alternating turns.
+
+
+    def test_a_move_to_with_speed_and_easing_progresses_non_linearly(self):
+
+        def easing(progress):
+            return 0 if progress < 0.5 else 1
+
+        coro = self.sprite.a_move_to(40, 30, speed=50, fps=10, easing=easing)
+        self._run_coroutines(coro)
+
+        # canvas.move should have been called 10 times:
+        # - First 4 with no movement.
+        # - 5th with the whole movement.
+        # - Remaining with no movement.
+
+        canvas_move_calls = self.canvas.move.call_args_list
+        self.assertEqual(len(canvas_move_calls), 10, 'canvas.move call count')
+        for call in canvas_move_calls[:4]:
+            _shape_id, dx, dy = call.args
+            self.assertAlmostEqual(dx, 0, places=1)
+            self.assertAlmostEqual(dy, 0, places=1)
+
+        _shape_id, dx, dy = canvas_move_calls[4].args
+        self.assertAlmostEqual(dx, -40, places=1)
+        self.assertAlmostEqual(dy, -30, places=1)
+
+        for call in canvas_move_calls[5:]:
+            _shape_id, dx, dy = call.args
+            self.assertAlmostEqual(dx, 0, places=1)
+            self.assertAlmostEqual(dy, 0, places=1)
+
+
+    def test_a_move_to_with_speed_calls_callback(self):
+
+        data = []
+
+        coro = self.sprite.a_move_to(40, 30, speed=50, fps=10,
+                                     callback=lambda *args: data.append(args))
+        self._run_coroutines(coro)
+
+        # Data should have 10 (progress, (x, y)) tuples:
+        self.assertEqual(len(data), 10, 'callback count')
+        for i, (progress, (x, y)) in enumerate(data, start=1):
+            self.assertAlmostEqual(progress, i/10, places=3)
+            self.assertAlmostEqual(x, 80-40*progress, places=1)
+            self.assertAlmostEqual(y, 60-30*progress, places=1)
+
+
+    def test_a_move_to_with_speed_None_does_not_call_callback(self):
+
+        data = []
+
+        coro = self.sprite.a_move_to(40, 30, speed=None, fps=10,
+                                     callback=lambda *args: data.append(args))
+        self._run_coroutines(coro)
+
+        self.assertFalse(data, 'no callbacks expected')
+
+
+    def test_concurrent_a_move_to_fails(self):
+
+
+        coro_h = self.sprite.a_move_to(40, 0, speed=40, fps=10)
+        coro_v = self.sprite.a_move_to(0, 30, speed=30, fps=10)
+
+        with self.assertRaises(base.AnimationError):
+            self._run_coroutines(coro_h, coro_v)
+
+
+    def test_concurrent_a_move_to_with_a_move_fails(self):
+
+        coro_absolute = self.sprite.a_move_to(40, 0, speed=40, fps=10)
+        coro_relative = self.sprite.a_move(0, 30, speed=30, fps=10)
+
+        with self.assertRaises(base.AnimationError):
+            self._run_coroutines(coro_absolute, coro_relative)
