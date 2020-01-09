@@ -721,10 +721,19 @@ class TestAsyncMoveToAnimation(AsyncAnimationBase):
             self._run_coroutines(coro_h, coro_v)
 
 
-    def test_concurrent_a_move_to_with_a_move_fails(self):
+    def test_a_move_fails_with_running_a_move_to(self):
 
-        coro_absolute = self.sprite.a_move_to(40, 0, speed=40, fps=10)
-        coro_relative = self.sprite.a_move(0, 30, speed=30, fps=10)
+        coro_a_move_to = self.sprite.a_move_to(40, 0, speed=40, fps=10)
+        coro_a_move = self.sprite.a_move(0, 30, speed=30, fps=10)
 
         with self.assertRaises(base.AnimationError):
-            self._run_coroutines(coro_absolute, coro_relative)
+            self._run_coroutines(coro_a_move_to, coro_a_move)
+
+
+    def test_a_move_to_fails_with_running_a_move(self):
+
+        coro_a_move = self.sprite.a_move(0, 30, speed=30, fps=10)
+        coro_a_move_to = self.sprite.a_move_to(40, 0, speed=40, fps=10)
+
+        with self.assertRaises(base.AnimationError):
+            self._run_coroutines(coro_a_move, coro_a_move_to)
