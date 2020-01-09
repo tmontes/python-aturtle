@@ -481,7 +481,7 @@ class TestAsyncAnimation(test_base.TestCase):
         self._run_coroutines(coro)
 
         self.canvas.move.assert_called_once_with(None, 40, 30)
-        self.asyncio.sleep.assert_not_awaited()
+        self.assertFalse(self.asyncio.sleep_call_args, 'asyncio sleep call args')
 
 
     def test_a_move_with_speed_moves_anchor(self):
@@ -509,10 +509,9 @@ class TestAsyncAnimation(test_base.TestCase):
             self.assertAlmostEqual(dx, 4, places=1)
             self.assertAlmostEqual(dy, 3, places=1)
 
-        asyncio_sleep_awaits = self.asyncio.sleep.await_args_list
-        self.assertEqual(len(asyncio_sleep_awaits), 10, 'asyncio.sleep await count')
-        for sleep_await in asyncio_sleep_awaits:
-            sleep_duration, = sleep_await.args
+        asyncio_sleep_call_args = self.asyncio.sleep_call_args
+        self.assertEqual(len(asyncio_sleep_call_args), 10, 'asyncio.sleep await count')
+        for sleep_duration in asyncio_sleep_call_args:
             self.assertAlmostEqual(sleep_duration, 0.1, places=3)
 
         # TODO: A more correct test would check that canvas.move calls and
