@@ -583,17 +583,6 @@ class TestAsyncMoveAnimation(AsyncAnimationBase):
         self.assertFalse(data, 'no callbacks expected')
 
 
-    def test_concurrent_a_move_works(self):
-
-
-        coro_h = self.sprite.a_move(40, 0, speed=40, fps=10)
-        coro_v = self.sprite.a_move(0, 30, speed=30, fps=10)
-
-        self._run_coroutines(coro_h, coro_v)
-
-        self.assert_almost_equal_anchor(self.sprite.anchor, (40, 30), places=1)
-
-
 
 class TestAsyncMoveToAnimation(AsyncAnimationBase):
 
@@ -711,34 +700,6 @@ class TestAsyncMoveToAnimation(AsyncAnimationBase):
         self.assertFalse(data, 'no callbacks expected')
 
 
-    def test_concurrent_a_move_to_fails(self):
-
-
-        coro_h = self.sprite.a_move_to(40, 0, speed=40, fps=10)
-        coro_v = self.sprite.a_move_to(0, 30, speed=30, fps=10)
-
-        with self.assertRaises(base.AnimationError):
-            self._run_coroutines(coro_h, coro_v)
-
-
-    def test_a_move_fails_with_running_a_move_to(self):
-
-        coro_a_move_to = self.sprite.a_move_to(40, 0, speed=40, fps=10)
-        coro_a_move = self.sprite.a_move(0, 30, speed=30, fps=10)
-
-        with self.assertRaises(base.AnimationError):
-            self._run_coroutines(coro_a_move_to, coro_a_move)
-
-
-    def test_a_move_to_fails_with_running_a_move(self):
-
-        coro_a_move = self.sprite.a_move(0, 30, speed=30, fps=10)
-        coro_a_move_to = self.sprite.a_move_to(40, 0, speed=40, fps=10)
-
-        with self.assertRaises(base.AnimationError):
-            self._run_coroutines(coro_a_move, coro_a_move_to)
-
-
 
 class TestAsyncRotateAnimation(AsyncAnimationBase):
 
@@ -812,17 +773,6 @@ class TestAsyncRotateAnimation(AsyncAnimationBase):
         self._run_coroutines(coro)
 
         self.assertFalse(data, 'no callbacks expected')
-
-
-    def test_concurrent_a_rotate_works(self):
-
-
-        coro_one = self.sprite.a_rotate(20, speed=20, fps=10)
-        coro_two = self.sprite.a_rotate(10, speed=10, fps=10)
-
-        self._run_coroutines(coro_one, coro_two)
-
-        self.assertAlmostEqual(self.sprite.angle, 30, places=1)
 
 
 
@@ -899,8 +849,63 @@ class TestAsyncRotateToAnimation(AsyncAnimationBase):
         self.assertFalse(data, 'no callbacks expected')
 
 
-    def test_concurrent_a_rotate_to_fails(self):
 
+class TestAsyncAnimationConcurrency(AsyncAnimationBase):
+
+    def setUp(self):
+
+        super().setUp()
+        self.sprite = base.Sprite(canvas=self.canvas, shape=None)
+
+
+    def test_concurrent_a_move_works(self):
+
+        coro_h = self.sprite.a_move(40, 0, speed=40, fps=10)
+        coro_v = self.sprite.a_move(0, 30, speed=30, fps=10)
+
+        self._run_coroutines(coro_h, coro_v)
+
+        self.assert_almost_equal_anchor(self.sprite.anchor, (40, 30), places=1)
+
+
+    def test_concurrent_a_rotate_works(self):
+
+        coro_one = self.sprite.a_rotate(20, speed=20, fps=10)
+        coro_two = self.sprite.a_rotate(10, speed=10, fps=10)
+
+        self._run_coroutines(coro_one, coro_two)
+
+        self.assertAlmostEqual(self.sprite.angle, 30, places=1)
+
+
+    def test_concurrent_a_move_to_fails(self):
+
+        coro_h = self.sprite.a_move_to(40, 0, speed=40, fps=10)
+        coro_v = self.sprite.a_move_to(0, 30, speed=30, fps=10)
+
+        with self.assertRaises(base.AnimationError):
+            self._run_coroutines(coro_h, coro_v)
+
+
+    def test_a_move_fails_with_running_a_move_to(self):
+
+        coro_a_move_to = self.sprite.a_move_to(40, 0, speed=40, fps=10)
+        coro_a_move = self.sprite.a_move(0, 30, speed=30, fps=10)
+
+        with self.assertRaises(base.AnimationError):
+            self._run_coroutines(coro_a_move_to, coro_a_move)
+
+
+    def test_a_move_to_fails_with_running_a_move(self):
+
+        coro_a_move = self.sprite.a_move(0, 30, speed=30, fps=10)
+        coro_a_move_to = self.sprite.a_move_to(40, 0, speed=40, fps=10)
+
+        with self.assertRaises(base.AnimationError):
+            self._run_coroutines(coro_a_move, coro_a_move_to)
+
+
+    def test_concurrent_a_rotate_to_fails(self):
 
         coro_one = self.sprite.a_rotate_to(10, speed=10, fps=10)
         coro_two = self.sprite.a_rotate_to(20, speed=20, fps=10)
@@ -925,5 +930,4 @@ class TestAsyncRotateToAnimation(AsyncAnimationBase):
 
         with self.assertRaises(base.AnimationError):
             self._run_coroutines(coro_a_rotate, coro_a_rotate_to)
-
 
