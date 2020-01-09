@@ -5,10 +5,14 @@
 # See LICENSE for details.
 # ----------------------------------------------------------------------------
 
+import contextlib
+from unittest import mock
+
 from aturtle.sprites import base
 
 from . import base as test_base
 from . import fake_tkinter
+from . import fake_asyncio
 
 
 
@@ -428,3 +432,64 @@ class TestNonDefaultSprite(test_base.TestCase):
         self.sprite.rotate_to(42, update=True)
         self.canvas.update.assert_called_once_with()
 
+
+
+class TestAsyncAnimation(test_base.TestCase):
+
+    def setUp(self):
+
+        self.canvas = fake_tkinter.FakeCanvas()
+        self.sprite = base.Sprite(canvas=self.canvas, shape=None)
+
+        self.asyncio = fake_asyncio.FakeAsyncio()
+        self._exit_stack = contextlib.ExitStack()
+        self._exit_stack.enter_context(
+            mock.patch('aturtle.sprites.base.asyncio', self.asyncio)
+        )
+
+
+    def tearDown(self):
+
+        self._exit_stack.close()
+
+
+    def _run_coroutine(self, coro):
+
+        while True:
+            try:
+                coro.send(None)
+            except StopIteration:
+                break
+
+
+    def test_a_move_with_speed_None_is_single_step_and_synchronous(self):
+
+        coro = self.sprite.a_move(40, 30, speed=None, fps=10)
+        self._run_coroutine(coro)
+
+        self.canvas.move.assert_called_once_with(None, 40, 30)
+        self.asyncio.sleep.assert_not_awaited()
+
+
+    def test_a_move_with_speed_calls_canvas_move_and_asyncio_sleep(self):
+
+        coro = self.sprite.a_move(40, 30, speed=50, fps=10)
+        self._run_coroutine(coro)
+
+        # Given that the move distance is 50 and the speed is 50, animation
+        # duration is 1 second. At 10 fps, 10 frames must be generated: each
+        # with a call to canvas.move of 1/10th the distance and an await of
+        # asyncio.sleep of 1/10th the duration.
+
+        canvas_move_calls = self.canvas.move.call_args_list
+        self.assertEqual(len(canvas_move_calls), 10, 'canvas.move call count')
+        for call in canvas_move_calls:
+            _shape_id, dx, dy = call.args
+            self.assertAlmostEqual(dx, 4, places=1)
+            self.assertAlmostEqual(dy, 3, places=1)
+
+        asyncio_sleep_awaits = self.asyncio.sleep.await_args_list
+        self.assertEqual(len(asyncio_sleep_awaits), 10, 'asyncio.sleep await count')
+        for sleep_await in asyncio_sleep_awaits:
+            sleep_duration, = sleep_await.args
+            self.assertAlmostEqual(sleep_duration, 0.1, places=3)
