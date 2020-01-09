@@ -225,8 +225,8 @@ class Sprite:
         self.rotate(angle-self._angle, around=around, update=update)
 
 
-    async def a_rotate(self, dangle, *, speed=360, fps=50, easing=None,
-                       callback=None, update=False):
+    async def a_rotate(self, dangle, *, around=None, speed=360, fps=50,
+                       easing=None, callback=None, update=False):
         """
         `speed` in degrees per second
         `fps` how many updates/rotations per second
@@ -236,7 +236,7 @@ class Sprite:
         with self._rotation.relative(), contextlib.suppress(asyncio.CancelledError):
 
             if speed is None:
-                self.rotate(dangle, update=update)
+                self.rotate(dangle, around=around, update=update)
                 return
 
             total_seconds = abs(dangle / speed)
@@ -250,15 +250,15 @@ class Sprite:
                 progress = frame / total_frames
                 eased_progress = easing(progress) if easing else progress
                 eased_delta = (eased_progress - prev_eased_progress) * total_frames
-                self.rotate(frame_dangle * eased_delta, update=update)
+                self.rotate(frame_dangle * eased_delta, around=around, update=update)
                 if callback:
                     callback(eased_progress, self._angle)
                 await asyncio.sleep(frame_seconds)
                 prev_eased_progress = eased_progress
 
 
-    async def a_rotate_to(self, angle, *, speed=360, fps=50, easing=None,
-                          callback=None, update=False):
+    async def a_rotate_to(self, angle, *, around=None, speed=360, fps=50,
+                          easing=None, callback=None, update=False):
         """
         `speed` in degrees per second
         `fps` how many updates/rotations per second
@@ -267,7 +267,7 @@ class Sprite:
         with self._rotation.absolute(), contextlib.suppress(asyncio.CancelledError):
 
             if speed is None:
-                self.rotate_to(angle, update=update)
+                self.rotate_to(angle, around=around, update=update)
                 return
 
             start_angle = self._angle
@@ -283,7 +283,7 @@ class Sprite:
                 progress = frame / total_frames
                 eased_progress = easing(progress) if easing else progress
                 frame_angle = start_angle + dangle * eased_progress
-                self.rotate_to(frame_angle, update=update)
+                self.rotate_to(frame_angle, around=around, update=update)
                 if callback:
                     callback(eased_progress, self._angle)
                 await asyncio.sleep(frame_seconds)
