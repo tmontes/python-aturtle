@@ -559,9 +559,10 @@ class TestAsyncMoveAnimation(AsyncAnimationBase):
     def test_async_move_with_speed_calls_callback(self):
 
         data = []
+        async def cb(*args):
+            data.append(args)
 
-        coro = self.sprite.async_move(40, 30, speed=50, fps=10,
-                                      callback=lambda *args: data.append(args))
+        coro = self.sprite.async_move(40, 30, speed=50, fps=10, callback=cb)
         self._run_coroutines(coro)
 
         # Data should have 10 (progress, (x, y)) tuples:
@@ -575,9 +576,10 @@ class TestAsyncMoveAnimation(AsyncAnimationBase):
     def test_async_move_with_speed_None_does_not_call_callback(self):
 
         data = []
+        async def cb(*args):
+            data.append(args)
 
-        coro = self.sprite.async_move(40, 30, speed=None, fps=10,
-                                      callback=lambda *args: data.append(args))
+        coro = self.sprite.async_move(40, 30, speed=None, fps=10, callback=cb)
         self._run_coroutines(coro)
 
         self.assertFalse(data, 'no callbacks expected')
@@ -676,9 +678,10 @@ class TestAsyncMoveToAnimation(AsyncAnimationBase):
     def test_async_move_to_with_speed_calls_callback(self):
 
         data = []
+        async def cb(*args):
+            data.append(args)
 
-        coro = self.sprite.async_move_to(40, 30, speed=50, fps=10,
-                                         callback=lambda *args: data.append(args))
+        coro = self.sprite.async_move_to(40, 30, speed=50, fps=10, callback=cb)
         self._run_coroutines(coro)
 
         # Data should have 10 (progress, (x, y)) tuples:
@@ -692,9 +695,10 @@ class TestAsyncMoveToAnimation(AsyncAnimationBase):
     def test_async_move_to_with_speed_None_does_not_call_callback(self):
 
         data = []
+        async def cb(*args):
+            data.append(args)
 
-        coro = self.sprite.async_move_to(40, 30, speed=None, fps=10,
-                                         callback=lambda *args: data.append(args))
+        coro = self.sprite.async_move_to(40, 30, speed=None, fps=10, callback=cb)
         self._run_coroutines(coro)
 
         self.assertFalse(data, 'no callbacks expected')
@@ -752,9 +756,10 @@ class TestAsyncRotateAnimation(AsyncAnimationBase):
     def test_async_rotate_with_speed_calls_callback(self):
 
         data = []
+        async def cb(*args):
+            data.append(args)
 
-        coro = self.sprite.async_rotate(30, speed=30, fps=10,
-                                        callback=lambda *args: data.append(args))
+        coro = self.sprite.async_rotate(30, speed=30, fps=10, callback=cb)
         self._run_coroutines(coro)
 
         # Data should have 10 (progress, (x, y)) tuples:
@@ -767,9 +772,10 @@ class TestAsyncRotateAnimation(AsyncAnimationBase):
     def test_async_rotate_with_speed_None_does_not_call_callback(self):
 
         data = []
+        async def cb(*args):
+            data.append(args)
 
-        coro = self.sprite.async_rotate(30, speed=None, fps=10,
-                                        callback=lambda *args: data.append(args))
+        coro = self.sprite.async_rotate(30, speed=None, fps=10, callback=cb)
         self._run_coroutines(coro)
 
         self.assertFalse(data, 'no callbacks expected')
@@ -826,9 +832,10 @@ class TestAsyncRotateToAnimation(AsyncAnimationBase):
     def test_async_rotate_to_with_speed_calls_callback(self):
 
         data = []
+        async def cb(*args):
+            data.append(args)
 
-        coro = self.sprite.async_rotate_to(30, speed=10, fps=10,
-                                           callback=lambda *args: data.append(args))
+        coro = self.sprite.async_rotate_to(30, speed=10, fps=10, callback=cb)
         self._run_coroutines(coro)
 
         # Data should have 10 (progress, (x, y)) tuples:
@@ -841,9 +848,10 @@ class TestAsyncRotateToAnimation(AsyncAnimationBase):
     def test_async_rotate_to_with_speed_None_does_not_call_callback(self):
 
         data = []
+        async def cb(*args):
+            data.append(args)
 
-        coro = self.sprite.async_rotate_to(30, speed=None, fps=10,
-                                           callback=lambda *args: data.append(args))
+        coro = self.sprite.async_rotate_to(30, speed=None, fps=10, callback=cb)
         self._run_coroutines(coro)
 
         self.assertFalse(data, 'no callbacks expected')
@@ -854,8 +862,10 @@ class TestAsyncRotateToAnimation(AsyncAnimationBase):
         sprite = base.Sprite(canvas=self.canvas, shape=None, angle=350)
 
         angles = []
-        coro = sprite.async_rotate_to(10, speed=1, fps=1,
-                                      callback=lambda _p, a: angles.append(a))
+        async def cb(_progress, angle):
+            angles.append(angle)
+
+        coro = sprite.async_rotate_to(10, speed=1, fps=1, callback=cb)
         self._run_coroutines(coro)
 
         # Stored angles should grow from 351 to 359, then from 0 to 10
@@ -867,8 +877,10 @@ class TestAsyncRotateToAnimation(AsyncAnimationBase):
         sprite = base.Sprite(canvas=self.canvas, shape=None, angle=10)
 
         angles = []
-        coro = sprite.async_rotate_to(350, speed=1, fps=1,
-                                      callback=lambda _p, a: angles.append(a))
+        async def cb(_progress, angle):
+            angles.append(angle)
+
+        coro = sprite.async_rotate_to(350, speed=1, fps=1, callback=cb)
         self._run_coroutines(coro)
 
         # Stored angles should decrease from 9 to 0, then from 359 to 350.

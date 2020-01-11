@@ -205,7 +205,7 @@ class Sprite:
                 eased_delta = (eased_progress - prev_eased_progress) * total_frames
                 self.move(frame_dx * eased_delta, frame_dy * eased_delta, update=update)
                 if callback:
-                    callback(eased_progress, self._anchor)
+                    await callback(eased_progress, self._anchor)
                 await asyncio.sleep(frame_seconds)
                 prev_eased_progress = eased_progress
 
@@ -247,7 +247,7 @@ class Sprite:
                 frame_y = start_y + dy * eased_progress
                 self.move_to(frame_x, frame_y, update=update)
                 if callback:
-                    callback(eased_progress, self._anchor)
+                    await callback(eased_progress, self._anchor)
                 await asyncio.sleep(frame_seconds)
 
 
@@ -321,7 +321,7 @@ class Sprite:
                 eased_delta = (eased_progress - prev_eased_progress) * total_frames
                 self.rotate(frame_dangle * eased_delta, around=around, update=update)
                 if callback:
-                    callback(eased_progress, self._angle)
+                    await callback(eased_progress, self._angle)
                 await asyncio.sleep(frame_seconds)
                 prev_eased_progress = eased_progress
 
@@ -365,7 +365,7 @@ class Sprite:
                 frame_angle = start_angle + dangle * eased_progress
                 self.rotate_to(frame_angle, around=around, update=update)
                 if callback:
-                    callback(eased_progress, self._angle)
+                    await callback(eased_progress, self._angle)
                 await asyncio.sleep(frame_seconds)
 
 
