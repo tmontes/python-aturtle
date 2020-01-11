@@ -169,8 +169,8 @@ class Sprite:
         self.move(x - sprite_x, y - sprite_y, update=update)
 
 
-    async def a_move(self, dx, dy, *, speed=INIT, easing=INIT, callback=INIT,
-                     fps=INIT, update=INIT):
+    async def async_move(self, dx, dy, *, speed=INIT, easing=INIT, callback=INIT,
+                         fps=INIT, update=INIT):
         """
         Move the Sprite by the given relative `dx` and `dy` values.
 
@@ -210,8 +210,8 @@ class Sprite:
                 prev_eased_progress = eased_progress
 
 
-    async def a_move_to(self, x, y, *, speed=INIT, easing=INIT, callback=INIT,
-                        fps=INIT, update=INIT):
+    async def async_move_to(self, x, y, *, speed=INIT, easing=INIT, callback=INIT,
+                            fps=INIT, update=INIT):
         """
         Move the Sprite to the given absolute (`x`, `y`) position.
 
@@ -285,8 +285,8 @@ class Sprite:
         self.rotate(angle-self._angle, around=around, update=update)
 
 
-    async def a_rotate(self, dangle, *, around=None, speed=INIT, easing=INIT,
-                       callback=INIT, fps=INIT, update=INIT):
+    async def async_rotate(self, dangle, *, around=None, speed=INIT, easing=INIT,
+                           callback=INIT, fps=INIT, update=INIT):
         """
         Rotate the Sprite anchor by `angle` degrees. If `around` is None, the
         anchor is left unchanged. Otherwise, rotate it about `around`, assumed
@@ -326,8 +326,8 @@ class Sprite:
                 prev_eased_progress = eased_progress
 
 
-    async def a_rotate_to(self, angle, *, around=None, speed=INIT, easing=INIT,
-                          callback=INIT, fps=INIT, update=INIT):
+    async def async_rotate_to(self, angle, *, around=None, speed=INIT, easing=INIT,
+                              callback=INIT, fps=INIT, update=INIT):
         """
         Rotate the Sprite anchor to `angle` degrees, with 0 being the underlying
         shape's original orientation. If `anchor` is None, the anchor is left
