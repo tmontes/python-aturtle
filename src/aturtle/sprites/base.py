@@ -12,7 +12,9 @@ import math
 
 
 class AnimationError(Exception):
-    pass
+    """
+    Sprite animation error.
+    """
 
 
 
@@ -21,8 +23,8 @@ class _ConcurrentAnimationContexts:
     Provides two concurrent animation controlling context managers:
     one for relative animation, and another for absolute animation.
 
-    Supporting concurrent / cumulative relative animations, while preventing
-    any concurrency when absolute based animations are active.
+    Supports concurrent relative animations and prevents any concurrency
+    when absolute animations are active.
     """
     def __init__(self, name):
 
@@ -34,7 +36,8 @@ class _ConcurrentAnimationContexts:
     @contextlib.contextmanager
     def relative(self):
         """
-        Raises `AnimationError` when entering if absolute animations are active.
+        Tracks running relative animations. Raises `AnimationError` on enter,
+        if absolute animations are active.
         """
         if self._absolute_count:
             raise AnimationError(f'{self._absolute_count} active absolute {self._name}')
@@ -49,7 +52,8 @@ class _ConcurrentAnimationContexts:
     @contextlib.contextmanager
     def absolute(self):
         """
-        Raises `AnimationError` when entering if any animations are active.
+        Tracks running absolute animations. Raises `AnimationError` on enter,
+        if any animations are active.
         """
         if self._relative_count:
             raise AnimationError(f'{self._relative_count} active relative {self._name}')
@@ -67,7 +71,7 @@ class _ConcurrentAnimationContexts:
 class Sprite:
 
     """
-    Base class.
+    Sprite base class.
     """
 
     def __init__(self, canvas, shape, *, anchor=(0, 0), angle=0):
@@ -105,7 +109,7 @@ class Sprite:
     def move(self, dx=0, dy=0, *, update=False):
         """
         Move the Sprite by the given relative `dx` and `dy` values.
-        Update the output if `update` is true.
+        Update the output canvas if `update` is true.
         """
         sprite_x, sprite_y = self._anchor
         self._anchor = (sprite_x + dx, sprite_y + dy)
@@ -117,7 +121,7 @@ class Sprite:
     def move_to(self, x=0, y=0, *, update=False):
         """
         Move the Sprite to the given absolute (`x`, `y`) position.
-        Update the output if `update` is true.
+        Update the output canvas if `update` is true.
         """
         sprite_x, sprite_y = self._anchor
         self.move(x - sprite_x, y - sprite_y, update=update)
@@ -195,7 +199,7 @@ class Sprite:
         Rotate the Sprite anchor by `angle` degrees. If `around` is None, the
         anchor is left unchanged. Otherwise, rotate it about `around`, assumed
         to be a (cx, cy) two-tuple defining the center of rotation.
-        Update the output if `update` is true.
+        Update the output canvas if `update` is true.
         """
         self._angle = (self._angle + angle) % 360
         angle_rad = angle * math.pi / 180.0
@@ -220,7 +224,7 @@ class Sprite:
         the anchor is left unchanged. Otherwise, it is rotated around
         it, assumed to be a (cx, cy) two-tuple defining the center of
         rotation.
-        Update the output if `update` is true.
+        Update the output canvas if `update` is true.
         """
         self.rotate(angle-self._angle, around=around, update=update)
 
@@ -291,14 +295,14 @@ class Sprite:
 
     def update(self):
         """
-        Update the the output by redrawing pending movements or rotations.
+        Update the output canvas to reflect the current Sprite state.
         """
         self._canvas.update()
 
 
     def delete(self):
         """
-        Remove the Sprite from the output, getting ready for object deletion.
+        Remove the Sprite from the output canvas, getting ready for disposal.
         """
         if self._id:
             self._canvas.delete(self._id)
