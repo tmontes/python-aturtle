@@ -10,9 +10,16 @@ from . import base
 
 class Sprite(base.Sprite):
 
-    def __init__(self, canvas, shape, *, anchor=(0, 0), angle=0):
+    def __init__(self, canvas, shape, *, anchor=(0, 0), angle=0, speed=360,
+                 m_speed=None, r_speed=None, easing=None, m_easing=None,
+                 r_easing=None, m_callback=None, r_callback=None, fps=80,
+                 update=False):
 
-        super().__init__(canvas, shape, anchor=anchor, angle=angle)
+        super().__init__(canvas, shape, anchor=anchor, angle=angle,
+                         speed=speed, m_speed=m_speed, r_speed=r_speed,
+                         easing=easing, m_easing=m_easing, r_easing=r_easing,
+                         m_callback=m_callback, r_callback=r_callback,
+                         fps=fps, update=update)
 
         sprite_x, sprite_y = anchor
         shape_x, shape_y = shape.anchor

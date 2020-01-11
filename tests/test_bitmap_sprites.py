@@ -104,15 +104,15 @@ class TestDefaultSprite(base.TestCase):
         canvas_moveto.assert_called_once_with(24, 2, 2)
 
 
-    def test_rotate_does_not_call_canvas_update_idletasks(self):
+    def test_rotate_does_not_call_canvas_update(self):
 
         sprite = sprites.BitmapSprite(self.canvas, FakeBitmapShape())
         sprite.rotate(1)
-        self.canvas.update_idletasks.assert_not_called()
+        self.canvas.update.assert_not_called()
 
 
-    def test_rotate_with_update_calls_canvas_update_idletasks(self):
+    def test_rotate_with_update_calls_canvas_update(self):
 
         sprite = sprites.BitmapSprite(self.canvas, FakeBitmapShape())
         sprite.rotate(1, update=True)
-        self.canvas.update_idletasks.assert_called_once_with()
+        self.canvas.update.assert_called_once_with()

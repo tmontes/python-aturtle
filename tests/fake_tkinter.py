@@ -19,7 +19,7 @@ class FakeCanvas:
         self.yview_scroll = mock.Mock()
         self.move = mock.Mock()
         self.coords = mock.Mock()
-        self.update_idletasks = mock.Mock()
+        self.update = mock.Mock()
         self.delete = mock.Mock()
         self.create_polygon_coords = None
         self.create_polygon_kwargs = None
