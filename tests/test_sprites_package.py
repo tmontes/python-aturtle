@@ -59,6 +59,16 @@ class TestFullyPatchedNoArgs(unittest.TestCase):
             shape,
             anchor=(0, 0),
             angle=0,
+            speed=360,
+            m_speed=None,
+            r_speed=None,
+            easing=None,
+            m_easing=None,
+            r_easing=None,
+            m_callback=None,
+            r_callback=None,
+            fps=80,
+            update=False,
         )
 
         # Result is what calling the Sprite class produced.
@@ -84,6 +94,16 @@ class TestFullyPatchedNoArgs(unittest.TestCase):
             shape,
             anchor=(0, 0),
             angle=0,
+            speed=360,
+            m_speed=None,
+            r_speed=None,
+            easing=None,
+            m_easing=None,
+            r_easing=None,
+            m_callback=None,
+            r_callback=None,
+            fps=80,
+            update=False,
         )
 
         # Result is what calling the Sprite class produced.
@@ -107,6 +127,16 @@ class TestFullyPatchedNoArgs(unittest.TestCase):
             shape,
             anchor=(0, 0),
             angle=0,
+            speed=360,
+            m_speed=None,
+            r_speed=None,
+            easing=None,
+            m_easing=None,
+            r_easing=None,
+            m_callback=None,
+            r_callback=None,
+            fps=80,
+            update=False,
         )
 
         # Result is what calling the Sprite class produced.
@@ -131,6 +161,16 @@ class TestFullyPatchedNoArgs(unittest.TestCase):
             shape,
             anchor=(0, 0),
             angle=0,
+            speed=360,
+            m_speed=None,
+            r_speed=None,
+            easing=None,
+            m_easing=None,
+            r_easing=None,
+            m_callback=None,
+            r_callback=None,
+            fps=80,
+            update=False,
         )
 
         # Result is what calling the Sprite class produced.
@@ -193,6 +233,16 @@ class TestFullyPatchedWithArgs(unittest.TestCase):
             shape,
             anchor=(42, 24),
             angle=180,
+            speed=360,
+            m_speed=None,
+            r_speed=None,
+            easing=None,
+            m_easing=None,
+            r_easing=None,
+            m_callback=None,
+            r_callback=None,
+            fps=80,
+            update=False,
         )
 
         # Result is what calling the Sprite class produced.
@@ -229,6 +279,16 @@ class TestFullyPatchedWithArgs(unittest.TestCase):
             shape,
             anchor=(42, 24),
             angle=180,
+            speed=360,
+            m_speed=None,
+            r_speed=None,
+            easing=None,
+            m_easing=None,
+            r_easing=None,
+            m_callback=None,
+            r_callback=None,
+            fps=80,
+            update=False,
         )
 
         # Result is what calling the Sprite class produced.
@@ -263,6 +323,16 @@ class TestFullyPatchedWithArgs(unittest.TestCase):
             shape,
             anchor=(42, 24),
             angle=180,
+            speed=360,
+            m_speed=None,
+            r_speed=None,
+            easing=None,
+            m_easing=None,
+            r_easing=None,
+            m_callback=None,
+            r_callback=None,
+            fps=80,
+            update=False,
         )
 
         # Result is what calling the Sprite class produced.
@@ -304,6 +374,16 @@ class TestFullyPatchedWithArgs(unittest.TestCase):
             shape,
             anchor=(42, 24),
             angle=180,
+            speed=360,
+            m_speed=None,
+            r_speed=None,
+            easing=None,
+            m_easing=None,
+            r_easing=None,
+            m_callback=None,
+            r_callback=None,
+            fps=80,
+            update=False,
         )
 
         # Result is what calling the Sprite class produced.
@@ -347,6 +427,16 @@ class TestPartiallyPatchedNoArgs(unittest.TestCase):
             shape,
             anchor=(0, 0),
             angle=0,
+            speed=360,
+            m_speed=None,
+            r_speed=None,
+            easing=None,
+            m_easing=None,
+            r_easing=None,
+            m_callback=None,
+            r_callback=None,
+            fps=80,
+            update=False,
         )
 
         # Result is what calling the Sprite class produced.
@@ -371,6 +461,16 @@ class TestPartiallyPatchedNoArgs(unittest.TestCase):
             shape,
             anchor=(0, 0),
             angle=0,
+            speed=360,
+            m_speed=None,
+            r_speed=None,
+            easing=None,
+            m_easing=None,
+            r_easing=None,
+            m_callback=None,
+            r_callback=None,
+            fps=80,
+            update=False,
         )
 
         # Result is what calling the Sprite class produced.
@@ -419,6 +519,16 @@ class TestPartiallyPatchedWithArgs(unittest.TestCase):
             shape,
             anchor=(42, 24),
             angle=180,
+            speed=360,
+            m_speed=None,
+            r_speed=None,
+            easing=None,
+            m_easing=None,
+            r_easing=None,
+            m_callback=None,
+            r_callback=None,
+            fps=80,
+            update=False,
         )
 
         # Result is what calling the Sprite class produced.
@@ -448,6 +558,16 @@ class TestPartiallyPatchedWithArgs(unittest.TestCase):
             shape,
             anchor=(42, 24),
             angle=180,
+            speed=360,
+            m_speed=None,
+            r_speed=None,
+            easing=None,
+            m_easing=None,
+            r_easing=None,
+            m_callback=None,
+            r_callback=None,
+            fps=80,
+            update=False,
         )
 
         # Result is what calling the Sprite class produced.

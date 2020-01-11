@@ -15,7 +15,11 @@ from . vector import Sprite as VectorSprite
 
 
 
-def create_sprite(canvas, shape_source, *, anchor=(0, 0), angle=0, **kwargs):
+def create_sprite(canvas, shape_source, *, anchor=(0, 0), angle=0,
+                  speed=360, m_speed=None, r_speed=None,
+                  easing=None, m_easing=None, r_easing=None,
+                  m_callback=None, r_callback=None,
+                  fps=80, update=False, **kwargs):
     """
     Returns a newly created sprite from `shape_source`, placed at the `anchor`
     position in the given `canvas`.
@@ -38,17 +42,37 @@ def create_sprite(canvas, shape_source, *, anchor=(0, 0), angle=0, **kwargs):
     """
     if isinstance(shape_source, (str, pathlib.Path)):
         shape = _BitmapShape(filename=shape_source, **kwargs)
-        sprite = BitmapSprite(canvas, shape, anchor=anchor, angle=angle)
+        sprite = BitmapSprite(canvas, shape, anchor=anchor, angle=angle,
+                              speed=speed, m_speed=m_speed, r_speed=r_speed,
+                              easing=easing, m_easing=m_easing, r_easing=r_easing,
+                              m_callback=m_callback, r_callback=r_callback,
+                              fps=fps, update=update)
     elif isinstance(shape_source, bytes):
         shape = _BitmapShape(data=shape_source, **kwargs)
-        sprite = BitmapSprite(canvas, shape, anchor=anchor, angle=angle)
+        sprite = BitmapSprite(canvas, shape, anchor=anchor, angle=angle,
+                              speed=speed, m_speed=m_speed, r_speed=r_speed,
+                              easing=easing, m_easing=m_easing, r_easing=r_easing,
+                              m_callback=m_callback, r_callback=r_callback,
+                              fps=fps, update=update)
     elif isinstance(shape_source, list):
         shape = _VectorShape(shape_source, **kwargs)
-        sprite = VectorSprite(canvas, shape, anchor=anchor, angle=angle)
+        sprite = VectorSprite(canvas, shape, anchor=anchor, angle=angle,
+                              speed=speed, m_speed=m_speed, r_speed=r_speed,
+                              easing=easing, m_easing=m_easing, r_easing=r_easing,
+                              m_callback=m_callback, r_callback=r_callback,
+                              fps=fps, update=update)
     elif isinstance(shape_source, _VectorShape):
-        sprite = VectorSprite(canvas, shape_source, anchor=anchor, angle=angle)
+        sprite = VectorSprite(canvas, shape_source, anchor=anchor, angle=angle,
+                              speed=speed, m_speed=m_speed, r_speed=r_speed,
+                              easing=easing, m_easing=m_easing, r_easing=r_easing,
+                              m_callback=m_callback, r_callback=r_callback,
+                              fps=fps, update=update)
     elif isinstance(shape_source, _BitmapShape):
-        sprite = BitmapSprite(canvas, shape_source, anchor=anchor, angle=angle)
+        sprite = BitmapSprite(canvas, shape_source, anchor=anchor, angle=angle,
+                              speed=speed, m_speed=m_speed, r_speed=r_speed,
+                              easing=easing, m_easing=m_easing, r_easing=r_easing,
+                              m_callback=m_callback, r_callback=r_callback,
+                              fps=fps, update=update)
     else:
         raise TypeError(f'Unhandled shape_source type: {type(shape_source)}.')
 
