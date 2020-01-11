@@ -180,7 +180,7 @@ class TestDefaultSprite(test_base.TestCase):
         self.canvas.update.assert_called_once_with()
 
 
-    def test_move_with_no_update_calls_canvas_update(self):
+    def test_move_with_no_update_does_not_call_canvas_update(self):
 
         sprite = base.Sprite(canvas=self.canvas, shape=None)
         sprite.move(42, 24)
@@ -194,7 +194,7 @@ class TestDefaultSprite(test_base.TestCase):
         self.canvas.update.assert_called_once_with()
 
 
-    def test_move_to_with_no_update_calls_canvas_update(self):
+    def test_move_to_with_no_update_does_not_call_canvas_update(self):
 
         sprite = base.Sprite(canvas=self.canvas, shape=None)
         sprite.move_to(42, 24)
@@ -208,7 +208,7 @@ class TestDefaultSprite(test_base.TestCase):
         self.canvas.update.assert_called_once_with()
 
 
-    def test_rotate_with_no_update_calls_canvas_update(self):
+    def test_rotate_with_no_update_does_not_call_canvas_update(self):
 
         sprite = base.Sprite(canvas=self.canvas, shape=None)
         sprite.rotate(42)
@@ -222,7 +222,7 @@ class TestDefaultSprite(test_base.TestCase):
         self.canvas.update.assert_called_once_with()
 
 
-    def test_rotate_to_with_no_update_calls_canvas_update(self):
+    def test_rotate_to_with_no_update_does_not_call_canvas_update(self):
 
         sprite = base.Sprite(canvas=self.canvas, shape=None)
         sprite.rotate_to(42)
@@ -386,7 +386,7 @@ class TestNonDefaultSprite(test_base.TestCase):
         self.canvas.update.assert_called_once_with()
 
 
-    def test_move_with_no_update_calls_canvas_update(self):
+    def test_move_with_no_update_does_not_call_canvas_update(self):
 
         self.sprite.move(42, 24)
         self.canvas.update.assert_not_called()
@@ -398,7 +398,7 @@ class TestNonDefaultSprite(test_base.TestCase):
         self.canvas.update.assert_called_once_with()
 
 
-    def test_move_to_with_no_update_calls_canvas_update(self):
+    def test_move_to_with_no_update_does_not_call_canvas_update(self):
 
         self.sprite.move_to(42, 24)
         self.canvas.update.assert_not_called()
@@ -410,7 +410,7 @@ class TestNonDefaultSprite(test_base.TestCase):
         self.canvas.update.assert_called_once_with()
 
 
-    def test_rotate_with_no_update_calls_canvas_update(self):
+    def test_rotate_with_no_update_does_not_call_canvas_update(self):
 
         self.sprite.rotate(42)
         self.canvas.update.assert_not_called()
@@ -422,7 +422,7 @@ class TestNonDefaultSprite(test_base.TestCase):
         self.canvas.update.assert_called_once_with()
 
 
-    def test_rotate_to_with_no_update_calls_canvas_update(self):
+    def test_rotate_to_with_no_update_does_not_call_canvas_update(self):
 
         self.sprite.rotate_to(42)
         self.canvas.update.assert_not_called()
@@ -743,7 +743,7 @@ class TestAsyncRotateAnimation(AsyncAnimationBase):
         coro = self.sprite.async_rotate(30, speed=30, fps=10)
         self._run_coroutines(coro)
 
-        # Given that the move distance is 30 and the speed is 50, animation
+        # Given that the move "distance" is 30 and the speed is 30, animation
         # duration is 1 second. At 10 fps, 10 frames must be generated: each
         # with a an await of asyncio.sleep of 1/10th the duration.
 
@@ -762,7 +762,7 @@ class TestAsyncRotateAnimation(AsyncAnimationBase):
         coro = self.sprite.async_rotate(30, speed=30, fps=10, callback=cb)
         self._run_coroutines(coro)
 
-        # Data should have 10 (progress, (x, y)) tuples:
+        # Data should have 10 (progress, angle) tuples:
         self.assertEqual(len(data), 10, 'callback count')
         for i, (progress, angle) in enumerate(data, start=1):
             self.assertAlmostEqual(progress, i/10, places=3)
@@ -814,12 +814,12 @@ class TestAsyncRotateToAnimation(AsyncAnimationBase):
         self.assertAlmostEqual(self.sprite.angle, 30, places=1)
 
 
-    def test_async_rotate_to_with_speed_calls_canvas_move_and_asyncio_sleep(self):
+    def test_async_rotate_to_with_speed_calls_asyncio_sleep(self):
 
         coro = self.sprite.async_rotate_to(30, speed=10, fps=10)
         self._run_coroutines(coro)
 
-        # Given that the move distance is 10 and the speed is 10, animation
+        # Given that the move "distance" is 10 and the speed is 10, animation
         # duration is 1 second. At 10 fps, 10 frames must be generated: each
         # with a call to asyncio.sleep of 1/10th the duration.
 
@@ -838,7 +838,7 @@ class TestAsyncRotateToAnimation(AsyncAnimationBase):
         coro = self.sprite.async_rotate_to(30, speed=10, fps=10, callback=cb)
         self._run_coroutines(coro)
 
-        # Data should have 10 (progress, (x, y)) tuples:
+        # Data should have 10 (progress, angle) tuples:
         self.assertEqual(len(data), 10, 'callback count')
         for i, (progress, angle) in enumerate(data, start=1):
             self.assertAlmostEqual(progress, i/10, places=3)
