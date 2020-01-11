@@ -68,16 +68,49 @@ class _ConcurrentAnimationContexts:
 
 
 
+class _InitValue:
+    # Ensure a nicer help() output.
+    def __repr__(self):
+        return '<InitValue>'
+
+# Used in default argument values to mean "use whatever was set at init time".
+INIT = _InitValue()
+
+
+
 class Sprite:
 
     """
     Sprite base class.
     """
 
-    def __init__(self, canvas, shape, *, anchor=(0, 0), angle=0):
+    def __init__(self, canvas, shape, *, anchor=(0, 0), angle=0, speed=360,
+                 m_speed=None, r_speed=None, easing=None, m_easing=None,
+                 r_easing=None, m_callback=None, r_callback=None, fps=80,
+                 update=False):
         """
         Initialize a Sprite with the given `shape` and place it on the output
         `canvas` at the given `x`, `y` coordinates, rotated `angle` degrees.
+
+        Sprite moves at `m_speed` canvas units per second, and rotates at
+        `r_speed` degrees per second; if None they default to `speed`.
+
+        Movement speed is changed by the `m_easing` callable, if passed, and
+        rotation speed is changed by the `r_easing` callable; if None, they
+        default to the `easing` callable.
+
+        If set, `m_callback` is called once per frame with (progress, anchor)
+        positional arguments, where progress is a number that goes from 0 to 1
+        througout the animation, and anchor is an (x, y) tuple with the Sprite's
+        position at the time. If set, `r_callback` is called once per frame with
+        (progress, angle) positional arguments, where progress is as above, and
+        angle is the Sprite's angle at the time.
+
+        Movement and rotation animations generate an aproximation of `fps`
+        frames per second.
+
+        When `update` is true, the output canvas is updated automatically after
+        every frame of every movement or rotation.
         """
         self._canvas = canvas
         self._id = None
@@ -85,6 +118,15 @@ class Sprite:
         self._shape = shape
         self._anchor = anchor
         self._angle = angle
+
+        self._m_speed = m_speed if m_speed is not None else speed
+        self._r_speed = r_speed if r_speed is not None else speed
+        self._m_easing = m_easing if m_easing is not None else easing
+        self._r_easing = r_easing if r_easing is not None else easing
+        self._m_callback = m_callback
+        self._r_callback = r_callback
+        self._fps = fps
+        self._update = update
 
         self._movement = _ConcurrentAnimationContexts('moves')
         self._rotation = _ConcurrentAnimationContexts('rotates')
@@ -120,26 +162,33 @@ class Sprite:
 
     def move_to(self, x=0, y=0, *, update=False):
         """
-        Move the Sprite to the given absolute (`x`, `y`) position.
+        Move the Sprite to the given absolute `x`, `y` position.
         Update the output canvas if `update` is true.
         """
         sprite_x, sprite_y = self._anchor
         self.move(x - sprite_x, y - sprite_y, update=update)
 
 
-    async def a_move(self, dx, dy, *, speed=100, fps=50, easing=None,
-                     callback=None, update=False):
+    async def a_move(self, dx, dy, *, speed=INIT, easing=INIT, callback=INIT,
+                     fps=INIT, update=INIT):
         """
-        `speed` in units per second
-        `fps` how many updates/moves per second
-        `easing` callable mapping time to progress, both in the [0, 1] range
-        `callback` called once per frame, with current (progress, anchor).
+        Move the Sprite by the given relative `dx` and `dy` values.
+
+        The `speed`, `easing`, `callback`, `fps`, and `update` arguments over-
+        ride the initialized values. If `speed` is None, there's no animation.
         """
         with self._movement.relative(), contextlib.suppress(asyncio.CancelledError):
+
+            speed = self._r_speed if speed is INIT else speed
+            update = self._update if update is INIT else update
 
             if speed is None:
                 self.move(dx, dy, update=update)
                 return
+
+            easing = self._m_easing if easing is INIT else easing
+            callback = self._m_callback if callback is INIT else callback
+            fps = self._fps if fps is INIT else fps
 
             distance = (dx ** 2 + dy ** 2) ** 0.5
             total_seconds = distance / speed
@@ -161,18 +210,26 @@ class Sprite:
                 prev_eased_progress = eased_progress
 
 
-    async def a_move_to(self, x, y, *, speed=100, fps=50, easing=None,
-                        callback=None, update=False):
+    async def a_move_to(self, x, y, *, speed=INIT, easing=INIT, callback=INIT,
+                        fps=INIT, update=INIT):
         """
-        `speed` in units per second
-        `fps` how many updates/moves per second
-        `easing` callable mapping time to progress, both in the [0, 1] range
+        Move the Sprite to the given absolute (`x`, `y`) position.
+
+        The `speed`, `easing`, `callback`, `fps`, and `update` arguments over-
+        ride the initialized values. If `speed` is None, there's no animation.
         """
         with self._movement.absolute(), contextlib.suppress(asyncio.CancelledError):
+
+            speed = self._r_speed if speed is INIT else speed
+            update = self._update if update is INIT else update
 
             if speed is None:
                 self.move_to(x, y, update=update)
                 return
+
+            easing = self._m_easing if easing is INIT else easing
+            callback = self._m_callback if callback is INIT else callback
+            fps = self._fps if fps is INIT else fps
 
             start_x, start_y = self._anchor
             dx = x - start_x
@@ -219,29 +276,37 @@ class Sprite:
 
     def rotate_to(self, angle=0, around=None, update=False):
         """
-        Rotate the Sprite anchor to `angle` degrees, with 0 being the
-        underlying shape's original orientation. If `anchor` is None,
-        the anchor is left unchanged. Otherwise, it is rotated around
-        it, assumed to be a (cx, cy) two-tuple defining the center of
-        rotation.
+        Rotate the Sprite anchor to `angle` degrees, with 0 being the underlying
+        shape's original orientation. If `anchor` is None, the anchor is left
+        unchanged. Otherwise, it is rotated around it, assumed to be a (cx, cy)
+        two-tuple defining the center of rotation.
         Update the output canvas if `update` is true.
         """
         self.rotate(angle-self._angle, around=around, update=update)
 
 
-    async def a_rotate(self, dangle, *, around=None, speed=360, fps=50,
-                       easing=None, callback=None, update=False):
+    async def a_rotate(self, dangle, *, around=None, speed=INIT, easing=INIT,
+                       callback=INIT, fps=INIT, update=INIT):
         """
-        `speed` in degrees per second
-        `fps` how many updates/rotations per second
-        `easing` callable mapping time to progress, both in the [0, 1] range
-        `callback` called once per frame, with current (progress, angle).
+        Rotate the Sprite anchor by `angle` degrees. If `around` is None, the
+        anchor is left unchanged. Otherwise, rotate it about `around`, assumed
+        to be a (cx, cy) two-tuple defining the center of rotation.
+
+        The `speed`, `easing`, `callback`, `fps`, and `update` arguments over-
+        ride the initialized values. If `speed` is None, there's no animation.
         """
         with self._rotation.relative(), contextlib.suppress(asyncio.CancelledError):
+
+            speed = self._r_speed if speed is INIT else speed
+            update = self._update if update is INIT else update
 
             if speed is None:
                 self.rotate(dangle, around=around, update=update)
                 return
+
+            easing = self._r_easing if easing is INIT else easing
+            callback = self._r_callback if callback is INIT else callback
+            fps = self._fps if fps is INIT else fps
 
             total_seconds = abs(dangle / speed)
             total_frames = int(total_seconds * fps)
@@ -261,18 +326,29 @@ class Sprite:
                 prev_eased_progress = eased_progress
 
 
-    async def a_rotate_to(self, angle, *, around=None, speed=360, fps=50,
-                          easing=None, callback=None, update=False):
+    async def a_rotate_to(self, angle, *, around=None, speed=INIT, easing=INIT,
+                          callback=INIT, fps=INIT, update=INIT):
         """
-        `speed` in degrees per second
-        `fps` how many updates/rotations per second
-        `easing` callable mapping time to progress, both in the [0, 1] range
+        Rotate the Sprite anchor to `angle` degrees, with 0 being the underlying
+        shape's original orientation. If `anchor` is None, the anchor is left
+        unchanged. Otherwise, it is rotated around it, assumed to be a (cx, cy)
+        two-tuple defining the center of rotation.
+
+        The `speed`, `easing`, `callback`, `fps`, and `update` arguments over-
+        ride the initialized values. If `speed` is None, there's no animation.
         """
         with self._rotation.absolute(), contextlib.suppress(asyncio.CancelledError):
+
+            speed = self._r_speed if speed is INIT else speed
+            update = self._update if update is INIT else update
 
             if speed is None:
                 self.rotate_to(angle, around=around, update=update)
                 return
+
+            easing = self._r_easing if easing is INIT else easing
+            callback = self._r_callback if callback is INIT else callback
+            fps = self._fps if fps is INIT else fps
 
             start_angle = self._angle
             dangle = (angle - start_angle) % 360
