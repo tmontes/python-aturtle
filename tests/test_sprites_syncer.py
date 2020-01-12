@@ -31,6 +31,7 @@ class Test(unittest.TestCase):
 
         sync_sleep = syncer.create_sync_func(async_sleep, lambda n: n)
 
+        # Patch the function's `time` global for testing purposes.
         time_module_mock = mock.Mock()
         sync_sleep.__globals__['time'] = time_module_mock
 
@@ -47,6 +48,7 @@ class Test(unittest.TestCase):
 
         sync_sleep = syncer.create_sync_func(async_sleep, lambda n: n)
 
+        # Patch the function's `time` global for testing purposes.
         time_module_mock = mock.Mock()
         sync_sleep.__globals__['time'] = time_module_mock
 
@@ -63,6 +65,7 @@ class Test(unittest.TestCase):
 
         sync_sleep = syncer.create_sync_func(async_sleep, lambda n: n)
 
+        # Patch the function's `time` global for testing purposes.
         time_module_mock = mock.Mock()
         sync_sleep.__globals__['time'] = time_module_mock
 
@@ -74,8 +77,6 @@ class Test(unittest.TestCase):
 
     def test_syncer_converts_awaited_self_references(self):
 
-        time_module_mock = mock.Mock()
-
         class Async:
             async def async_sleep(self, duration):
                 await asyncio.sleep(duration)
@@ -86,11 +87,13 @@ class Test(unittest.TestCase):
             sync_sleep = syncer.create_sync_func(async_sleep, lambda n: n[1:])
             sync_repeat = syncer.create_sync_func(async_repeat, lambda n: n[1:])
 
-            # Could not figure out how to patch after class creation. :/
-            sync_sleep.__globals__['time'] = time_module_mock
+        a = Async()
+
+        # Patch the function's `time` global for testing purposes.
+        time_module_mock = mock.Mock()
+        a.sync_sleep.__func__.__globals__['time'] = time_module_mock
 
         # Should call auto-generated a.sync_sleep which calls `time.sleep`.
-        a = Async()
         a.sync_repeat(7, 42)
 
         # `time.sleep` was called 42 times
