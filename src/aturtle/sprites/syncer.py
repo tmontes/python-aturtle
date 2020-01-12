@@ -121,7 +121,8 @@ def create_sync_func(async_func, name_transformer):
     # Finally, create the sync function from sync code and globals.
     sync_func = types.FunctionType(sync_code, sync_func_globals, sync_name)
     # Is there a better way of "copying" default kwarg values?
-    sync_func.__kwdefaults__ = dict(async_func.__kwdefaults__)
+    if async_func.__kwdefaults__:
+        sync_func.__kwdefaults__ = dict(async_func.__kwdefaults__)
 
     return sync_func
 
