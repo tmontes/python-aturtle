@@ -238,12 +238,12 @@ class Sprite:
         The `update` argument overrides the initialized value.
         """
         self._angle = (self._angle + angle) % 360
-        angle_rad = angle * math.pi / 180.0
         if around:
             sprite_x, sprite_y = self._anchor
             cx, cy = around
             sprite_x -= cx
             sprite_y -= cy
+            angle_rad = angle * math.pi / 180.0
             sin_theta = math.sin(angle_rad)
             cos_theta = math.cos(angle_rad)
             new_x = sprite_x * cos_theta - sprite_y * sin_theta + cx
