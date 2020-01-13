@@ -147,8 +147,7 @@ class Sprite:
         self._anchor = (sprite_x + dx, sprite_y + dy)
         self._canvas.move(self._id, dx, dy)
 
-        update = self._update if update is None else update
-        if update:
+        if update or self._update:
             self.update()
 
 
@@ -172,7 +171,6 @@ class Sprite:
         with self._movement.relative(), contextlib.suppress(asyncio.CancelledError):
 
             speed = self._r_speed if speed is None else speed
-            update = self._update if update is None else update
             easing = self._m_easing if easing is None else easing
             callback = self._m_callback if callback is None else callback
             fps = self._fps if fps is None else fps
@@ -208,7 +206,6 @@ class Sprite:
         with self._movement.absolute(), contextlib.suppress(asyncio.CancelledError):
 
             speed = self._r_speed if speed is None else speed
-            update = self._update if update is None else update
             easing = self._m_easing if easing is None else easing
             callback = self._m_callback if callback is None else callback
             fps = self._fps if fps is None else fps
@@ -253,8 +250,7 @@ class Sprite:
             new_y = sprite_x * sin_theta + sprite_y * cos_theta + cy
             self._anchor = (new_x, new_y)
 
-        update = self._update if update is None else update
-        if update:
+        if update or self._update:
             self.update()
 
 
@@ -282,7 +278,6 @@ class Sprite:
         with self._rotation.relative(), contextlib.suppress(asyncio.CancelledError):
 
             speed = self._r_speed if speed is None else speed
-            update = self._update if update is None else update
             easing = self._r_easing if easing is None else easing
             callback = self._r_callback if callback is None else callback
             fps = self._fps if fps is None else fps
@@ -319,7 +314,6 @@ class Sprite:
         with self._rotation.absolute(), contextlib.suppress(asyncio.CancelledError):
 
             speed = self._r_speed if speed is None else speed
-            update = self._update if update is None else update
             easing = self._r_easing if easing is None else easing
             callback = self._r_callback if callback is None else callback
             fps = self._fps if fps is None else fps
