@@ -138,22 +138,24 @@ class Sprite:
         return self._angle
 
 
-    def move(self, dx=0, dy=0, *, update=False):
+    def move(self, dx=0, dy=0, *, update=None):
         """
         Move the Sprite by the given relative `dx` and `dy` values.
-        Update the output canvas if `update` is true.
+        The `update` argument overrides the initialized value.
         """
         sprite_x, sprite_y = self._anchor
         self._anchor = (sprite_x + dx, sprite_y + dy)
         self._canvas.move(self._id, dx, dy)
+
+        update = self._update if update is None else update
         if update:
             self.update()
 
 
-    def move_to(self, x=0, y=0, *, update=False):
+    def move_to(self, x=0, y=0, *, update=None):
         """
         Move the Sprite to the given absolute `x`, `y` position.
-        Update the output canvas if `update` is true.
+        The `update` argument overrides the initialized value.
         """
         sprite_x, sprite_y = self._anchor
         self.move(x - sprite_x, y - sprite_y, update=update)
@@ -231,12 +233,12 @@ class Sprite:
                 await asyncio.sleep(frame_seconds)
 
 
-    def rotate(self, angle=0, *, around=None, update=False):
+    def rotate(self, angle=0, *, around=None, update=None):
         """
         Rotate the Sprite anchor by `angle` degrees. If `around` is None, the
         anchor is left unchanged. Otherwise, rotate it about `around`, assumed
         to be a (cx, cy) two-tuple defining the center of rotation.
-        Update the output canvas if `update` is true.
+        The `update` argument overrides the initialized value.
         """
         self._angle = (self._angle + angle) % 360
         angle_rad = angle * math.pi / 180.0
@@ -250,17 +252,19 @@ class Sprite:
             new_x = sprite_x * cos_theta - sprite_y * sin_theta + cx
             new_y = sprite_x * sin_theta + sprite_y * cos_theta + cy
             self._anchor = (new_x, new_y)
+
+        update = self._update if update is None else update
         if update:
             self.update()
 
 
-    def rotate_to(self, angle=0, around=None, update=False):
+    def rotate_to(self, angle=0, around=None, update=None):
         """
         Rotate the Sprite anchor to `angle` degrees, with 0 being the underlying
         shape's original orientation. If `anchor` is None, the anchor is left
         unchanged. Otherwise, it is rotated around it, assumed to be a (cx, cy)
         two-tuple defining the center of rotation.
-        Update the output canvas if `update` is true.
+        The `update` argument overrides the initialized value.
         """
         self.rotate(angle-self._angle, around=around, update=update)
 
