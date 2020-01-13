@@ -50,7 +50,7 @@ class Sprite(base.Sprite):
     def rotate(self, angle=0, *, around=None, update=None):
 
         # Rotate anchor point and update angle.
-        super().rotate(angle, around=around, update=update)
+        super().rotate(angle, around=around, update=False)
 
         # Use the shape for the new orientation.
         self._canvas.coords(
