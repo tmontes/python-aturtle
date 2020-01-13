@@ -31,13 +31,12 @@ class Test(unittest.TestCase):
 
         sync_sleep = syncer.create_sync_func(async_sleep, lambda n: n)
 
-        # Patch the function's `time` global for testing purposes.
+        # The `time` module was injected into the function globals.
         time_module_mock = mock.Mock()
-        sync_sleep.__globals__['time'] = time_module_mock
+        with mock.patch(__name__ + '.time', time_module_mock):
+            sync_sleep()
 
-        # Should call `time.sleep(42)`
-        sync_sleep()
-
+        # `time.sleep(42)` was called.
         time_module_mock.sleep.assert_called_once_with(42)
 
 
@@ -48,13 +47,12 @@ class Test(unittest.TestCase):
 
         sync_sleep = syncer.create_sync_func(async_sleep, lambda n: n)
 
-        # Patch the function's `time` global for testing purposes.
+        # The `time` module was injected into the function globals.
         time_module_mock = mock.Mock()
-        sync_sleep.__globals__['time'] = time_module_mock
+        with mock.patch(__name__ + '.time', time_module_mock):
+            sync_sleep()
 
-        # Should call `time.sleep(42)`
-        sync_sleep()
-
+        # `time.sleep(42)` was called.
         time_module_mock.sleep.assert_called_once_with(42)
 
 
@@ -65,13 +63,12 @@ class Test(unittest.TestCase):
 
         sync_sleep = syncer.create_sync_func(async_sleep, lambda n: n)
 
-        # Patch the function's `time` global for testing purposes.
+        # The `time` module was injected into the function globals.
         time_module_mock = mock.Mock()
-        sync_sleep.__globals__['time'] = time_module_mock
+        with mock.patch(__name__ + '.time', time_module_mock):
+            sync_sleep(duration=24)
 
-        # Should call `time.sleep(24)`
-        sync_sleep(duration=24)
-
+        # `time.sleep(24)` was called.
         time_module_mock.sleep.assert_called_once_with(24)
 
 
@@ -89,17 +86,16 @@ class Test(unittest.TestCase):
 
         a = Async()
 
-        # Patch the function's `time` global for testing purposes.
+        # The `time` module was injected into the method globals.
         time_module_mock = mock.Mock()
-        a.sync_sleep.__func__.__globals__['time'] = time_module_mock
+        with mock.patch(__name__ + '.time', time_module_mock):
+            a.sync_repeat(7, 42)
 
-        # Should call auto-generated a.sync_sleep which calls `time.sleep`.
-        a.sync_repeat(7, 42)
-
-        # `time.sleep` was called 42 times
+        # `time.sleep` was called 42 times..
         time_sleep_call_args_list = time_module_mock.sleep.call_args_list
         self.assertEqual(len(time_sleep_call_args_list), 42, 'time.sleep call count')
 
-        # `time.sleep` was always called with a single positional argument: 7
+        # `time.sleep` was always called with a single positional argument: 7.
         for time_sleep_call_args in time_sleep_call_args_list:
             self.assertEqual(time_sleep_call_args, mock.call(7))
+
