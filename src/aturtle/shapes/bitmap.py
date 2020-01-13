@@ -63,7 +63,7 @@ class Shape(base.Shape):
         else:
             # No tkinter, PIL was imported successfully.
             source = filename if filename else io.BytesIO(base64.b64decode(data))
-            image = Image.open(source)
+            image = Image.open(source).convert('RGBA')
             width = image.width
             height = image.height
 
