@@ -31,9 +31,9 @@ class Sprite(base.Sprite):
         )
 
 
-    def rotate(self, angle=0, *, around=None, update=False):
+    def rotate(self, angle=0, *, around=None, update=None):
 
-        # Rotate anchor point if needed.
+        # Rotate anchor point and update angle.
         super().rotate(angle, around=around, update=False)
 
         # Anchor point rotated, move the shape.
@@ -49,5 +49,5 @@ class Sprite(base.Sprite):
         # Use the pre-rendered shape for the new orientation.
         self._canvas.itemconfig(self._id, image=self._shape[self._angle])
 
-        if update:
-            self.update()
+        if update or self._update:
+            self._canvas.update()
