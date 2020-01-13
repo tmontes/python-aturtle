@@ -23,6 +23,9 @@ class FakePILImage:
     def open(cls, *args, **kwargs):
         return cls(*args, **kwargs)
 
+    def convert(self, _format):
+        return self
+
     rotate = mock.Mock()
 
     @classmethod
