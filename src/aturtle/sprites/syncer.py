@@ -112,7 +112,7 @@ def create_sync_func(async_func, name_transformer):
     sync_code = next(filter(is_code_object, sync_mod_code.co_consts))
 
     # The sync code has references to the `time` module: ensure it's reachable.
-    sync_func_globals = dict(async_func.__globals__)
+    sync_func_globals = async_func.__globals__
     sync_func_globals['time'] = time
 
     # Create the sync function's name from the async one.
