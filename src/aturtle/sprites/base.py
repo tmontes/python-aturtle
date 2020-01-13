@@ -9,6 +9,8 @@ import asyncio
 import contextlib
 import math
 
+from . import syncer
+
 
 
 class AnimationError(Exception):
@@ -138,6 +140,9 @@ class Sprite:
         return self._angle
 
 
+    # ------------------------------------------------------------------------
+    # Direct movement and rotation methods: no animation at play.
+
     def move(self, dx=0, dy=0, *, update=None):
         """
         Move the Sprite by the given relative `dx` and `dy` values.
@@ -158,76 +163,6 @@ class Sprite:
         """
         sprite_x, sprite_y = self._anchor
         self.move(x - sprite_x, y - sprite_y, update=update)
-
-
-    async def async_move(self, dx, dy, *, speed=None, easing=None, callback=None,
-                         fps=None, update=None):
-        """
-        Move the Sprite by the given relative `dx` and `dy` values.
-
-        The `speed`, `easing`, `callback`, `fps`, and `update` arguments over-
-        ride the initialized values.
-        """
-        with self._movement.relative(), contextlib.suppress(asyncio.CancelledError):
-
-            speed = self._r_speed if speed is None else speed
-            easing = self._m_easing if easing is None else easing
-            callback = self._m_callback if callback is None else callback
-            fps = self._fps if fps is None else fps
-
-            distance = (dx ** 2 + dy ** 2) ** 0.5
-            total_seconds = distance / speed
-            total_frames = int(total_seconds * fps)
-            frame_seconds = 1 / fps
-
-            frame_dx = dx / total_frames
-            frame_dy = dy / total_frames
-
-            prev_eased_progress = 0
-            for frame in range(1, total_frames+1):
-                progress = frame / total_frames
-                eased_progress = easing(progress) if easing else progress
-                eased_delta = (eased_progress - prev_eased_progress) * total_frames
-                self.move(frame_dx * eased_delta, frame_dy * eased_delta, update=update)
-                if callback:
-                    await callback(eased_progress, self._anchor)
-                await asyncio.sleep(frame_seconds)
-                prev_eased_progress = eased_progress
-
-
-    async def async_move_to(self, x, y, *, speed=None, easing=None, callback=None,
-                            fps=None, update=None):
-        """
-        Move the Sprite to the given absolute (`x`, `y`) position.
-
-        The `speed`, `easing`, `callback`, `fps`, and `update` arguments over-
-        ride the initialized values.
-        """
-        with self._movement.absolute(), contextlib.suppress(asyncio.CancelledError):
-
-            speed = self._r_speed if speed is None else speed
-            easing = self._m_easing if easing is None else easing
-            callback = self._m_callback if callback is None else callback
-            fps = self._fps if fps is None else fps
-
-            start_x, start_y = self._anchor
-            dx = x - start_x
-            dy = y - start_y
-
-            distance = (dx ** 2 + dy ** 2) ** 0.5
-            total_seconds = distance / speed
-            total_frames = int(total_seconds * fps)
-            frame_seconds = 1 / fps
-
-            for frame in range(1, total_frames+1):
-                progress = frame / total_frames
-                eased_progress = easing(progress) if easing else progress
-                frame_x = start_x + dx * eased_progress
-                frame_y = start_y + dy * eased_progress
-                self.move_to(frame_x, frame_y, update=update)
-                if callback:
-                    await callback(eased_progress, self._anchor)
-                await asyncio.sleep(frame_seconds)
 
 
     def rotate(self, angle=0, *, around=None, update=None):
@@ -265,12 +200,85 @@ class Sprite:
         self.rotate(angle-self._angle, around=around, update=update)
 
 
+    # ------------------------------------------------------------------------
+    # Async animated movement and rotation methods.
+
+    async def async_move(self, dx, dy, *, speed=None, easing=None, callback=None,
+                         fps=None, update=None):
+        """
+        Move the Sprite by the given relative `dx` and `dy` values. Animated.
+
+        The `speed`, `easing`, `callback`, `fps`, and `update` arguments over-
+        ride the initialized values.
+        """
+        with self._movement.relative(), contextlib.suppress(asyncio.CancelledError):
+
+            speed = self._r_speed if speed is None else speed
+            easing = self._m_easing if easing is None else easing
+            callback = self._m_callback if callback is None else callback
+            fps = self._fps if fps is None else fps
+
+            distance = (dx ** 2 + dy ** 2) ** 0.5
+            total_seconds = distance / speed
+            total_frames = int(total_seconds * fps)
+            frame_seconds = 1 / fps
+
+            frame_dx = dx / total_frames
+            frame_dy = dy / total_frames
+
+            prev_eased_progress = 0
+            for frame in range(1, total_frames+1):
+                progress = frame / total_frames
+                eased_progress = easing(progress) if easing else progress
+                eased_delta = (eased_progress - prev_eased_progress) * total_frames
+                self.move(frame_dx * eased_delta, frame_dy * eased_delta, update=update)
+                if callback:
+                    await callback(eased_progress, self._anchor)
+                await asyncio.sleep(frame_seconds)
+                prev_eased_progress = eased_progress
+
+
+    async def async_move_to(self, x, y, *, speed=None, easing=None, callback=None,
+                            fps=None, update=None):
+        """
+        Move the Sprite to the given absolute (`x`, `y`) position. Animated.
+
+        The `speed`, `easing`, `callback`, `fps`, and `update` arguments over-
+        ride the initialized values.
+        """
+        with self._movement.absolute(), contextlib.suppress(asyncio.CancelledError):
+
+            speed = self._r_speed if speed is None else speed
+            easing = self._m_easing if easing is None else easing
+            callback = self._m_callback if callback is None else callback
+            fps = self._fps if fps is None else fps
+
+            start_x, start_y = self._anchor
+            dx = x - start_x
+            dy = y - start_y
+
+            distance = (dx ** 2 + dy ** 2) ** 0.5
+            total_seconds = distance / speed
+            total_frames = int(total_seconds * fps)
+            frame_seconds = 1 / fps
+
+            for frame in range(1, total_frames+1):
+                progress = frame / total_frames
+                eased_progress = easing(progress) if easing else progress
+                frame_x = start_x + dx * eased_progress
+                frame_y = start_y + dy * eased_progress
+                self.move_to(frame_x, frame_y, update=update)
+                if callback:
+                    await callback(eased_progress, self._anchor)
+                await asyncio.sleep(frame_seconds)
+
+
     async def async_rotate(self, dangle, *, around=None, speed=None, easing=None,
                            callback=None, fps=None, update=None):
         """
         Rotate the Sprite anchor by `angle` degrees. If `around` is None, the
         anchor is left unchanged. Otherwise, rotate it about `around`, assumed
-        to be a (cx, cy) two-tuple defining the center of rotation.
+        to be a (cx, cy) two-tuple defining the center of rotation. Animated.
 
         The `speed`, `easing`, `callback`, `fps`, and `update` arguments over-
         ride the initialized values. If `speed` is None, there's no animation.
@@ -306,7 +314,7 @@ class Sprite:
         Rotate the Sprite anchor to `angle` degrees, with 0 being the underlying
         shape's original orientation. If `anchor` is None, the anchor is left
         unchanged. Otherwise, it is rotated around it, assumed to be a (cx, cy)
-        two-tuple defining the center of rotation.
+        two-tuple defining the center of rotation. Animated.
 
         The `speed`, `easing`, `callback`, `fps`, and `update` arguments over-
         ride the initialized values. If `speed` is None, there's no animation.
@@ -336,6 +344,28 @@ class Sprite:
                     await callback(eased_progress, self._angle)
                 await asyncio.sleep(frame_seconds)
 
+
+    # ------------------------------------------------------------------------
+    # Sync animated movement and rotation methods.
+    #
+    # The synchronous versions of the async animated movement and rotation
+    # methods are # automatically generated by the code in the `syncer` module.
+    #
+    # The `name_mapper` function is defined exclusively for this purpuse,
+    # being deleted after the fact, in order not to pollute the class attrs.
+
+    def name_mapper(name):
+        return name[1:] if name.startswith('async_') else name
+
+    sync_move = syncer.create_sync_func(async_move, name_mapper)
+    sync_move_to = syncer.create_sync_func(async_move_to, name_mapper)
+    sync_rotate = syncer.create_sync_func(async_rotate, name_mapper)
+    sync_rotate_to = syncer.create_sync_func(async_rotate_to, name_mapper)
+
+    del name_mapper
+
+
+    # ------------------------------------------------------------------------
 
     def delete(self):
         """
