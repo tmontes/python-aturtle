@@ -148,7 +148,7 @@ class Sprite:
         self._canvas.move(self._id, dx, dy)
 
         if update or self._update:
-            self.update()
+            self._canvas.update()
 
 
     def move_to(self, x=0, y=0, *, update=None):
@@ -251,7 +251,7 @@ class Sprite:
             self._anchor = (new_x, new_y)
 
         if update or self._update:
-            self.update()
+            self._canvas.update()
 
 
     def rotate_to(self, angle=0, around=None, update=None):
@@ -335,13 +335,6 @@ class Sprite:
                 if callback:
                     await callback(eased_progress, self._angle)
                 await asyncio.sleep(frame_seconds)
-
-
-    def update(self):
-        """
-        Update the output canvas to reflect the current Sprite state.
-        """
-        self._canvas.update()
 
 
     def delete(self):

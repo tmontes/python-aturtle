@@ -205,14 +205,6 @@ class TestDefaultSprite(base.TestCase):
         self.canvas.update.assert_called_once_with()
 
 
-    def test_update_calls_canvas_update(self):
-
-        sprite = sprites.VectorSprite(self.canvas, UnitSquare())
-
-        sprite.update()
-        self.canvas.update.assert_called_once_with()
-
-
     def test_delete_calls_canvas_delete(self):
 
         sprite = sprites.VectorSprite(self.canvas, UnitSquare())

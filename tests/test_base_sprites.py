@@ -173,13 +173,6 @@ class TestDefaultSprite(test_base.TestCase):
         self.assertAlmostEqual(sprite.angle, 90, places=1)
 
 
-    def test_update_calls_canvas_update(self):
-
-        sprite = base.Sprite(canvas=self.canvas, shape=None)
-        sprite.update()
-        self.canvas.update.assert_called_once_with()
-
-
     def test_move_with_no_update_does_not_call_canvas_update(self):
 
         sprite = base.Sprite(canvas=self.canvas, shape=None)
@@ -378,12 +371,6 @@ class TestNonDefaultSprite(test_base.TestCase):
 
         self.sprite.rotate_to(90, around=(1, 1))
         self.assertAlmostEqual(self.sprite.angle, 90, places=1)
-
-
-    def test_update_calls_canvas_update(self):
-
-        self.sprite.update()
-        self.canvas.update.assert_called_once_with()
 
 
     def test_move_with_no_update_does_not_call_canvas_update(self):
