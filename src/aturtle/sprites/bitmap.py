@@ -39,5 +39,4 @@ class Sprite(base.Sprite):
         # Use the pre-rendered shape for the new orientation.
         self._canvas.itemconfig(self._id, image=self._shape[self._angle])
 
-        if update or self._update:
-            self._canvas.update()
+        self.update(update=update)

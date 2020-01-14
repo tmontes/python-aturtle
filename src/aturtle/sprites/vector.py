@@ -53,10 +53,6 @@ class Sprite(base.Sprite):
         super().direct_rotate(angle, around=around, update=False)
 
         # Use the shape for the new orientation.
-        self._canvas.coords(
-            self._id,
-            self._offset_shape_coords(self._angle),
-        )
+        self._canvas.coords(self._id, self._offset_shape_coords(self._angle))
 
-        if update or self._update:
-            self._canvas.update()
+        self.update(update=update)
