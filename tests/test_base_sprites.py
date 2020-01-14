@@ -537,6 +537,14 @@ class TestAsyncMoveAnimation(AsyncAnimationBase):
             self.assertAlmostEqual(y, 30*progress, places=1)
 
 
+    def test_async_move_with_high_speed_and_nearly_zero_frames_works(self):
+
+        coro = self.sprite.async_move(0.1, 0, speed=1_000_000, fps=1)
+        self._run_coroutines(coro)
+
+        self.assert_almost_equal_anchor(self.sprite.anchor, (0.1, 0), places=1)
+
+
 
 class TestAsyncMoveToAnimation(AsyncAnimationBase):
 
@@ -627,6 +635,14 @@ class TestAsyncMoveToAnimation(AsyncAnimationBase):
             self.assertAlmostEqual(y, 60-30*progress, places=1)
 
 
+    def test_async_move_to_with_high_speed_and_nearly_zero_frames_works(self):
+
+        coro = self.sprite.async_move_to(80.1, 60, speed=1_000_000, fps=1)
+        self._run_coroutines(coro)
+
+        self.assert_almost_equal_anchor(self.sprite.anchor, (80.1, 60), places=1)
+
+
 
 class TestAsyncRotateAnimation(AsyncAnimationBase):
 
@@ -673,6 +689,14 @@ class TestAsyncRotateAnimation(AsyncAnimationBase):
         for i, (progress, angle) in enumerate(data, start=1):
             self.assertAlmostEqual(progress, i/10, places=3)
             self.assertAlmostEqual(angle, 30*progress, places=1)
+
+
+    def test_async_rotate_with_high_speed_and_nearly_zero_frames_works(self):
+
+        coro = self.sprite.async_rotate(0.1, speed=1_000_000, fps=1)
+        self._run_coroutines(coro)
+
+        self.assertAlmostEqual(self.sprite.angle, 0.1, places=1)
 
 
 
@@ -751,6 +775,14 @@ class TestAsyncRotateToAnimation(AsyncAnimationBase):
 
         # Stored angles should decrease from 9 to 0, then from 359 to 350.
         self.assertEqual(angles, [*range(9, -1, -1), *range(359, 349, -1)])
+
+
+    def test_async_rotate_to_with_high_speed_and_nearly_zero_frames_works(self):
+
+        coro = self.sprite.async_rotate_to(40.1, speed=1_000_000, fps=1)
+        self._run_coroutines(coro)
+
+        self.assertAlmostEqual(self.sprite.angle, 40.1, places=1)
 
 
 
@@ -996,6 +1028,11 @@ class TestSyncMoveAnimation(SyncAnimationBase):
             self.assertAlmostEqual(y, 30*progress, places=1)
 
 
+    def test_sync_move_with_high_speed_and_nearly_zero_frames_works(self):
+
+        self.sprite.sync_move(0.1, 0, speed=1_000_000, fps=1)
+        self.assert_almost_equal_anchor(self.sprite.anchor, (0.1, 0), places=1)
+
 
 class TestSyncMoveToAnimation(SyncAnimationBase):
 
@@ -1082,6 +1119,12 @@ class TestSyncMoveToAnimation(SyncAnimationBase):
             self.assertAlmostEqual(y, 60-30*progress, places=1)
 
 
+    def test_sync_move_to_with_high_speed_and_nearly_zero_frames_works(self):
+
+        self.sprite.sync_move_to(80.1, 60, speed=1_000_000, fps=1)
+        self.assert_almost_equal_anchor(self.sprite.anchor, (80.1, 60), places=1)
+
+
 
 class TestSyncRotateAnimation(SyncAnimationBase):
 
@@ -1125,6 +1168,12 @@ class TestSyncRotateAnimation(SyncAnimationBase):
         for i, (progress, angle) in enumerate(data, start=1):
             self.assertAlmostEqual(progress, i/10, places=3)
             self.assertAlmostEqual(angle, 30*progress, places=1)
+
+
+    def test_sync_rotate_with_high_speed_and_nearly_zero_frames_works(self):
+
+        self.sprite.sync_rotate(0.1, speed=1_000_000, fps=1)
+        self.assertAlmostEqual(self.sprite.angle, 0.1, places=1)
 
 
 
@@ -1198,6 +1247,12 @@ class TestSyncRotateToAnimation(SyncAnimationBase):
 
         # Stored angles should decrease from 9 to 0, then from 359 to 350.
         self.assertEqual(angles, [*range(9, -1, -1), *range(359, 349, -1)])
+
+    def test_sync_rotate_to_with_high_speed_and_nearly_zero_frames_works(self):
+
+        self.sprite.sync_rotate_to(40.1, speed=1_000_000, fps=1)
+        self.assertAlmostEqual(self.sprite.angle, 40.1, places=1)
+
 
 
 

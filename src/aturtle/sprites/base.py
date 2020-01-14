@@ -220,7 +220,8 @@ class Sprite:
 
             distance = (dx ** 2 + dy ** 2) ** 0.5
             total_seconds = distance / speed
-            total_frames = int(total_seconds * fps)
+            # Fast speed / low fps lead to 0 total_frames. Have at least 1.
+            total_frames = max(int(total_seconds * fps), 1)
             frame_seconds = 1 / fps
 
             frame_dx = dx / total_frames
@@ -259,7 +260,8 @@ class Sprite:
 
             distance = (dx ** 2 + dy ** 2) ** 0.5
             total_seconds = distance / speed
-            total_frames = int(total_seconds * fps)
+            # Fast speed / low fps lead to 0 total_frames. Have at least 1.
+            total_frames = max(int(total_seconds * fps), 1)
             frame_seconds = 1 / fps
 
             for frame in range(1, total_frames+1):
@@ -291,7 +293,8 @@ class Sprite:
             fps = self._fps if fps is None else fps
 
             total_seconds = abs(dangle / speed)
-            total_frames = int(total_seconds * fps)
+            # Fast speed / low fps lead to 0 total_frames. Have at least 1.
+            total_frames = max(int(total_seconds * fps), 1)
             frame_seconds = 1 / fps
 
             frame_dangle = dangle / total_frames
@@ -332,7 +335,8 @@ class Sprite:
                 dangle = dangle - 360
 
             total_seconds = abs(dangle / speed)
-            total_frames = int(total_seconds * fps)
+            # Fast speed / low fps lead to 0 total_frames. Have at least 1.
+            total_frames = max(int(total_seconds * fps), 1)
             frame_seconds = 1 / fps
 
             for frame in range(1, total_frames+1):
