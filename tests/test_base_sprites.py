@@ -41,198 +41,191 @@ class TestDefaultSprite(test_base.TestCase):
         self.assertAlmostEqual(sprite.angle, 0, places=1)
 
 
-    def test_move_moves_anchor(self):
+    def test_direct_move_moves_anchor(self):
 
         sprite = base.Sprite(canvas=self.canvas, shape=None)
-        sprite.move(42, 24)
+        sprite.direct_move(42, 24)
         self.assert_almost_equal_anchor(sprite.anchor, (42, 24), places=1)
 
 
-    def test_move_moves_anchor_relative(self):
+    def test_direct_move_moves_anchor_relative(self):
 
         sprite = base.Sprite(canvas=self.canvas, shape=None)
-        sprite.move(42, 0)
-        sprite.move(0, 24)
+        sprite.direct_move(42, 0)
+        sprite.direct_move(0, 24)
         self.assert_almost_equal_anchor(sprite.anchor, (42, 24), places=1)
 
 
-    def test_move_does_not_change_angle(self):
+    def test_direct_move_does_not_change_angle(self):
 
         sprite = base.Sprite(canvas=self.canvas, shape=None)
-        sprite.move(42, 24)
+        sprite.direct_move(42, 24)
         self.assertAlmostEqual(sprite.angle, 0, places=1)
 
 
-    def test_move_to_moves_anchor(self):
+    def test_direct_move_to_moves_anchor(self):
 
         sprite = base.Sprite(canvas=self.canvas, shape=None)
-        sprite.move_to(42, 24)
+        sprite.direct_move_to(42, 24)
         self.assert_almost_equal_anchor(sprite.anchor, (42, 24), places=1)
 
 
-    def test_move_to_moves_anchor_absolute(self):
+    def test_direct_move_to_moves_anchor_absolute(self):
 
         sprite = base.Sprite(canvas=self.canvas, shape=None)
-        sprite.move_to(42, 0)
-        sprite.move_to(0, 24)
+        sprite.direct_move_to(42, 0)
+        sprite.direct_move_to(0, 24)
         self.assert_almost_equal_anchor(sprite.anchor, (0, 24), places=1)
 
 
-    def test_move_to_does_not_change_angle(self):
+    def test_direct_move_to_does_not_change_angle(self):
 
         sprite = base.Sprite(canvas=self.canvas, shape=None)
-        sprite.move_to(42, 24)
+        sprite.direct_move_to(42, 24)
         self.assertAlmostEqual(sprite.angle, 0, places=1)
 
 
-    def test_rotate_does_not_move_anchor(self):
+    def test_direct_rotate_does_not_move_anchor(self):
 
         sprite = base.Sprite(canvas=self.canvas, shape=None)
-        sprite.rotate(90)
+        sprite.direct_rotate(90)
         self.assert_almost_equal_anchor(sprite.anchor, (0, 0), places=1)
 
 
-    def test_rotate_around_moves_anchor(self):
+    def test_direct_rotate_around_moves_anchor(self):
 
         sprite = base.Sprite(canvas=self.canvas, shape=None)
-        sprite.rotate(180, around=(1, 1))
+        sprite.direct_rotate(180, around=(1, 1))
         self.assert_almost_equal_anchor(sprite.anchor, (2, 2), places=1)
 
 
-    def test_rotate_around_moves_anchor_relative(self):
+    def test_direct_rotate_around_moves_anchor_relative(self):
 
         sprite = base.Sprite(canvas=self.canvas, shape=None)
-        sprite.rotate(90, around=(1, 1))
-        sprite.rotate(90, around=(1, 1))
+        sprite.direct_rotate(90, around=(1, 1))
+        sprite.direct_rotate(90, around=(1, 1))
         self.assert_almost_equal_anchor(sprite.anchor, (2, 2), places=1)
 
 
-    def test_rotate_changes_angle(self):
+    def test_direct_rotate_changes_angle(self):
 
         sprite = base.Sprite(canvas=self.canvas, shape=None)
-        sprite.rotate(90)
+        sprite.direct_rotate(90)
         self.assertAlmostEqual(sprite.angle, 90, places=1)
 
 
-    def test_rotate_changes_angle_relative(self):
+    def test_direct_rotate_changes_angle_relative(self):
 
         sprite = base.Sprite(canvas=self.canvas, shape=None)
-        sprite.rotate(45)
-        sprite.rotate(45)
+        sprite.direct_rotate(45)
+        sprite.direct_rotate(45)
         self.assertAlmostEqual(sprite.angle, 90, places=1)
 
 
-    def test_rotate_around_changes_angle(self):
+    def test_direct_rotate_around_changes_angle(self):
 
         sprite = base.Sprite(canvas=self.canvas, shape=None)
-        sprite.rotate(90, around=(1, 1))
+        sprite.direct_rotate(90, around=(1, 1))
         self.assertAlmostEqual(sprite.angle, 90, places=1)
 
 
-    def test_rotate_to_does_not_move_anchor(self):
+    def test_direct_rotate_to_does_not_move_anchor(self):
 
         sprite = base.Sprite(canvas=self.canvas, shape=None)
-        sprite.rotate_to(90)
+        sprite.direct_rotate_to(90)
         self.assert_almost_equal_anchor(sprite.anchor, (0, 0), places=1)
 
 
-    def test_rotate_to_around_moves_anchor(self):
+    def test_direct_rotate_to_around_moves_anchor(self):
 
         sprite = base.Sprite(canvas=self.canvas, shape=None)
-        sprite.rotate_to(180, around=(1, 1))
+        sprite.direct_rotate_to(180, around=(1, 1))
         self.assert_almost_equal_anchor(sprite.anchor, (2, 2), places=1)
 
 
-    def test_rotate_to_around_moves_anchor_absolute(self):
+    def test_direct_rotate_to_around_moves_anchor_absolute(self):
 
         sprite = base.Sprite(canvas=self.canvas, shape=None)
-        sprite.rotate_to(90, around=(1, 1))
-        sprite.rotate_to(180, around=(1, 1))
+        sprite.direct_rotate_to(90, around=(1, 1))
+        sprite.direct_rotate_to(180, around=(1, 1))
         self.assert_almost_equal_anchor(sprite.anchor, (2, 2), places=1)
 
 
-    def test_rotate_to_changes_angle(self):
+    def test_direct_rotate_to_changes_angle(self):
 
         sprite = base.Sprite(canvas=self.canvas, shape=None)
-        sprite.rotate_to(90)
+        sprite.direct_rotate_to(90)
         self.assertAlmostEqual(sprite.angle, 90, places=1)
 
 
-    def test_rotate_to_changes_angle_absolute(self):
+    def test_direct_rotate_to_changes_angle_absolute(self):
 
         sprite = base.Sprite(canvas=self.canvas, shape=None)
-        sprite.rotate_to(20)
-        sprite.rotate_to(90)
+        sprite.direct_rotate_to(20)
+        sprite.direct_rotate_to(90)
         self.assertAlmostEqual(sprite.angle, 90, places=1)
 
 
-    def test_rotate_to_around_changes_angle(self):
+    def test_direct_rotate_to_around_changes_angle(self):
 
         sprite = base.Sprite(canvas=self.canvas, shape=None)
-        sprite.rotate_to(90, around=(1, 1))
+        sprite.direct_rotate_to(90, around=(1, 1))
         self.assertAlmostEqual(sprite.angle, 90, places=1)
 
 
-    def test_update_calls_canvas_update(self):
+    def test_direct_move_with_no_update_does_not_call_canvas_update(self):
 
         sprite = base.Sprite(canvas=self.canvas, shape=None)
-        sprite.update()
-        self.canvas.update.assert_called_once_with()
-
-
-    def test_move_with_no_update_does_not_call_canvas_update(self):
-
-        sprite = base.Sprite(canvas=self.canvas, shape=None)
-        sprite.move(42, 24)
+        sprite.direct_move(42, 24)
         self.canvas.update.assert_not_called()
 
 
-    def test_move_with_update_calls_canvas_update(self):
+    def test_direct_move_with_update_calls_canvas_update(self):
 
         sprite = base.Sprite(canvas=self.canvas, shape=None)
-        sprite.move(42, 24, update=True)
+        sprite.direct_move(42, 24, update=True)
         self.canvas.update.assert_called_once_with()
 
 
-    def test_move_to_with_no_update_does_not_call_canvas_update(self):
+    def test_direct_move_to_with_no_update_does_not_call_canvas_update(self):
 
         sprite = base.Sprite(canvas=self.canvas, shape=None)
-        sprite.move_to(42, 24)
+        sprite.direct_move_to(42, 24)
         self.canvas.update.assert_not_called()
 
 
-    def test_move_to_with_update_calls_canvas_update(self):
+    def test_direct_move_to_with_update_calls_canvas_update(self):
 
         sprite = base.Sprite(canvas=self.canvas, shape=None)
-        sprite.move_to(42, 24, update=True)
+        sprite.direct_move_to(42, 24, update=True)
         self.canvas.update.assert_called_once_with()
 
 
-    def test_rotate_with_no_update_does_not_call_canvas_update(self):
+    def test_direct_rotate_with_no_update_does_not_call_canvas_update(self):
 
         sprite = base.Sprite(canvas=self.canvas, shape=None)
-        sprite.rotate(42)
+        sprite.direct_rotate(42)
         self.canvas.update.assert_not_called()
 
 
-    def test_rotate_with_update_calls_canvas_update(self):
+    def test_direct_rotate_with_update_calls_canvas_update(self):
 
         sprite = base.Sprite(canvas=self.canvas, shape=None)
-        sprite.rotate(42, update=True)
+        sprite.direct_rotate(42, update=True)
         self.canvas.update.assert_called_once_with()
 
 
-    def test_rotate_to_with_no_update_does_not_call_canvas_update(self):
+    def test_direct_rotate_to_with_no_update_does_not_call_canvas_update(self):
 
         sprite = base.Sprite(canvas=self.canvas, shape=None)
-        sprite.rotate_to(42)
+        sprite.direct_rotate_to(42)
         self.canvas.update.assert_not_called()
 
 
-    def test_rotate_to_with_update_calls_canvas_update(self):
+    def test_direct_rotate_to_with_update_calls_canvas_update(self):
 
         sprite = base.Sprite(canvas=self.canvas, shape=None)
-        sprite.rotate_to(42, update=True)
+        sprite.direct_rotate_to(42, update=True)
         self.canvas.update.assert_called_once_with()
 
 
@@ -260,177 +253,165 @@ class TestNonDefaultSprite(test_base.TestCase):
         self.assertAlmostEqual(self.sprite.angle, 42, places=1)
 
 
-    def test_move_with_no_args_does_not_move_anchor(self):
+    def test_direct_move_moves_anchor(self):
 
-        self.sprite.move()
-        self.assert_almost_equal_anchor(self.sprite.anchor, (42, 24), places=1)
-
-
-    def test_move_moves_anchor(self):
-
-        self.sprite.move(-42, -24)
+        self.sprite.direct_move(-42, -24)
         self.assert_almost_equal_anchor(self.sprite.anchor, (0, 0), places=1)
 
 
-    def test_move_moves_anchor_relative(self):
+    def test_direct_move_moves_anchor_relative(self):
 
-        self.sprite.move(-42, 0)
-        self.sprite.move(0, -24)
+        self.sprite.direct_move(-42, 0)
+        self.sprite.direct_move(0, -24)
         self.assert_almost_equal_anchor(self.sprite.anchor, (0, 0), places=1)
 
 
-    def test_move_does_not_change_angle(self):
+    def test_direct_move_does_not_change_angle(self):
 
-        self.sprite.move(42, 24)
+        self.sprite.direct_move(42, 24)
         self.assertAlmostEqual(self.sprite.angle, 42, places=1)
 
 
-    def test_move_to_moves_anchor(self):
+    def test_direct_move_to_moves_anchor(self):
 
-        self.sprite.move_to(20, 10)
+        self.sprite.direct_move_to(20, 10)
         self.assert_almost_equal_anchor(self.sprite.anchor, (20, 10), places=1)
 
 
-    def test_move_to_moves_anchor_absolute(self):
+    def test_direct_move_to_moves_anchor_absolute(self):
 
-        self.sprite.move_to(42, 0)
-        self.sprite.move_to(0, 24)
+        self.sprite.direct_move_to(42, 0)
+        self.sprite.direct_move_to(0, 24)
         self.assert_almost_equal_anchor(self.sprite.anchor, (0, 24), places=1)
 
 
-    def test_move_to_does_not_change_angle(self):
+    def test_direct_move_to_does_not_change_angle(self):
 
-        self.sprite.move_to(42, 24)
+        self.sprite.direct_move_to(42, 24)
         self.assertAlmostEqual(self.sprite.angle, 42, places=1)
 
 
-    def test_rotate_does_not_move_anchor(self):
+    def test_direct_rotate_does_not_move_anchor(self):
 
-        self.sprite.rotate(90)
+        self.sprite.direct_rotate(90)
         self.assert_almost_equal_anchor(self.sprite.anchor, (42, 24), places=1)
 
 
-    def test_rotate_around_moves_anchor(self):
+    def test_direct_rotate_around_moves_anchor(self):
 
-        self.sprite.rotate(180, around=(0, 0))
+        self.sprite.direct_rotate(180, around=(0, 0))
         self.assert_almost_equal_anchor(self.sprite.anchor, (-42, -24), places=1)
 
 
-    def test_rotate_around_moves_anchor_relative(self):
+    def test_direct_rotate_around_moves_anchor_relative(self):
 
-        self.sprite.rotate(90, around=(0, 0))
-        self.sprite.rotate(90, around=(0, 0))
+        self.sprite.direct_rotate(90, around=(0, 0))
+        self.sprite.direct_rotate(90, around=(0, 0))
         self.assert_almost_equal_anchor(self.sprite.anchor, (-42, -24), places=1)
 
 
-    def test_rotate_changes_angle(self):
+    def test_direct_rotate_changes_angle(self):
 
-        self.sprite.rotate(-42)
+        self.sprite.direct_rotate(-42)
         self.assertAlmostEqual(self.sprite.angle, 0, places=1)
 
 
-    def test_rotate_changes_angle_relative(self):
+    def test_direct_rotate_changes_angle_relative(self):
 
-        self.sprite.rotate(-40)
-        self.sprite.rotate(-2)
+        self.sprite.direct_rotate(-40)
+        self.sprite.direct_rotate(-2)
         self.assertAlmostEqual(self.sprite.angle, 0, places=1)
 
 
-    def test_rotate_around_changes_angle(self):
+    def test_direct_rotate_around_changes_angle(self):
 
-        self.sprite.rotate(-42, around=(1, 1))
+        self.sprite.direct_rotate(-42, around=(1, 1))
         self.assertAlmostEqual(self.sprite.angle, 0, places=1)
 
 
-    def test_rotate_to_does_not_move_anchor(self):
+    def test_direct_rotate_to_does_not_move_anchor(self):
 
-        self.sprite.rotate_to(90)
+        self.sprite.direct_rotate_to(90)
         self.assert_almost_equal_anchor(self.sprite.anchor, (42, 24), places=1)
 
 
-    def test_rotate_to_around_moves_anchor(self):
+    def test_direct_rotate_to_around_moves_anchor(self):
 
-        self.sprite.rotate_to(42+180, around=(0, 0))
+        self.sprite.direct_rotate_to(42+180, around=(0, 0))
         self.assert_almost_equal_anchor(self.sprite.anchor, (-42, -24), places=1)
 
 
-    def test_rotate_to_around_moves_anchor_absolute(self):
+    def test_direct_rotate_to_around_moves_anchor_absolute(self):
 
-        self.sprite.rotate_to(90, around=(0, 0))
-        self.sprite.rotate_to(42+180, around=(0, 0))
+        self.sprite.direct_rotate_to(90, around=(0, 0))
+        self.sprite.direct_rotate_to(42+180, around=(0, 0))
         self.assert_almost_equal_anchor(self.sprite.anchor, (-42, -24), places=1)
 
 
-    def test_rotate_to_changes_angle(self):
+    def test_direct_rotate_to_changes_angle(self):
 
-        self.sprite.rotate_to(90)
+        self.sprite.direct_rotate_to(90)
         self.assertAlmostEqual(self.sprite.angle, 90, places=1)
 
 
-    def test_rotate_to_changes_angle_absolute(self):
+    def test_direct_rotate_to_changes_angle_absolute(self):
 
-        self.sprite.rotate_to(20)
-        self.sprite.rotate_to(90)
+        self.sprite.direct_rotate_to(20)
+        self.sprite.direct_rotate_to(90)
         self.assertAlmostEqual(self.sprite.angle, 90, places=1)
 
 
-    def test_rotate_to_around_changes_angle(self):
+    def test_direct_rotate_to_around_changes_angle(self):
 
-        self.sprite.rotate_to(90, around=(1, 1))
+        self.sprite.direct_rotate_to(90, around=(1, 1))
         self.assertAlmostEqual(self.sprite.angle, 90, places=1)
 
 
-    def test_update_calls_canvas_update(self):
+    def test_direct_move_with_no_update_does_not_call_canvas_update(self):
 
-        self.sprite.update()
-        self.canvas.update.assert_called_once_with()
-
-
-    def test_move_with_no_update_does_not_call_canvas_update(self):
-
-        self.sprite.move(42, 24)
+        self.sprite.direct_move(42, 24)
         self.canvas.update.assert_not_called()
 
 
-    def test_move_with_update_calls_canvas_update(self):
+    def test_direct_move_with_update_calls_canvas_update(self):
 
-        self.sprite.move(42, 24, update=True)
+        self.sprite.direct_move(42, 24, update=True)
         self.canvas.update.assert_called_once_with()
 
 
-    def test_move_to_with_no_update_does_not_call_canvas_update(self):
+    def test_direct_move_to_with_no_update_does_not_call_canvas_update(self):
 
-        self.sprite.move_to(42, 24)
+        self.sprite.direct_move_to(42, 24)
         self.canvas.update.assert_not_called()
 
 
-    def test_move_to_with_update_calls_canvas_update(self):
+    def test_direct_move_to_with_update_calls_canvas_update(self):
 
-        self.sprite.move_to(42, 24, update=True)
+        self.sprite.direct_move_to(42, 24, update=True)
         self.canvas.update.assert_called_once_with()
 
 
-    def test_rotate_with_no_update_does_not_call_canvas_update(self):
+    def test_direct_rotate_with_no_update_does_not_call_canvas_update(self):
 
-        self.sprite.rotate(42)
+        self.sprite.direct_rotate(42)
         self.canvas.update.assert_not_called()
 
 
-    def test_rotate_with_update_calls_canvas_update(self):
+    def test_direct_rotate_with_update_calls_canvas_update(self):
 
-        self.sprite.rotate(42, update=True)
+        self.sprite.direct_rotate(42, update=True)
         self.canvas.update.assert_called_once_with()
 
 
-    def test_rotate_to_with_no_update_does_not_call_canvas_update(self):
+    def test_direct_rotate_to_with_no_update_does_not_call_canvas_update(self):
 
-        self.sprite.rotate_to(42)
+        self.sprite.direct_rotate_to(42)
         self.canvas.update.assert_not_called()
 
 
-    def test_rotate_to_with_update_calls_canvas_update(self):
+    def test_direct_rotate_to_with_update_calls_canvas_update(self):
 
-        self.sprite.rotate_to(42, update=True)
+        self.sprite.direct_rotate_to(42, update=True)
         self.canvas.update.assert_called_once_with()
 
 
@@ -473,23 +454,6 @@ class TestAsyncMoveAnimation(AsyncAnimationBase):
 
         super().setUp()
         self.sprite = base.Sprite(canvas=self.canvas, shape=None, anchor=(0, 0))
-
-
-    def test_async_move_with_speed_None_moves_anchor(self):
-
-        coro = self.sprite.async_move(40, 30, speed=None, fps=10)
-        self._run_coroutines(coro)
-
-        self.assert_almost_equal_anchor(self.sprite.anchor, (40, 30), places=1)
-
-
-    def test_async_move_with_speed_None_is_single_step_and_synchronous(self):
-
-        coro = self.sprite.async_move(40, 30, speed=None, fps=10)
-        self._run_coroutines(coro)
-
-        self.canvas.move.assert_called_once_with(None, 40, 30)
-        self.assertFalse(self.asyncio.sleep_call_args, 'asyncio sleep call args')
 
 
     def test_async_move_with_speed_moves_anchor(self):
@@ -573,18 +537,6 @@ class TestAsyncMoveAnimation(AsyncAnimationBase):
             self.assertAlmostEqual(y, 30*progress, places=1)
 
 
-    def test_async_move_with_speed_None_does_not_call_callback(self):
-
-        data = []
-        async def cb(*args):
-            data.append(args)
-
-        coro = self.sprite.async_move(40, 30, speed=None, fps=10, callback=cb)
-        self._run_coroutines(coro)
-
-        self.assertFalse(data, 'no callbacks expected')
-
-
 
 class TestAsyncMoveToAnimation(AsyncAnimationBase):
 
@@ -592,23 +544,6 @@ class TestAsyncMoveToAnimation(AsyncAnimationBase):
 
         super().setUp()
         self.sprite = base.Sprite(canvas=self.canvas, shape=None, anchor=(80, 60))
-
-
-    def test_async_move_to_with_speed_None_moves_anchor(self):
-
-        coro = self.sprite.async_move_to(40, 30, speed=None, fps=10)
-        self._run_coroutines(coro)
-
-        self.assert_almost_equal_anchor(self.sprite.anchor, (40, 30), places=1)
-
-
-    def test_async_move_to_with_speed_None_is_single_step_and_synchronous(self):
-
-        coro = self.sprite.async_move_to(40, 30, speed=None, fps=10)
-        self._run_coroutines(coro)
-
-        self.canvas.move.assert_called_once_with(None, -40, -30)
-        self.assertFalse(self.asyncio.sleep_call_args, 'asyncio sleep call args')
 
 
     def test_async_move_to_with_speed_moves_anchor(self):
@@ -692,18 +627,6 @@ class TestAsyncMoveToAnimation(AsyncAnimationBase):
             self.assertAlmostEqual(y, 60-30*progress, places=1)
 
 
-    def test_async_move_to_with_speed_None_does_not_call_callback(self):
-
-        data = []
-        async def cb(*args):
-            data.append(args)
-
-        coro = self.sprite.async_move_to(40, 30, speed=None, fps=10, callback=cb)
-        self._run_coroutines(coro)
-
-        self.assertFalse(data, 'no callbacks expected')
-
-
 
 class TestAsyncRotateAnimation(AsyncAnimationBase):
 
@@ -713,24 +636,7 @@ class TestAsyncRotateAnimation(AsyncAnimationBase):
         self.sprite = base.Sprite(canvas=self.canvas, shape=None)
 
 
-    def test_async_rotate_with_speed_None_moves_anchor(self):
-
-        coro = self.sprite.async_rotate(30, speed=None, fps=10)
-        self._run_coroutines(coro)
-
-        self.assertAlmostEqual(self.sprite.angle, 30, places=1)
-
-
-    def test_async_rotate_with_speed_None_is_single_step_and_synchronous(self):
-
-        coro = self.sprite.async_rotate(30, speed=None, fps=10)
-        self._run_coroutines(coro)
-
-        self.assertAlmostEqual(self.sprite.angle, 30, places=1)
-        self.assertFalse(self.asyncio.sleep_call_args, 'asyncio sleep call args')
-
-
-    def test_async_rotate_with_speed_updates_angle(self):
+    def test_async_direct_rotate_with_speed_updates_angle(self):
 
         coro = self.sprite.async_rotate(30, speed=30, fps=10)
         self._run_coroutines(coro)
@@ -769,18 +675,6 @@ class TestAsyncRotateAnimation(AsyncAnimationBase):
             self.assertAlmostEqual(angle, 30*progress, places=1)
 
 
-    def test_async_rotate_with_speed_None_does_not_call_callback(self):
-
-        data = []
-        async def cb(*args):
-            data.append(args)
-
-        coro = self.sprite.async_rotate(30, speed=None, fps=10, callback=cb)
-        self._run_coroutines(coro)
-
-        self.assertFalse(data, 'no callbacks expected')
-
-
 
 class TestAsyncRotateToAnimation(AsyncAnimationBase):
 
@@ -788,22 +682,6 @@ class TestAsyncRotateToAnimation(AsyncAnimationBase):
 
         super().setUp()
         self.sprite = base.Sprite(canvas=self.canvas, shape=None, angle=40)
-
-
-    def test_async_rotate_to_with_speed_None_moves_anchor(self):
-
-        coro = self.sprite.async_rotate_to(30, speed=None, fps=10)
-        self._run_coroutines(coro)
-
-        self.assertAlmostEqual(self.sprite.angle, 30, places=1)
-
-
-    def test_async_rotate_to_with_speed_None_is_single_step_and_synchronous(self):
-
-        coro = self.sprite.async_rotate_to(30, speed=None, fps=10)
-        self._run_coroutines(coro)
-
-        self.assertFalse(self.asyncio.sleep_call_args, 'asyncio sleep call args')
 
 
     def test_async_rotate_to_with_speed_updates_angle(self):
@@ -843,18 +721,6 @@ class TestAsyncRotateToAnimation(AsyncAnimationBase):
         for i, (progress, angle) in enumerate(data, start=1):
             self.assertAlmostEqual(progress, i/10, places=3)
             self.assertAlmostEqual(angle, 40-10*progress, places=1)
-
-
-    def test_async_rotate_to_with_speed_None_does_not_call_callback(self):
-
-        data = []
-        async def cb(*args):
-            data.append(args)
-
-        coro = self.sprite.async_rotate_to(30, speed=None, fps=10, callback=cb)
-        self._run_coroutines(coro)
-
-        self.assertFalse(data, 'no callbacks expected')
 
 
     def test_async_rotate_to_takes_the_shortest_path_350_to_10(self):
@@ -1024,3 +890,311 @@ class TestAsyncAnimationConcurrency(AsyncAnimationBase):
 
         with self.assertRaises(base.AnimationError):
             self._run_coroutines(coro_async_rotate, coro_async_rotate_to)
+
+
+
+class SyncAnimationBase(test_base.TestCase):
+
+    def setUp(self):
+
+        self.canvas = fake_tkinter.FakeCanvas()
+
+        self.time = mock.Mock()
+        self._exit_stack = contextlib.ExitStack()
+        self._exit_stack.enter_context(
+            mock.patch('aturtle.sprites.base.time', self.time)
+        )
+
+
+    def tearDown(self):
+
+        self._exit_stack.close()
+
+
+
+class TestSyncMoveAnimation(SyncAnimationBase):
+
+    def setUp(self):
+
+        super().setUp()
+        self.sprite = base.Sprite(canvas=self.canvas, shape=None, anchor=(0, 0))
+
+
+    def test_sync_move_with_speed_moves_anchor(self):
+
+        self.sprite.sync_move(40, 30, speed=50, fps=10)
+        self.assert_almost_equal_anchor(self.sprite.anchor, (40, 30), places=1)
+
+
+    def test_sync_move_with_speed_calls_canvas_move_and_time_sleep(self):
+
+        self.sprite.sync_move(40, 30, speed=50, fps=10)
+
+        # Given that the move distance is 50 and the speed is 50, animation
+        # duration is 1 second. At 10 fps, 10 frames must be generated: each
+        # with a call to canvas.move of 1/10th the distance and an await of
+        # asyncio.sleep of 1/10th the duration.
+
+        canvas_move_calls = self.canvas.move.call_args_list
+        self.assertEqual(len(canvas_move_calls), 10, 'canvas.move call count')
+        for call in canvas_move_calls:
+            _shape_id, dx, dy = call.args
+            self.assertAlmostEqual(dx, 4, places=1)
+            self.assertAlmostEqual(dy, 3, places=1)
+
+        time_sleep_call_args = self.time.sleep.call_args_list
+        self.assertEqual(len(time_sleep_call_args), 10, 'time.sleep await count')
+        for call_args in time_sleep_call_args:
+            self.assertAlmostEqual(call_args.args[0], 0.1, places=3)
+
+        # TODO: A more correct test would check that canvas.move calls and
+        # asyncio.sleep awaits are called in alternating turns.
+
+
+    def test_sync_move_with_speed_and_easing_progresses_non_linearly(self):
+
+        def easing(progress):
+            return 0 if progress < 0.5 else 1
+
+        self.sprite.sync_move(40, 30, speed=50, fps=10, easing=easing)
+
+        # canvas.move should have been called 10 times:
+        # - First 4 with no movement.
+        # - 5th with the whole movement.
+        # - Remaining with no movement.
+
+        canvas_move_calls = self.canvas.move.call_args_list
+        self.assertEqual(len(canvas_move_calls), 10, 'canvas.move call count')
+        for call in canvas_move_calls[:4]:
+            _shape_id, dx, dy = call.args
+            self.assertAlmostEqual(dx, 0, places=1)
+            self.assertAlmostEqual(dy, 0, places=1)
+
+        _shape_id, dx, dy = canvas_move_calls[4].args
+        self.assertAlmostEqual(dx, 40, places=1)
+        self.assertAlmostEqual(dy, 30, places=1)
+
+        for call in canvas_move_calls[5:]:
+            _shape_id, dx, dy = call.args
+            self.assertAlmostEqual(dx, 0, places=1)
+            self.assertAlmostEqual(dy, 0, places=1)
+
+
+    def test_sync_move_with_speed_calls_callback(self):
+
+        data = []
+        def cb(*args):
+            data.append(args)
+
+        self.sprite.sync_move(40, 30, speed=50, fps=10, callback=cb)
+
+        # Data should have 10 (progress, (x, y)) tuples:
+        self.assertEqual(len(data), 10, 'callback count')
+        for i, (progress, (x, y)) in enumerate(data, start=1):
+            self.assertAlmostEqual(progress, i/10, places=3)
+            self.assertAlmostEqual(x, 40*progress, places=1)
+            self.assertAlmostEqual(y, 30*progress, places=1)
+
+
+
+class TestSyncMoveToAnimation(SyncAnimationBase):
+
+    def setUp(self):
+
+        super().setUp()
+        self.sprite = base.Sprite(canvas=self.canvas, shape=None, anchor=(80, 60))
+
+
+    def test_sync_move_to_with_speed_moves_anchor(self):
+
+        self.sprite.sync_move_to(40, 30, speed=50, fps=10)
+
+        self.assert_almost_equal_anchor(self.sprite.anchor, (40, 30), places=1)
+
+
+    def test_sync_move_to_with_speed_calls_canvas_move_and_time_sleep(self):
+
+        self.sprite.sync_move_to(40, 30, speed=50, fps=10)
+
+        # Given that the move distance is 50 and the speed is 50, animation
+        # duration is 1 second. At 10 fps, 10 frames must be generated: each
+        # with a call to canvas.move of 1/10th the distance and an await of
+        # asyncio.sleep of 1/10th the duration.
+
+        canvas_move_calls = self.canvas.move.call_args_list
+        self.assertEqual(len(canvas_move_calls), 10, 'canvas.move call count')
+        for call in canvas_move_calls:
+            _shape_id, dx, dy = call.args
+            self.assertAlmostEqual(dx, -4, places=1)
+            self.assertAlmostEqual(dy, -3, places=1)
+
+        time_sleep_call_args = self.time.sleep.call_args_list
+        self.assertEqual(len(time_sleep_call_args), 10, 'time.sleep await count')
+        for call_args in time_sleep_call_args:
+            self.assertAlmostEqual(call_args.args[0], 0.1, places=3)
+
+        # TODO: A more correct test would check that canvas.move calls and
+        # asyncio.sleep awaits are called in alternating turns.
+
+
+    def test_sync_move_to_with_speed_and_easing_progresses_non_linearly(self):
+
+        def easing(progress):
+            return 0 if progress < 0.5 else 1
+
+        self.sprite.sync_move_to(40, 30, speed=50, fps=10, easing=easing)
+
+        # canvas.move should have been called 10 times:
+        # - First 4 with no movement.
+        # - 5th with the whole movement.
+        # - Remaining with no movement.
+
+        canvas_move_calls = self.canvas.move.call_args_list
+        self.assertEqual(len(canvas_move_calls), 10, 'canvas.move call count')
+        for call in canvas_move_calls[:4]:
+            _shape_id, dx, dy = call.args
+            self.assertAlmostEqual(dx, 0, places=1)
+            self.assertAlmostEqual(dy, 0, places=1)
+
+        _shape_id, dx, dy = canvas_move_calls[4].args
+        self.assertAlmostEqual(dx, -40, places=1)
+        self.assertAlmostEqual(dy, -30, places=1)
+
+        for call in canvas_move_calls[5:]:
+            _shape_id, dx, dy = call.args
+            self.assertAlmostEqual(dx, 0, places=1)
+            self.assertAlmostEqual(dy, 0, places=1)
+
+
+    def test_sync_move_to_with_speed_calls_callback(self):
+
+        data = []
+        def cb(*args):
+            data.append(args)
+
+        self.sprite.sync_move_to(40, 30, speed=50, fps=10, callback=cb)
+
+        # Data should have 10 (progress, (x, y)) tuples:
+        self.assertEqual(len(data), 10, 'callback count')
+        for i, (progress, (x, y)) in enumerate(data, start=1):
+            self.assertAlmostEqual(progress, i/10, places=3)
+            self.assertAlmostEqual(x, 80-40*progress, places=1)
+            self.assertAlmostEqual(y, 60-30*progress, places=1)
+
+
+
+class TestSyncRotateAnimation(SyncAnimationBase):
+
+    def setUp(self):
+
+        super().setUp()
+        self.sprite = base.Sprite(canvas=self.canvas, shape=None)
+
+
+    def test_sync_rotate_with_speed_updates_angle(self):
+
+        self.sprite.sync_rotate(30, speed=30, fps=10)
+
+        self.assertAlmostEqual(self.sprite.angle, 30, places=1)
+
+
+    def test_sync_rotate_with_speed_calls_time_sleep(self):
+
+        self.sprite.sync_rotate(30, speed=30, fps=10)
+
+        # Given that the move "distance" is 30 and the speed is 30, animation
+        # duration is 1 second. At 10 fps, 10 frames must be generated: each
+        # with a an await of asyncio.sleep of 1/10th the duration.
+
+        time_sleep_call_args = self.time.sleep.call_args_list
+        self.assertEqual(len(time_sleep_call_args), 10, 'asyncio.sleep await count')
+        for call_args in time_sleep_call_args:
+            self.assertAlmostEqual(call_args.args[0], 0.1, places=3)
+
+
+    def test_sync_rotate_with_speed_calls_callback(self):
+
+        data = []
+        def cb(*args):
+            data.append(args)
+
+        self.sprite.sync_rotate(30, speed=30, fps=10, callback=cb)
+
+        # Data should have 10 (progress, angle) tuples:
+        self.assertEqual(len(data), 10, 'callback count')
+        for i, (progress, angle) in enumerate(data, start=1):
+            self.assertAlmostEqual(progress, i/10, places=3)
+            self.assertAlmostEqual(angle, 30*progress, places=1)
+
+
+
+class TestSyncRotateToAnimation(SyncAnimationBase):
+
+    def setUp(self):
+
+        super().setUp()
+        self.sprite = base.Sprite(canvas=self.canvas, shape=None, angle=40)
+
+
+    def test_sync_rotate_to_with_speed_updates_angle(self):
+
+        self.sprite.sync_rotate_to(30, speed=10, fps=10)
+
+        self.assertAlmostEqual(self.sprite.angle, 30, places=1)
+
+
+    def test_sync_rotate_to_with_speed_calls_time_sleep(self):
+
+        self.sprite.sync_rotate_to(30, speed=10, fps=10)
+
+        # Given that the move "distance" is 10 and the speed is 10, animation
+        # duration is 1 second. At 10 fps, 10 frames must be generated: each
+        # with a call to asyncio.sleep of 1/10th the duration.
+
+        time_sleep_call_args = self.time.sleep.call_args_list
+        self.assertEqual(len(time_sleep_call_args), 10, 'asyncio.sleep await count')
+        for call_args in time_sleep_call_args:
+            self.assertAlmostEqual(call_args.args[0], 0.1, places=3)
+
+
+    def test_sync_rotate_to_with_speed_calls_callback(self):
+
+        data = []
+        def cb(*args):
+            data.append(args)
+
+        self.sprite.sync_rotate_to(30, speed=10, fps=10, callback=cb)
+
+        # Data should have 10 (progress, angle) tuples:
+        self.assertEqual(len(data), 10, 'callback count')
+        for i, (progress, angle) in enumerate(data, start=1):
+            self.assertAlmostEqual(progress, i/10, places=3)
+            self.assertAlmostEqual(angle, 40-10*progress, places=1)
+
+
+    def test_sync_rotate_to_takes_the_shortest_path_350_to_10(self):
+
+        sprite = base.Sprite(canvas=self.canvas, shape=None, angle=350)
+
+        angles = []
+        def cb(_progress, angle):
+            angles.append(angle)
+
+        sprite.sync_rotate_to(10, speed=1, fps=1, callback=cb)
+
+        # Stored angles should grow from 351 to 359, then from 0 to 10
+        self.assertEqual(angles, [*range(351, 360), *range(11)])
+
+
+    def test_sync_rotate_to_takes_the_shortest_path_10_to_350(self):
+
+        sprite = base.Sprite(canvas=self.canvas, shape=None, angle=10)
+
+        angles = []
+        def cb(_progress, angle):
+            angles.append(angle)
+
+        sprite.sync_rotate_to(350, speed=1, fps=1, callback=cb)
+
+        # Stored angles should decrease from 9 to 0, then from 359 to 350.
+        self.assertEqual(angles, [*range(9, -1, -1), *range(359, 349, -1)])

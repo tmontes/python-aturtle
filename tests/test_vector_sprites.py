@@ -81,10 +81,10 @@ class TestDefaultSprite(base.TestCase):
         self.assert_almost_equal_coords(sprite.coords, expected_coords, places=1)
 
 
-    def test_move_moves_coords(self):
+    def test_direct_move_moves_coords(self):
 
         sprite = sprites.VectorSprite(self.canvas, UnitSquare())
-        sprite.move(2, 1)
+        sprite.direct_move(2, 1)
 
         expected_coords = [2.5, 0.5, 2.5, 1.5, 1.5, 1.5, 1.5, 0.5]
         self.assert_almost_equal_coords(
@@ -94,10 +94,10 @@ class TestDefaultSprite(base.TestCase):
         )
 
 
-    def test_move_to_moves_coords(self):
+    def test_direct_move_to_moves_coords(self):
 
         sprite = sprites.VectorSprite(self.canvas, UnitSquare())
-        sprite.move_to(2, 1)
+        sprite.direct_move_to(2, 1)
         expected_coords = [2.5, 0.5, 2.5, 1.5, 1.5, 1.5, 1.5, 0.5]
         self.assert_almost_equal_coords(
             sprite.coords,
@@ -106,12 +106,12 @@ class TestDefaultSprite(base.TestCase):
         )
 
 
-    def test_rotate_updates_coords(self):
+    def test_direct_rotate_updates_coords(self):
 
         sprite = sprites.VectorSprite(self.canvas, UnitSquare())
         original_coords = list(sprite.coords)
 
-        sprite.rotate(180)
+        sprite.direct_rotate(180)
         # Half-circle rotated coords are easy to determine.
         expected_coords = original_coords[4:] + original_coords[:5]
         self.assert_almost_equal_coords(
@@ -121,95 +121,87 @@ class TestDefaultSprite(base.TestCase):
         )
 
 
-    def test_rotate_around_point_rotates_anchor(self):
+    def test_direct_rotate_around_point_rotates_anchor(self):
 
         sprite = sprites.VectorSprite(self.canvas, UnitSquare())
 
-        sprite.rotate(180, around=(1, 1))
+        sprite.direct_rotate(180, around=(1, 1))
         self.assert_almost_equal_anchor(sprite.anchor, (2, 2), places=1)
 
 
-    def test_rotate_around_point_updates_coords(self):
+    def test_direct_rotate_around_point_updates_coords(self):
 
         sprite = sprites.VectorSprite(self.canvas, UnitSquare())
 
-        sprite.rotate(180, around=(1, 1))
+        sprite.direct_rotate(180, around=(1, 1))
         # Half-circle rotated coords around (1, 1) are these.
         expected_coords = [1.5, 2.5, 1.5, 1.5, 2.5, 1.5, 2.5, 2.5]
         for orig, new in zip(expected_coords, sprite.coords):
             self.assertAlmostEqual(orig, new, places=5)
 
 
-    def test_rotate_to_does_not_change_anchor(self):
+    def test_direct_rotate_to_does_not_change_anchor(self):
 
         sprite = sprites.VectorSprite(self.canvas, UnitSquare())
         original_anchor = sprite.anchor
 
-        sprite.rotate_to()
+        sprite.direct_rotate_to(0)
         self.assert_almost_equal_anchor(original_anchor, sprite.anchor, places=1)
 
 
-    def test_move_does_not_call_canvas_update(self):
+    def test_direct_move_does_not_call_canvas_update(self):
 
         sprite = sprites.VectorSprite(self.canvas, UnitSquare())
-        sprite.move(0, 10)
+        sprite.direct_move(0, 10)
         self.canvas.update.assert_not_called()
 
 
-    def test_move_with_update_calls_canvas_update(self):
+    def test_direct_move_with_update_calls_canvas_update(self):
 
         sprite = sprites.VectorSprite(self.canvas, UnitSquare())
-        sprite.move(0, 10, update=True)
+        sprite.direct_move(0, 10, update=True)
         self.canvas.update.assert_called_once_with()
 
 
-    def test_move_to_does_not_call_canvas_update(self):
+    def test_direct_move_to_does_not_call_canvas_update(self):
 
         sprite = sprites.VectorSprite(self.canvas, UnitSquare())
-        sprite.move_to(0, 10)
+        sprite.direct_move_to(0, 10)
         self.canvas.update.assert_not_called()
 
 
-    def test_move_to_with_update_calls_canvas_update(self):
+    def test_direct_move_to_with_update_calls_canvas_update(self):
 
         sprite = sprites.VectorSprite(self.canvas, UnitSquare())
-        sprite.move_to(0, 10, update=True)
+        sprite.direct_move_to(0, 10, update=True)
         self.canvas.update.assert_called_once_with()
 
 
-    def test_rotate_does_not_call_canvas_update(self):
+    def test_direct_rotate_does_not_call_canvas_update(self):
 
         sprite = sprites.VectorSprite(self.canvas, UnitSquare())
-        sprite.rotate(1)
+        sprite.direct_rotate(1)
         self.canvas.update.assert_not_called()
 
 
-    def test_rotate_with_update_calls_canvas_update(self):
+    def test_direct_rotate_with_update_calls_canvas_update(self):
 
         sprite = sprites.VectorSprite(self.canvas, UnitSquare())
-        sprite.rotate(1, update=True)
+        sprite.direct_rotate(1, update=True)
         self.canvas.update.assert_called_once_with()
 
 
-    def test_rotate_to_does_not_call_canvas_update(self):
+    def test_direct_rotate_to_does_not_call_canvas_update(self):
 
         sprite = sprites.VectorSprite(self.canvas, UnitSquare())
-        sprite.rotate_to()
+        sprite.direct_rotate_to(0)
         self.canvas.update.assert_not_called()
 
 
-    def test_rotate_to_with_update_calls_canvas_update(self):
+    def test_direct_rotate_to_with_update_calls_canvas_update(self):
 
         sprite = sprites.VectorSprite(self.canvas, UnitSquare())
-        sprite.rotate_to(update=True)
-        self.canvas.update.assert_called_once_with()
-
-
-    def test_update_calls_canvas_update(self):
-
-        sprite = sprites.VectorSprite(self.canvas, UnitSquare())
-
-        sprite.update()
+        sprite.direct_rotate_to(0, update=True)
         self.canvas.update.assert_called_once_with()
 
 
@@ -274,10 +266,10 @@ class TestNonDefaultSprite(base.TestCase):
         )
 
 
-    def test_move_moves_coords(self):
+    def test_direct_move_moves_coords(self):
 
         sprite = sprites.VectorSprite(self.canvas, UnitSquare(), anchor=(1, 0))
-        sprite.move(1, 1)
+        sprite.direct_move(1, 1)
 
         expected_coords = [2.5, 0.5, 2.5, 1.5, 1.5, 1.5, 1.5, 0.5]
         self.assert_almost_equal_coords(
@@ -287,10 +279,10 @@ class TestNonDefaultSprite(base.TestCase):
         )
 
 
-    def test_move_to_moves_coords(self):
+    def test_direct_move_to_moves_coords(self):
 
         sprite = sprites.VectorSprite(self.canvas, UnitSquare(), anchor=(5, 5))
-        sprite.move_to(2, 1)
+        sprite.direct_move_to(2, 1)
         expected_coords = [2.5, 0.5, 2.5, 1.5, 1.5, 1.5, 1.5, 0.5]
         self.assert_almost_equal_coords(
             sprite.coords,
@@ -299,12 +291,12 @@ class TestNonDefaultSprite(base.TestCase):
         )
 
 
-    def test_rotate_updates_coords(self):
+    def test_direct_rotate_updates_coords(self):
 
         sprite = sprites.VectorSprite(self.canvas, UnitSquare(), angle=180)
         original_coords = list(sprite.coords)
 
-        sprite.rotate(180)
+        sprite.direct_rotate(180)
         # Half-circle rotated coords are easy to determine.
         expected_coords = original_coords[4:] + original_coords[:5]
         self.assert_almost_equal_coords(
@@ -314,19 +306,19 @@ class TestNonDefaultSprite(base.TestCase):
         )
 
 
-    def test_rotate_around_point_rotates_anchor(self):
+    def test_direct_rotate_around_point_rotates_anchor(self):
 
         sprite = sprites.VectorSprite(self.canvas, UnitSquare(), anchor=(2, 1))
 
-        sprite.rotate(180, around=(0, 0))
+        sprite.direct_rotate(180, around=(0, 0))
         self.assert_almost_equal_anchor(sprite.anchor, (-2, -1), places=1)
 
 
-    def test_rotate_around_point_updates_coords(self):
+    def test_direct_rotate_around_point_updates_coords(self):
 
         sprite = sprites.VectorSprite(self.canvas, UnitSquare(), anchor=(1, 1))
 
-        sprite.rotate(180, around=(0, 0))
+        sprite.direct_rotate(180, around=(0, 0))
         expected_coords = [-1.5, -0.5, -1.5, -1.5, -0.5, -1.5, -0.5, -0.5]
         self.assert_almost_equal_coords(
             sprite.coords,
@@ -335,11 +327,11 @@ class TestNonDefaultSprite(base.TestCase):
         )
 
 
-    def test_rotate_to_does_not_change_anchor(self):
+    def test_direct_rotate_to_does_not_change_anchor(self):
 
         sprite = sprites.VectorSprite(self.canvas, UnitSquare(), angle=42)
         original_anchor = sprite.anchor
 
-        sprite.rotate_to()
+        sprite.direct_rotate_to(0)
         self.assert_almost_equal_anchor(original_anchor, sprite.anchor, places=1)
 
