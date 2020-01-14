@@ -143,7 +143,7 @@ class Sprite:
     # ------------------------------------------------------------------------
     # Direct movement and rotation methods: no animation at play.
 
-    def move(self, dx=0, dy=0, *, update=None):
+    def direct_move(self, dx=0, dy=0, *, update=None):
         """
         Move the Sprite by the given relative `dx` and `dy` values.
         The `update` argument overrides the initialized value.
@@ -156,16 +156,16 @@ class Sprite:
             self._canvas.update()
 
 
-    def move_to(self, x=0, y=0, *, update=None):
+    def direct_move_to(self, x=0, y=0, *, update=None):
         """
         Move the Sprite to the given absolute `x`, `y` position.
         The `update` argument overrides the initialized value.
         """
         sprite_x, sprite_y = self._anchor
-        self.move(x - sprite_x, y - sprite_y, update=update)
+        self.direct_move(x - sprite_x, y - sprite_y, update=update)
 
 
-    def rotate(self, angle=0, *, around=None, update=None):
+    def direct_rotate(self, angle=0, *, around=None, update=None):
         """
         Rotate the Sprite anchor by `angle` degrees. If `around` is None, the
         anchor is left unchanged. Otherwise, rotate it about `around`, assumed
@@ -189,7 +189,7 @@ class Sprite:
             self._canvas.update()
 
 
-    def rotate_to(self, angle=0, around=None, update=None):
+    def direct_rotate_to(self, angle=0, around=None, update=None):
         """
         Rotate the Sprite anchor to `angle` degrees, with 0 being the underlying
         shape's original orientation. If `anchor` is None, the anchor is left
@@ -197,7 +197,7 @@ class Sprite:
         two-tuple defining the center of rotation.
         The `update` argument overrides the initialized value.
         """
-        self.rotate(angle-self._angle, around=around, update=update)
+        self.direct_rotate(angle-self._angle, around=around, update=update)
 
 
     # ------------------------------------------------------------------------
@@ -231,7 +231,7 @@ class Sprite:
                 progress = frame / total_frames
                 eased_progress = easing(progress) if easing else progress
                 eased_delta = (eased_progress - prev_eased_progress) * total_frames
-                self.move(frame_dx * eased_delta, frame_dy * eased_delta, update=update)
+                self.direct_move(frame_dx * eased_delta, frame_dy * eased_delta, update=update)
                 if callback:
                     await callback(eased_progress, self._anchor)
                 await asyncio.sleep(frame_seconds)
@@ -267,7 +267,7 @@ class Sprite:
                 eased_progress = easing(progress) if easing else progress
                 frame_x = start_x + dx * eased_progress
                 frame_y = start_y + dy * eased_progress
-                self.move_to(frame_x, frame_y, update=update)
+                self.direct_move_to(frame_x, frame_y, update=update)
                 if callback:
                     await callback(eased_progress, self._anchor)
                 await asyncio.sleep(frame_seconds)
@@ -301,7 +301,7 @@ class Sprite:
                 progress = frame / total_frames
                 eased_progress = easing(progress) if easing else progress
                 eased_delta = (eased_progress - prev_eased_progress) * total_frames
-                self.rotate(frame_dangle * eased_delta, around=around, update=update)
+                self.direct_rotate(frame_dangle * eased_delta, around=around, update=update)
                 if callback:
                     await callback(eased_progress, self._angle)
                 await asyncio.sleep(frame_seconds)
@@ -339,7 +339,7 @@ class Sprite:
                 progress = frame / total_frames
                 eased_progress = easing(progress) if easing else progress
                 frame_angle = start_angle + dangle * eased_progress
-                self.rotate_to(frame_angle, around=around, update=update)
+                self.direct_rotate_to(frame_angle, around=around, update=update)
                 if callback:
                     await callback(eased_progress, self._angle)
                 await asyncio.sleep(frame_seconds)

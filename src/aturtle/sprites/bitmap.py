@@ -31,10 +31,10 @@ class Sprite(base.Sprite):
         )
 
 
-    def rotate(self, angle=0, *, around=None, update=None):
+    def direct_rotate(self, angle=0, *, around=None, update=None):
 
         # Rotate anchor point and update angle.
-        super().rotate(angle, around=around, update=False)
+        super().direct_rotate(angle, around=around, update=False)
 
         # Anchor point rotated, move the shape.
         if around:
