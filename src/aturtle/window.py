@@ -36,7 +36,7 @@ class Window:
         # Make (0, 0) the visual canvas center.
         canvas.config(xscrollincrement=1, yscrollincrement=1)
         self._x_scroll = -width // 2
-        self._y_scroll = -width // 2
+        self._y_scroll = -height // 2
         canvas.xview_scroll(self._x_scroll, 'units')
         canvas.yview_scroll(self._y_scroll, 'units')
 
