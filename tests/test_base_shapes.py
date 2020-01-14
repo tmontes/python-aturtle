@@ -151,6 +151,24 @@ class TestAccessPreRotateDefault(unittest.TestCase):
         self.assertEqual(step, 2705)
 
 
+    def test_angle_89_is_rotated_data_at_step_9_out_of_36(self):
+
+        shape = _TestShape(image='image', anchor=(0, 0), rotations=36)
+
+        image = shape[89]
+        (_image, _anchor, step, _rotations) = image
+        self.assertEqual(step, 9)
+
+
+    def test_angle_91_is_rotated_data_at_step_9_out_of_36(self):
+
+        shape = _TestShape(image='image', anchor=(0, 0), rotations=36)
+
+        image = shape[91]
+        (_image, _anchor, step, _rotations) = image
+        self.assertEqual(step, 9)
+
+
     def test_acessing_all_angles_does_not_call_rotated_data(self):
 
         shape = _TestShape(image='image', anchor=(0, 0), rotations=360)
