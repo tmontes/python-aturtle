@@ -72,7 +72,7 @@ class Shape:
         Image data at the given angle, in degrees.
         """
         rotations = self._rotations
-        step = int(angle * rotations / 360) % rotations
+        step = round(angle * rotations / 360) % rotations
 
         rotated_data = self._rotated_data
         if not step in rotated_data and not self._pre_rotate:
