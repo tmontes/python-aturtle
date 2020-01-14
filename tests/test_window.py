@@ -124,13 +124,13 @@ class TestWindow(FakedTkinterTestCase):
 
     def test_canvas_origin_is_centered(self):
 
-        w = window.Window(width=200, height=200)
+        w = window.Window(width=300, height=200)
 
         w.canvas.config.assert_called_once_with(
             xscrollincrement=1,
             yscrollincrement=1,
         )
-        w.canvas.xview_scroll.assert_called_once_with(-100, 'units')
+        w.canvas.xview_scroll.assert_called_once_with(-150, 'units')
         w.canvas.yview_scroll.assert_called_once_with(-100, 'units')
 
 
