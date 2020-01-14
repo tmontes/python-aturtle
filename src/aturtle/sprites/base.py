@@ -154,7 +154,7 @@ class Sprite:
         self._anchor = (sprite_x + dx, sprite_y + dy)
         self._canvas.move(self._id, dx, dy)
 
-        if update or self._update:
+        if update or (update is None and self._update):
             self._canvas.update()
 
 
@@ -188,7 +188,7 @@ class Sprite:
             self._canvas.move(self._id, new_x - old_x - cx, new_y - old_y - cy)
             self._anchor = (new_x, new_y)
 
-        if update or self._update:
+        if update or (update is None and self._update):
             self._canvas.update()
 
 

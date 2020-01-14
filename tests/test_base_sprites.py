@@ -1198,3 +1198,24 @@ class TestSyncRotateToAnimation(SyncAnimationBase):
 
         # Stored angles should decrease from 9 to 0, then from 359 to 350.
         self.assertEqual(angles, [*range(9, -1, -1), *range(359, 349, -1)])
+
+
+
+class TestRegressionSpriteInitializedWithUpdateTrue(test_base.TestCase):
+
+    def setUp(self):
+
+        self.canvas = fake_tkinter.FakeCanvas()
+        self.sprite = base.Sprite(self.canvas, shape=None, update=True)
+
+
+    def test_direct_move_with_update_False_doesnt_call_canvas_update(self):
+
+        self.sprite.direct_move(30, 40, update=False)
+        self.canvas.update.assert_not_called()
+
+
+    def test_direct_rotate_around_with_update_False_doesnt_call_canvas_update(self):
+
+        self.sprite.direct_rotate(30, around=(10, 10), update=False)
+        self.canvas.update.assert_not_called()
