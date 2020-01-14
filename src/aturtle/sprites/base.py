@@ -82,27 +82,29 @@ class Sprite:
                  update=False):
         """
         Initialize a Sprite with the given `shape` and place it on the output
-        `canvas` at the given `x`, `y` coordinates, rotated `angle` degrees.
+        `canvas` at `anchor` -- an (x, y) tuple  -- rotated `angle` degrees.
 
-        Sprite moves at `m_speed` canvas units per second, and rotates at
-        `r_speed` degrees per second; if None they default to `speed`.
+        Animated Sprites move at `m_speed` canvas units per second, and rotate
+        at `r_speed` degrees per second; if None they default to `speed`.
 
-        Movement speed is changed by the `m_easing` callable, if passed, and
-        rotation speed is changed by the `r_easing` callable; if None, they
-        default to the `easing` callable.
+        Linear movement progress is changed via the `m_easing` callable, if
+        passed, and linear rotation progress is changed via the `r_easing`
+        callable; if None, they default to the `easing` callable.
 
         If set, `m_callback` is called once per frame with (progress, anchor)
         positional arguments, where progress is a number that goes from 0 to 1
         througout the animation, and anchor is an (x, y) tuple with the Sprite's
         position at the time. If set, `r_callback` is called once per frame with
         (progress, angle) positional arguments, where progress is as above, and
-        angle is the Sprite's angle at the time.
+        angle is the Sprite's angle at the time. Callback results are awaited
+        for in by asynchronous animation methods.
 
         Movement and rotation animations generate an aproximation of `fps`
-        frames per second.
+        frames per second (the computation overhead is not accounted for in
+        the inter-frame delays).
 
-        When `update` is true, the output canvas is updated automatically with
-        on movement or rotation.
+        When `update` is true, the output canvas is updated automatically on
+        movement or rotation.
         """
         self._canvas = canvas
         self._id = None
@@ -145,8 +147,8 @@ class Sprite:
 
     def direct_move(self, dx=0, dy=0, *, update=None):
         """
-        Move the Sprite by the given relative `dx` and `dy` values.
-        The `update` argument overrides the initialized value.
+        Move the Sprite by the given relative `dx` and `dy` values, in a single
+        step. The `update` argument overrides the init-time value.
         """
         sprite_x, sprite_y = self._anchor
         self._anchor = (sprite_x + dx, sprite_y + dy)
@@ -158,8 +160,8 @@ class Sprite:
 
     def direct_move_to(self, x=0, y=0, *, update=None):
         """
-        Move the Sprite to the given absolute `x`, `y` position.
-        The `update` argument overrides the initialized value.
+        Move the Sprite to the given absolute `x`, `y` position, in a single
+        step. The `update` argument overrides the init-time value.
         """
         sprite_x, sprite_y = self._anchor
         self.direct_move(x - sprite_x, y - sprite_y, update=update)
@@ -167,10 +169,10 @@ class Sprite:
 
     def direct_rotate(self, angle=0, *, around=None, update=None):
         """
-        Rotate the Sprite anchor by `angle` degrees. If `around` is None, the
-        anchor is left unchanged. Otherwise, rotate it about `around`, assumed
-        to be a (cx, cy) two-tuple defining the center of rotation.
-        The `update` argument overrides the initialized value.
+        Rotate the Sprite anchor by `angle` degrees, in a single step.
+        If `around` is None, the anchor is left unchanged. Otherwise, it is
+        rotated `around`, assumed to be an (x, y) tuple defining the center of
+        rotation. The `update` argument overrides the init-time value.
         """
         self._angle = (self._angle + angle) % 360
         if around:
@@ -191,11 +193,11 @@ class Sprite:
 
     def direct_rotate_to(self, angle=0, around=None, update=None):
         """
-        Rotate the Sprite anchor to `angle` degrees, with 0 being the underlying
-        shape's original orientation. If `anchor` is None, the anchor is left
-        unchanged. Otherwise, it is rotated around it, assumed to be a (cx, cy)
-        two-tuple defining the center of rotation.
-        The `update` argument overrides the initialized value.
+        Rotate the Sprite anchor to `angle` degrees, in a single step, with 0
+        being the underlying shape's original orientation. If `around` is None,
+        the anchor is left unchanged. Otherwise, it is rotated around it,
+        assumed to be an (x, y) tuple defining the center of rotation.
+        The `update` argument overrides the init-time value.
         """
         self.direct_rotate(angle-self._angle, around=around, update=update)
 
@@ -206,10 +208,10 @@ class Sprite:
     async def async_move(self, dx, dy, *, speed=None, easing=None, callback=None,
                          fps=None, update=None):
         """
-        Move the Sprite by the given relative `dx` and `dy` values. Animated.
+        Animated move of the Sprite by the given relative `dx` and `dy` values.
 
         The `speed`, `easing`, `callback`, `fps`, and `update` arguments over-
-        ride the initialized values.
+        ride the init-time values.
         """
         with self._movement.relative(), contextlib.suppress(asyncio.CancelledError):
 
@@ -241,10 +243,10 @@ class Sprite:
     async def async_move_to(self, x, y, *, speed=None, easing=None, callback=None,
                             fps=None, update=None):
         """
-        Move the Sprite to the given absolute (`x`, `y`) position. Animated.
+        Animated move of the Sprite to the given absolute (`x`, `y`) position.
 
         The `speed`, `easing`, `callback`, `fps`, and `update` arguments over-
-        ride the initialized values.
+        ride the init-time values.
         """
         with self._movement.absolute(), contextlib.suppress(asyncio.CancelledError):
 
@@ -276,12 +278,12 @@ class Sprite:
     async def async_rotate(self, dangle, *, around=None, speed=None, easing=None,
                            callback=None, fps=None, update=None):
         """
-        Rotate the Sprite anchor by `angle` degrees. If `around` is None, the
-        anchor is left unchanged. Otherwise, rotate it about `around`, assumed
-        to be a (cx, cy) two-tuple defining the center of rotation. Animated.
+        Animated rotation of the Sprite by `angle` degrees. If `around` is None,
+        the anchor is left unchanged. Otherwise, it rotates about `around`,
+        assumed to be an (x, y) tuple defining the center of rotation.
 
         The `speed`, `easing`, `callback`, `fps`, and `update` arguments over-
-        ride the initialized values. If `speed` is None, there's no animation.
+        ride the init-time values.
         """
         with self._rotation.relative(), contextlib.suppress(asyncio.CancelledError):
 
@@ -311,13 +313,13 @@ class Sprite:
     async def async_rotate_to(self, angle, *, around=None, speed=None, easing=None,
                               callback=None, fps=None, update=None):
         """
-        Rotate the Sprite anchor to `angle` degrees, with 0 being the underlying
-        shape's original orientation. If `anchor` is None, the anchor is left
-        unchanged. Otherwise, it is rotated around it, assumed to be a (cx, cy)
-        two-tuple defining the center of rotation. Animated.
+        Animated rotation of Sprite to `angle` degrees, with 0 being the
+        underlying shape's original orientation. If `around` is None, the
+        anchor is left unchanged. Otherwise, it is rotated around it, assumed
+        to be an (x, y) tuple defining the center of rotation.
 
         The `speed`, `easing`, `callback`, `fps`, and `update` arguments over-
-        ride the initialized values. If `speed` is None, there's no animation.
+        ride the init-time values.
         """
         with self._rotation.absolute(), contextlib.suppress(asyncio.CancelledError):
 
@@ -349,12 +351,14 @@ class Sprite:
     # Sync animated movement and rotation methods.
     #
     # The synchronous versions of the async animated movement and rotation
-    # methods are # automatically generated by the code in the `syncer` module.
+    # methods are automatically generated by the code in the `syncer` module.
     #
     # The `name_mapper` function is defined exclusively for this purpuse,
     # being deleted after the fact, in order not to pollute the class attrs.
 
     def name_mapper(name):
+        # Cannot map all names. Otherwise, acesses to `self._anchor`, for
+        # example, would be somehow mapped and fail at runtime.
         return name[1:] if name.startswith('async_') else name
 
     sync_move = syncer.create_sync_func(async_move, name_mapper)
