@@ -335,3 +335,14 @@ class TestNonDefaultSprite(base.TestCase):
         sprite.direct_rotate_to(0)
         self.assert_almost_equal_anchor(original_anchor, sprite.anchor, places=1)
 
+
+
+class TestRegressionSpriteInitializedWithUpdateTrue(base.TestCase):
+
+    def test_direct_rotate_around_calls_canvas_update_once(self):
+
+        canvas = fake_tkinter.FakeCanvas()
+        sprite = sprites.VectorSprite(canvas, UnitSquare(), update=True)
+
+        sprite.direct_rotate(30, around=(10, 10))
+        canvas.update.assert_called_once_with()

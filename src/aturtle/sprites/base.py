@@ -153,9 +153,7 @@ class Sprite:
         sprite_x, sprite_y = self._anchor
         self._anchor = (sprite_x + dx, sprite_y + dy)
         self._canvas.move(self._id, dx, dy)
-
-        if update or self._update:
-            self._canvas.update()
+        self.update(update=update)
 
 
     def direct_move_to(self, x, y, *, update=None):
@@ -176,19 +174,19 @@ class Sprite:
         """
         self._angle = (self._angle + angle) % 360
         if around:
-            sprite_x, sprite_y = self._anchor
+            old_x, old_y = self._anchor
             cx, cy = around
-            sprite_x -= cx
-            sprite_y -= cy
+            old_x -= cx
+            old_y -= cy
             angle_rad = angle * math.pi / 180.0
             sin_theta = math.sin(angle_rad)
             cos_theta = math.cos(angle_rad)
-            new_x = sprite_x * cos_theta - sprite_y * sin_theta + cx
-            new_y = sprite_x * sin_theta + sprite_y * cos_theta + cy
+            new_x = old_x * cos_theta - old_y * sin_theta + cx
+            new_y = old_x * sin_theta + old_y * cos_theta + cy
+            self._canvas.move(self._id, new_x - old_x - cx, new_y - old_y - cy)
             self._anchor = (new_x, new_y)
 
-        if update or self._update:
-            self._canvas.update()
+        self.update(update=update)
 
 
     def direct_rotate_to(self, angle, around=None, update=None):
@@ -370,6 +368,16 @@ class Sprite:
 
 
     # ------------------------------------------------------------------------
+
+    def update(self, update=None):
+        """
+        Update the output canvas depending on `update` and its init-time value.
+        Updates if `update` is true, or if it is None and the init-time update
+        value is true. Otherwise no update happens.
+        """
+        if update or (update is None and self._update):
+            self._canvas.update()
+
 
     def delete(self):
         """
