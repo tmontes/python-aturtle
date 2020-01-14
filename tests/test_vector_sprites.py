@@ -145,7 +145,7 @@ class TestDefaultSprite(base.TestCase):
         sprite = sprites.VectorSprite(self.canvas, UnitSquare())
         original_anchor = sprite.anchor
 
-        sprite.direct_rotate_to()
+        sprite.direct_rotate_to(0)
         self.assert_almost_equal_anchor(original_anchor, sprite.anchor, places=1)
 
 
@@ -194,14 +194,14 @@ class TestDefaultSprite(base.TestCase):
     def test_direct_rotate_to_does_not_call_canvas_update(self):
 
         sprite = sprites.VectorSprite(self.canvas, UnitSquare())
-        sprite.direct_rotate_to()
+        sprite.direct_rotate_to(0)
         self.canvas.update.assert_not_called()
 
 
     def test_direct_rotate_to_with_update_calls_canvas_update(self):
 
         sprite = sprites.VectorSprite(self.canvas, UnitSquare())
-        sprite.direct_rotate_to(update=True)
+        sprite.direct_rotate_to(0, update=True)
         self.canvas.update.assert_called_once_with()
 
 
@@ -332,6 +332,6 @@ class TestNonDefaultSprite(base.TestCase):
         sprite = sprites.VectorSprite(self.canvas, UnitSquare(), angle=42)
         original_anchor = sprite.anchor
 
-        sprite.direct_rotate_to()
+        sprite.direct_rotate_to(0)
         self.assert_almost_equal_anchor(original_anchor, sprite.anchor, places=1)
 

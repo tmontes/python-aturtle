@@ -47,7 +47,7 @@ class Sprite(base.Sprite):
         return self._offset_shape_coords(self._angle)
 
 
-    def direct_rotate(self, angle=0, *, around=None, update=None):
+    def direct_rotate(self, angle, *, around=None, update=None):
 
         # Rotate anchor point and update angle.
         super().direct_rotate(angle, around=around, update=False)

@@ -253,12 +253,6 @@ class TestNonDefaultSprite(test_base.TestCase):
         self.assertAlmostEqual(self.sprite.angle, 42, places=1)
 
 
-    def test_direct_move_with_no_args_does_not_move_anchor(self):
-
-        self.sprite.direct_move()
-        self.assert_almost_equal_anchor(self.sprite.anchor, (42, 24), places=1)
-
-
     def test_direct_move_moves_anchor(self):
 
         self.sprite.direct_move(-42, -24)

@@ -145,7 +145,7 @@ class Sprite:
     # ------------------------------------------------------------------------
     # Direct movement and rotation methods: no animation at play.
 
-    def direct_move(self, dx=0, dy=0, *, update=None):
+    def direct_move(self, dx, dy, *, update=None):
         """
         Move the Sprite by the given relative `dx` and `dy` values, in a single
         step. The `update` argument overrides the init-time value.
@@ -158,7 +158,7 @@ class Sprite:
             self._canvas.update()
 
 
-    def direct_move_to(self, x=0, y=0, *, update=None):
+    def direct_move_to(self, x, y, *, update=None):
         """
         Move the Sprite to the given absolute `x`, `y` position, in a single
         step. The `update` argument overrides the init-time value.
@@ -167,7 +167,7 @@ class Sprite:
         self.direct_move(x - sprite_x, y - sprite_y, update=update)
 
 
-    def direct_rotate(self, angle=0, *, around=None, update=None):
+    def direct_rotate(self, angle, *, around=None, update=None):
         """
         Rotate the Sprite anchor by `angle` degrees, in a single step.
         If `around` is None, the anchor is left unchanged. Otherwise, it is
@@ -191,7 +191,7 @@ class Sprite:
             self._canvas.update()
 
 
-    def direct_rotate_to(self, angle=0, around=None, update=None):
+    def direct_rotate_to(self, angle, around=None, update=None):
         """
         Rotate the Sprite anchor to `angle` degrees, in a single step, with 0
         being the underlying shape's original orientation. If `around` is None,
