@@ -93,15 +93,15 @@ class TestDefaultSprite(base.TestCase):
         )
 
 
-    def test_direct_rotate_around_point_calls_canvas_moveto(self):
+    def test_direct_rotate_around_point_calls_canvas_move(self):
 
         shape = FakeBitmapShape(anchor=(0, 0))
         sprite = sprites.BitmapSprite(self.canvas, shape)
 
         sprite.direct_rotate(180, around=(1, 1))
 
-        canvas_moveto = self.canvas.moveto
-        canvas_moveto.assert_called_once_with(24, 2, 2)
+        canvas_move = self.canvas.move
+        canvas_move.assert_called_once_with(24, 2, 2)
 
 
     def test_direct_rotate_does_not_call_canvas_update(self):

@@ -176,15 +176,16 @@ class Sprite:
         """
         self._angle = (self._angle + angle) % 360
         if around:
-            sprite_x, sprite_y = self._anchor
+            old_x, old_y = self._anchor
             cx, cy = around
-            sprite_x -= cx
-            sprite_y -= cy
+            old_x -= cx
+            old_y -= cy
             angle_rad = angle * math.pi / 180.0
             sin_theta = math.sin(angle_rad)
             cos_theta = math.cos(angle_rad)
-            new_x = sprite_x * cos_theta - sprite_y * sin_theta + cx
-            new_y = sprite_x * sin_theta + sprite_y * cos_theta + cy
+            new_x = old_x * cos_theta - old_y * sin_theta + cx
+            new_y = old_x * sin_theta + old_y * cos_theta + cy
+            self._canvas.move(self._id, new_x - old_x - cx, new_y - old_y - cy)
             self._anchor = (new_x, new_y)
 
         if update or self._update:
