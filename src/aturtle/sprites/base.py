@@ -165,6 +165,18 @@ class Sprite:
         self.direct_move(x - sprite_x, y - sprite_y, update=update)
 
 
+    def direct_forward(self, distance, *, update=None):
+        """
+        Move the Sprite forward by `distance`, towards the direction set by
+        its angle. Negative values move the Sprite in the opposite direction.
+        The `update` argument overrides the init-time value.
+        """
+        angle_rad = self._angle * math.pi / 180.0
+        delta_x = distance * math.cos(angle_rad)
+        delta_y = distance * math.sin(angle_rad)
+        self.direct_move(delta_x, delta_y, update=update)
+
+
     def direct_rotate(self, angle, *, around=None, update=None):
         """
         Rotate the Sprite anchor by `angle` degrees, in a single step.
@@ -275,6 +287,30 @@ class Sprite:
                 await asyncio.sleep(frame_seconds)
 
 
+    async def async_forward(self, distance, *, speed=None, easing=None, callback=None,
+                            fps=None, update=None):
+        """
+        Animated move of the Sprite forward by `distance`, towards the direction
+        set by its angle.  Negative values move the Sprite in the opposite
+        direction.
+
+        The `speed`, `easing`, `callback`, `fps`, and `update` arguments over-
+        ride the init-time values.
+        """
+        angle_rad = self._angle * math.pi / 180.0
+        delta_x = distance * math.cos(angle_rad)
+        delta_y = distance * math.sin(angle_rad)
+        await self.async_move(
+            delta_x,
+            delta_y,
+            speed=speed,
+            easing=easing,
+            callback=callback,
+            fps=fps,
+            update=update,
+        )
+
+
     async def async_rotate(self, dangle, *, around=None, speed=None, easing=None,
                            callback=None, fps=None, update=None):
         """
@@ -365,6 +401,7 @@ class Sprite:
 
     sync_move = syncer.create_sync_func(async_move, name_mapper)
     sync_move_to = syncer.create_sync_func(async_move_to, name_mapper)
+    sync_forward = syncer.create_sync_func(async_forward, name_mapper)
     sync_rotate = syncer.create_sync_func(async_rotate, name_mapper)
     sync_rotate_to = syncer.create_sync_func(async_rotate_to, name_mapper)
 
