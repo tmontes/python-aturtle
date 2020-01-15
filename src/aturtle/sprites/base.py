@@ -127,6 +127,14 @@ class Sprite:
 
 
     @property
+    def canvas(self):
+        """
+        The Sprite's canvas.
+        """
+        return self._canvas
+
+
+    @property
     def anchor(self):
         """
         The Sprite's anchor position in the canvas, as an (x, y) tuple.
