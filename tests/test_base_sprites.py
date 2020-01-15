@@ -85,6 +85,28 @@ class TestDefaultSprite(test_base.TestCase):
         self.assertAlmostEqual(sprite.angle, 0, places=1)
 
 
+    def test_direct_forward_moves_anchor(self):
+
+        sprite = base.Sprite(canvas=self.canvas, shape=None)
+        sprite.direct_forward(42)
+        self.assert_almost_equal_anchor(sprite.anchor, (42, 0), places=1)
+
+
+    def test_direct_forward_moves_anchor_relative(self):
+
+        sprite = base.Sprite(canvas=self.canvas, shape=None)
+        sprite.direct_forward(42)
+        sprite.direct_forward(42)
+        self.assert_almost_equal_anchor(sprite.anchor, (84, 0), places=1)
+
+
+    def test_direct_forward_does_not_change_angle(self):
+
+        sprite = base.Sprite(canvas=self.canvas, shape=None)
+        sprite.direct_forward(42)
+        self.assertAlmostEqual(sprite.angle, 0, places=1)
+
+
     def test_direct_rotate_does_not_move_anchor(self):
 
         sprite = base.Sprite(canvas=self.canvas, shape=None)
@@ -288,6 +310,28 @@ class TestNonDefaultSprite(test_base.TestCase):
     def test_direct_move_to_does_not_change_angle(self):
 
         self.sprite.direct_move_to(42, 24)
+        self.assertAlmostEqual(self.sprite.angle, 42, places=1)
+
+
+    def test_direct_forward_moves_anchor(self):
+
+        # Starting at (42, 24), angled 42.
+        self.sprite.direct_forward(100)
+
+        # Forward 100 leads to anchor at (116.3, 90.9).
+        self.assert_almost_equal_anchor(self.sprite.anchor, (116.3, 90.9), places=1)
+
+
+    def test_direct_forward_moves_anchor_relative(self):
+
+        self.sprite.direct_forward(50)
+        self.sprite.direct_forward(50)
+        self.assert_almost_equal_anchor(self.sprite.anchor, (116.3, 90.9), places=1)
+
+
+    def test_direct_forward_does_not_change_angle(self):
+
+        self.sprite.direct_forward(42)
         self.assertAlmostEqual(self.sprite.angle, 42, places=1)
 
 
