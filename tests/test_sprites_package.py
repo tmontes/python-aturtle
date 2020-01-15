@@ -15,6 +15,74 @@ from aturtle.shapes import bitmap, vector
 
 
 
+class TestTarget(unittest.TestCase):
+
+    def setUp(self):
+
+        self.bitmap_shape_mock = mock.Mock()
+        self.vector_shape_mock = mock.Mock()
+        self.bitmap_sprite_mock = mock.Mock()
+        self.vector_sprite_mock = mock.Mock()
+
+        self.exit_stack = contextlib.ExitStack()
+
+        patches = (
+            mock.patch('aturtle.sprites._BitmapShape', self.bitmap_shape_mock),
+            mock.patch('aturtle.sprites._VectorShape', self.vector_shape_mock),
+            mock.patch('aturtle.sprites.BitmapSprite', self.bitmap_sprite_mock),
+            mock.patch('aturtle.sprites.VectorSprite', self.vector_sprite_mock),
+
+        )
+        for patch in patches:
+            self.exit_stack.enter_context(patch)
+
+
+    def tearDown(self):
+
+        self.exit_stack.close()
+
+
+    def test_create_with_canvas_target_works(self):
+
+        canvas = object()
+        shape = object()
+        self.bitmap_shape_mock.return_value = shape
+
+        sprite = sprites.create_sprite(canvas, 'filename')
+
+        # One shape was created with filename keyword argument.
+        self.bitmap_shape_mock.assert_called_once_with(filename='filename')
+
+        # One sprite was created.
+        self.bitmap_sprite_mock.assert_called_once()
+
+        # The first passed argument is the canvas.
+        first_argument = self.bitmap_sprite_mock.call_args.args[0]
+        self.assertIs(first_argument, canvas)
+
+
+    def test_create_with_window_target_works(self):
+
+        canvas = object()
+        window = mock.Mock()
+        window.canvas = canvas
+        shape = object()
+        self.bitmap_shape_mock.return_value = shape
+
+        sprite = sprites.create_sprite(window, 'filename')
+
+        # One shape was created with filename keyword argument.
+        self.bitmap_shape_mock.assert_called_once_with(filename='filename')
+
+        # One sprite was created.
+        self.bitmap_sprite_mock.assert_called_once()
+
+        # The first passed argument is the window canvas.
+        first_argument = self.bitmap_sprite_mock.call_args.args[0]
+        self.assertIs(first_argument, canvas)
+
+
+
 class TestFullyPatchedNoArgs(unittest.TestCase):
 
     def setUp(self):

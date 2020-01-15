@@ -15,14 +15,15 @@ from . vector import Sprite as VectorSprite
 
 
 
-def create_sprite(canvas, shape_source, *, anchor=(0, 0), angle=0,
+def create_sprite(target, shape_source, *, anchor=(0, 0), angle=0,
                   speed=360, m_speed=None, r_speed=None,
                   easing=None, m_easing=None, r_easing=None,
                   m_callback=None, r_callback=None,
                   fps=80, update=False, **kwargs):
     """
     Returns a newly created sprite from `shape_source`, placed at the `anchor`
-    position in the given `canvas`.
+    position in the given `target`, which should be either an aturtle.Window
+    object or a tkinter.Canvas one.
 
     The sprite's type and shape depend on the type of `shape_source`:
 
@@ -40,6 +41,7 @@ def create_sprite(canvas, shape_source, *, anchor=(0, 0), angle=0,
     for that, such a customized shape must be created beforehand and passed in
     explicitly via `shape_source`.
     """
+    canvas = target.canvas if hasattr(target, 'canvas') else target
     if isinstance(shape_source, (str, pathlib.Path)):
         shape = _BitmapShape(filename=shape_source, **kwargs)
         sprite = BitmapSprite(canvas, shape, anchor=anchor, angle=angle,
