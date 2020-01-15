@@ -92,6 +92,13 @@ class TestDefaultSprite(test_base.TestCase):
         self.assert_almost_equal_anchor(sprite.anchor, (42, 0), places=1)
 
 
+    def test_direct_forward_negative_moves_anchor(self):
+
+        sprite = base.Sprite(canvas=self.canvas, shape=None)
+        sprite.direct_forward(-42)
+        self.assert_almost_equal_anchor(sprite.anchor, (-42, 0), places=1)
+
+
     def test_direct_forward_moves_anchor_relative(self):
 
         sprite = base.Sprite(canvas=self.canvas, shape=None)
@@ -320,6 +327,15 @@ class TestNonDefaultSprite(test_base.TestCase):
 
         # Forward 100 leads to anchor at (116.3, 90.9).
         self.assert_almost_equal_anchor(self.sprite.anchor, (116.3, 90.9), places=1)
+
+
+    def test_direct_forward_negative_moves_anchor(self):
+
+        # Starting at (42, 24), angled 42.
+        self.sprite.direct_forward(-100)
+
+        # Forward 100 leads to anchor at (-32.3, -42.9).
+        self.assert_almost_equal_anchor(self.sprite.anchor, (-32.3, -42.9), places=1)
 
 
     def test_direct_forward_moves_anchor_relative(self):
@@ -702,6 +718,14 @@ class TestAsyncForwardAnimation(AsyncAnimationBase):
         self._run_coroutines(coro)
 
         self.assert_almost_equal_anchor(self.sprite.anchor, (50, 0), places=1)
+
+
+    def test_async_forward_negative_with_speed_moves_anchor(self):
+
+        coro = self.sprite.async_forward(-50, speed=50, fps=10)
+        self._run_coroutines(coro)
+
+        self.assert_almost_equal_anchor(self.sprite.anchor, (-50, 0), places=1)
 
 
     def test_async_forward_with_speed_calls_canvas_move_and_asyncio_sleep(self):
@@ -1176,6 +1200,7 @@ class TestSyncMoveAnimation(SyncAnimationBase):
         self.assert_almost_equal_anchor(self.sprite.anchor, (0.1, 0), places=1)
 
 
+
 class TestSyncMoveToAnimation(SyncAnimationBase):
 
     def setUp(self):
@@ -1280,6 +1305,12 @@ class TestSyncForwardAnimation(SyncAnimationBase):
 
         self.sprite.sync_forward(50, speed=50, fps=10)
         self.assert_almost_equal_anchor(self.sprite.anchor, (50, 0), places=1)
+
+
+    def test_sync_forward_negative_with_speed_moves_anchor(self):
+
+        self.sprite.sync_forward(-50, speed=50, fps=10)
+        self.assert_almost_equal_anchor(self.sprite.anchor, (-50, 0), places=1)
 
 
     def test_sync_forward_with_speed_calls_canvas_move_and_asyncio_sleep(self):
