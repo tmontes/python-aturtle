@@ -9,7 +9,7 @@ import asyncio
 import unittest
 from unittest import mock
 
-from aturtle.sprites import syncer
+from aturtle.utils import syncer
 
 
 

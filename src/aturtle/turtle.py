@@ -5,7 +5,7 @@
 # See LICENSE for details.
 # ----------------------------------------------------------------------------
 
-from . sprites import syncer
+from . utils import syncer
 
 
 

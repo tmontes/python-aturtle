@@ -9,7 +9,7 @@ import asyncio
 import contextlib
 import math
 
-from . import syncer
+from .. utils import syncer
 
 
 
