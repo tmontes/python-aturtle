@@ -165,17 +165,28 @@ class _ExprTransformer(ast.NodeTransformer):
 
     def visit_Attribute(self, node):
         """
-        Replaces "asyncio.sleep" constructs with "time.sleep" ones, and
-        "self.async_name" constructs with "self.sync_name" ones, using
-        `name_transformer` to produce "sync_name" from "async_name".
+        Replaces "asyncio.sleep" constructs with "time.sleep" ones,
+        "self.async_name" constructs with "self.sync_name" ones, and
+        "self.<attr>.async_name" constructs with "self.<attr>.sync_name"
+        ones using `name_transformer` to produce "sync_name" from
+        "async_name".
         """
+        if not hasattr(node.value, 'id') and node.value.value.id == 'self':
+            # node is "self.attr.async_attr"
+            return ast.Attribute(
+                value=node.value,
+                attr=self._name_transformer(node.attr),
+                ctx=node.ctx,
+            )
         if node.value.id == 'asyncio' and node.attr == 'sleep':
+            # node is "asyncio.sleep"
             return ast.Attribute(
                 value=ast.Name(id='time', ctx=node.value.ctx),
                 attr='sleep',
                 ctx=node.ctx,
             )
-        elif node.value.id == 'self':
+        if node.value.id == 'self':
+            # node is "self.async_attr"
             return ast.Attribute(
                 value=ast.Name(id=node.value.id, ctx=node.value.ctx),
                 attr=self._name_transformer(node.attr),

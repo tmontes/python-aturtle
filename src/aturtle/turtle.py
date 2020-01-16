@@ -5,6 +5,8 @@
 # See LICENSE for details.
 # ----------------------------------------------------------------------------
 
+from . sprites import syncer
+
 
 
 class Turtle:
@@ -31,7 +33,7 @@ class Turtle:
         self._down = True
 
 
-    def _sync_draw_line(self, _progress, anchor):
+    async def _async_draw_line(self, _progress, anchor):
 
         if self._line_id:
             self._canvas.coords(self._line_id, *self._line_start, *anchor)
@@ -42,11 +44,24 @@ class Turtle:
             self._lines.append(self._line_id)
 
 
-    def sync_forward(self, distance):
+    async def async_forward(self, distance):
 
         self._line_id = None
         self._line_start = self._sprite.anchor
-        self._sprite.sync_forward(
+        await self._sprite.async_forward(
             distance,
-            callback=self._sync_draw_line if self._down else None,
+            callback=self._async_draw_line if self._down else None,
         )
+
+
+    def name_mapper(name):
+        if name.startswith('_async'):
+            return '_' + name[2:]
+        if name.startswith('async'):
+            return name[1:]
+        return name
+
+    _sync_draw_line = syncer.create_sync_func(_async_draw_line, name_mapper)
+    sync_forward = syncer.create_sync_func(async_forward, name_mapper)
+
+    del name_mapper
