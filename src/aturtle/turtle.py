@@ -73,6 +73,26 @@ class Turtle:
         await self.async_forward(-distance)
 
 
+    async def async_move(self, dx, dy):
+
+        self._line_id = None
+        self._line_start = self._sprite.anchor
+        await self._sprite.async_move(
+            dx, dy,
+            callback=self._async_draw_line if self._down else None,
+        )
+
+
+    async def async_move_to(self, dx, dy):
+
+        self._line_id = None
+        self._line_start = self._sprite.anchor
+        await self._sprite.async_move_to(
+            dx, dy,
+            callback=self._async_draw_line if self._down else None,
+        )
+
+
     async def async_left(self, angle):
 
         await self._sprite.async_rotate(-angle)
@@ -93,6 +113,8 @@ class Turtle:
     _sync_draw_line = syncer.create_sync_func(_async_draw_line, name_mapper)
     sync_forward = syncer.create_sync_func(async_forward, name_mapper)
     sync_backward = syncer.create_sync_func(async_backward, name_mapper)
+    sync_move = syncer.create_sync_func(async_move, name_mapper)
+    sync_move_to = syncer.create_sync_func(async_move_to, name_mapper)
     sync_left = syncer.create_sync_func(async_left, name_mapper)
     sync_right = syncer.create_sync_func(async_right, name_mapper)
 
