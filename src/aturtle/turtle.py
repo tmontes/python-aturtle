@@ -9,14 +9,22 @@ from . utils import syncer
 
 
 
+_LINE_COLOR = '#cccccc'
+_LINE_WIDTH = 3
+
+
+
 class Turtle:
 
-    def __init__(self, sprite, *, down=True):
+    def __init__(self, sprite, *, down=True, line_color=_LINE_COLOR,
+                 line_width=_LINE_WIDTH):
 
         self._canvas = sprite.canvas
         self._sprite = sprite
 
         self._down = down
+        self.line_color = line_color
+        self.line_width = line_width
 
         self._line_id = None
         self._line_start = None
@@ -37,10 +45,16 @@ class Turtle:
 
         if self._line_id:
             self._canvas.coords(self._line_id, *self._line_start, *anchor)
+        else:
+            self._line_id = self._canvas.create_line(
+                *self._line_start,
+                *anchor,
+                fill=self.line_color,
+                width=self.line_width,
+                capstyle='round',
+            )
             # TODO: Improve this, cannot access private sprite attribute.
             self._canvas.tag_lower(self._line_id, self._sprite._id)
-        else:
-            self._line_id = self._canvas.create_line(*self._line_start, *anchor)
             self._lines.append(self._line_id)
 
 
