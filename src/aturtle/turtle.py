@@ -68,6 +68,11 @@ class Turtle:
         )
 
 
+    async def async_backward(self, distance):
+
+        await self.async_forward(-distance)
+
+
     async def async_left(self, angle):
 
         await self._sprite.async_rotate(-angle)
@@ -87,6 +92,7 @@ class Turtle:
 
     _sync_draw_line = syncer.create_sync_func(_async_draw_line, name_mapper)
     sync_forward = syncer.create_sync_func(async_forward, name_mapper)
+    sync_backward = syncer.create_sync_func(async_backward, name_mapper)
     sync_left = syncer.create_sync_func(async_left, name_mapper)
     sync_right = syncer.create_sync_func(async_right, name_mapper)
 
