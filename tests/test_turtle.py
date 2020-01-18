@@ -7,6 +7,7 @@
 
 import collections
 import contextlib
+import itertools as it
 from unittest import mock
 
 from aturtle import turtle
@@ -184,7 +185,154 @@ class TestTurtleAsyncRotation(AsyncAnimationBase):
 
 class TestTurtleAsyncMovement(AsyncAnimationBase):
 
-    pass
+    def setUp(self):
+
+        self.canvas = fake_tkinter.FakeCanvas()
+        self.sprite = fake_sprite.FakeSprite(
+            canvas=self.canvas,
+            anchor=(0, 0),
+            angle=0,
+        )
+
+
+    def test_async_forward_awaits_sprite_async_forward(self):
+
+        t = turtle.Turtle(self.sprite)
+
+        coro = t.async_forward(42)
+        self._run_coroutines(coro)
+
+        self.sprite.async_forward.assert_awaited_with(
+            42,
+            callback=t._async_draw_line,
+            speed=None,
+            easing=None,
+            fps=None,
+            update=None,
+        )
+
+
+    def test_async_forward_with_args_awaits_sprite_async_forward_with_args(self):
+
+        t = turtle.Turtle(self.sprite)
+
+        coro = t.async_forward(
+            42,
+            speed='speed',
+            easing='easing',
+            fps='fps',
+            update='update',
+        )
+        self._run_coroutines(coro)
+
+        self.sprite.async_forward.assert_awaited_with(
+            42,
+            callback=t._async_draw_line,
+            speed='speed',
+            easing='easing',
+            fps='fps',
+            update='update',
+        )
+
+
+    def test_async_forward_down_draw_line_vs_init_down(self):
+
+        init_downs = (False, True)
+        downs = (None, False, True)
+
+        for init_down, down in it.product(init_downs, downs):
+            with self.subTest(init_down=init_down, down=down):
+
+                t = turtle.Turtle(self.sprite, down=init_down)
+
+                self.assertIs(t.down, init_down)
+
+                coro = t.async_forward(42, down=down)
+                self._run_coroutines(coro)
+
+                self.assertIs(t.down, init_down)
+
+                effective_down = down if down is not None else init_down
+                expected_cb = t._async_draw_line if effective_down else None
+
+                self.sprite.async_forward.assert_awaited_with(
+                    42,
+                    callback=expected_cb,
+                    speed=None,
+                    easing=None,
+                    fps=None,
+                    update=None,
+                )
+
+
+    def test_async_backward_awaits_sprite_async_forward(self):
+
+        t = turtle.Turtle(self.sprite)
+
+        coro = t.async_backward(42)
+        self._run_coroutines(coro)
+
+        self.sprite.async_forward.assert_awaited_with(
+            -42,
+            callback=t._async_draw_line,
+            speed=None,
+            easing=None,
+            fps=None,
+            update=None,
+        )
+
+
+    def test_async_backward_with_args_awaits_sprite_async_forward_with_args(self):
+
+        t = turtle.Turtle(self.sprite)
+
+        coro = t.async_backward(
+            -42,
+            speed='speed',
+            easing='easing',
+            fps='fps',
+            update='update',
+        )
+        self._run_coroutines(coro)
+
+        self.sprite.async_forward.assert_awaited_with(
+            42,
+            callback=t._async_draw_line,
+            speed='speed',
+            easing='easing',
+            fps='fps',
+            update='update',
+        )
+
+
+    def test_async_backward_down_draw_line_vs_init_down(self):
+
+        init_downs = (False, True)
+        downs = (None, False, True)
+
+        for init_down, down in it.product(init_downs, downs):
+            with self.subTest(init_down=init_down, down=down):
+
+                t = turtle.Turtle(self.sprite, down=init_down)
+
+                self.assertIs(t.down, init_down)
+
+                coro = t.async_backward(42, down=down)
+                self._run_coroutines(coro)
+
+                self.assertIs(t.down, init_down)
+
+                effective_down = down if down is not None else init_down
+                expected_cb = t._async_draw_line if effective_down else None
+
+                self.sprite.async_forward.assert_awaited_with(
+                    -42,
+                    callback=expected_cb,
+                    speed=None,
+                    easing=None,
+                    fps=None,
+                    update=None,
+                )
 
 
 
