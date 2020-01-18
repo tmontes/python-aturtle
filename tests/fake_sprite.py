@@ -19,4 +19,7 @@ class FakeSprite:
         self.async_move_to = mock.AsyncMock()
         self.async_forward = mock.AsyncMock()
         self.async_rotate = mock.AsyncMock()
+        self.sync_move = mock.Mock()
+        self.sync_move_to = mock.Mock()
+        self.sync_forward = mock.Mock()
         self.sync_rotate = mock.Mock()

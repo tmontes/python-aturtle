@@ -556,5 +556,283 @@ class TestTurtleSyncRotation(base.TestCase):
 
 class TestTurtleSyncMovement(base.TestCase):
 
-    pass
+    def setUp(self):
+
+        self.canvas = fake_tkinter.FakeCanvas()
+        self.sprite = fake_sprite.FakeSprite(
+            canvas=self.canvas,
+            anchor=(0, 0),
+            angle=0,
+        )
+
+
+    def test_sync_forward_calls_sprite_sync_forward(self):
+
+        t = turtle.Turtle(self.sprite)
+
+        t.sync_forward(42)
+
+        self.sprite.sync_forward.assert_called_with(
+            42,
+            callback=t._sync_draw_line,
+            speed=None,
+            easing=None,
+            fps=None,
+            update=None,
+        )
+
+
+    def test_sync_forward_with_args_calls_sprite_sync_forward_with_args(self):
+
+        t = turtle.Turtle(self.sprite)
+
+        t.sync_forward(
+            42,
+            speed='speed',
+            easing='easing',
+            fps='fps',
+            update='update',
+        )
+
+        self.sprite.sync_forward.assert_called_with(
+            42,
+            callback=t._sync_draw_line,
+            speed='speed',
+            easing='easing',
+            fps='fps',
+            update='update',
+        )
+
+
+    def test_sync_forward_down_draw_line_vs_init_down(self):
+
+        init_downs = (False, True)
+        downs = (None, False, True)
+
+        for init_down, down in it.product(init_downs, downs):
+            with self.subTest(init_down=init_down, down=down):
+
+                t = turtle.Turtle(self.sprite, down=init_down)
+
+                self.assertIs(t.down, init_down)
+
+                t.sync_forward(42, down=down)
+
+                self.assertIs(t.down, init_down)
+
+                effective_down = down if down is not None else init_down
+                expected_cb = t._sync_draw_line if effective_down else None
+
+                self.sprite.sync_forward.assert_called_with(
+                    42,
+                    callback=expected_cb,
+                    speed=None,
+                    easing=None,
+                    fps=None,
+                    update=None,
+                )
+
+
+    def test_sync_backward_calls_sprite_sync_forward(self):
+
+        t = turtle.Turtle(self.sprite)
+
+        t.sync_backward(42)
+
+        self.sprite.sync_forward.assert_called_with(
+            -42,
+            callback=t._sync_draw_line,
+            speed=None,
+            easing=None,
+            fps=None,
+            update=None,
+        )
+
+
+    def test_sync_backward_with_args_calls_sprite_sync_forward_with_args(self):
+
+        t = turtle.Turtle(self.sprite)
+
+        t.sync_backward(
+            -42,
+            speed='speed',
+            easing='easing',
+            fps='fps',
+            update='update',
+        )
+
+        self.sprite.sync_forward.assert_called_with(
+            42,
+            callback=t._sync_draw_line,
+            speed='speed',
+            easing='easing',
+            fps='fps',
+            update='update',
+        )
+
+
+    def test_sync_backward_down_draw_line_vs_init_down(self):
+
+        init_downs = (False, True)
+        downs = (None, False, True)
+
+        for init_down, down in it.product(init_downs, downs):
+            with self.subTest(init_down=init_down, down=down):
+
+                t = turtle.Turtle(self.sprite, down=init_down)
+
+                self.assertIs(t.down, init_down)
+
+                t.sync_backward(42, down=down)
+
+                self.assertIs(t.down, init_down)
+
+                effective_down = down if down is not None else init_down
+                expected_cb = t._sync_draw_line if effective_down else None
+
+                self.sprite.sync_forward.assert_called_with(
+                    -42,
+                    callback=expected_cb,
+                    speed=None,
+                    easing=None,
+                    fps=None,
+                    update=None,
+                )
+
+
+    def test_sync_move_calls_sprite_sync_move(self):
+
+        t = turtle.Turtle(self.sprite)
+
+        t.sync_move(42, 24)
+
+        self.sprite.sync_move.assert_called_with(
+            42, 24,
+            callback=t._sync_draw_line,
+            speed=None,
+            easing=None,
+            fps=None,
+            update=None,
+        )
+
+
+    def test_sync_move_with_args_calls_sprite_sync_move_with_args(self):
+
+        t = turtle.Turtle(self.sprite)
+
+        t.sync_move(
+            42, 24,
+            speed='speed',
+            easing='easing',
+            fps='fps',
+            update='update',
+        )
+
+        self.sprite.sync_move.assert_called_with(
+            42, 24,
+            callback=t._sync_draw_line,
+            speed='speed',
+            easing='easing',
+            fps='fps',
+            update='update',
+        )
+
+
+    def test_sync_move_down_draw_line_vs_init_down(self):
+
+        init_downs = (False, True)
+        downs = (None, False, True)
+
+        for init_down, down in it.product(init_downs, downs):
+            with self.subTest(init_down=init_down, down=down):
+
+                t = turtle.Turtle(self.sprite, down=init_down)
+
+                self.assertIs(t.down, init_down)
+
+                t.sync_move(42, 24, down=down)
+
+                self.assertIs(t.down, init_down)
+
+                effective_down = down if down is not None else init_down
+                expected_cb = t._sync_draw_line if effective_down else None
+
+                self.sprite.sync_move.assert_called_with(
+                    42, 24,
+                    callback=expected_cb,
+                    speed=None,
+                    easing=None,
+                    fps=None,
+                    update=None,
+                )
+
+
+    def test_sync_move_to_calls_sprite_sync_move_to(self):
+
+        t = turtle.Turtle(self.sprite)
+
+        t.sync_move_to(42, 24)
+
+        self.sprite.sync_move_to.assert_called_with(
+            42, 24,
+            callback=t._sync_draw_line,
+            speed=None,
+            easing=None,
+            fps=None,
+            update=None,
+        )
+
+
+    def test_sync_move_to_with_args_calls_sprite_sync_move_to_with_args(self):
+
+        t = turtle.Turtle(self.sprite)
+
+        t.sync_move_to(
+            42, 24,
+            speed='speed',
+            easing='easing',
+            fps='fps',
+            update='update',
+        )
+
+        self.sprite.sync_move_to.assert_called_with(
+            42, 24,
+            callback=t._sync_draw_line,
+            speed='speed',
+            easing='easing',
+            fps='fps',
+            update='update',
+        )
+
+
+    def test_sync_move_to_down_draw_line_vs_init_down(self):
+
+        init_downs = (False, True)
+        downs = (None, False, True)
+
+        for init_down, down in it.product(init_downs, downs):
+            with self.subTest(init_down=init_down, down=down):
+
+                t = turtle.Turtle(self.sprite, down=init_down)
+
+                self.assertIs(t.down, init_down)
+
+                t.sync_move_to(42, 24, down=down)
+
+                self.assertIs(t.down, init_down)
+
+                effective_down = down if down is not None else init_down
+                expected_cb = t._sync_draw_line if effective_down else None
+
+                self.sprite.sync_move_to.assert_called_with(
+                    42, 24,
+                    callback=expected_cb,
+                    speed=None,
+                    easing=None,
+                    fps=None,
+                    update=None,
+                )
+
+
+
 
