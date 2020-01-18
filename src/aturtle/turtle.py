@@ -43,6 +43,22 @@ class Turtle:
         self._lines = []
 
 
+    @property
+    def anchor(self):
+        """
+        The turtle's anchor position in the canvas, as an (x, y) tuple.
+        """
+        return self._sprite.anchor
+
+
+    @property
+    def angle(self):
+        """
+        The turtle's rotation angle, in degrees.
+        """
+        return self._sprite.angle
+
+
     def up(self):
         """
         Raises the turtle from the canvas. No lines are drawn as it moves.
