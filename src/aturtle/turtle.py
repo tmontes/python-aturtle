@@ -88,8 +88,7 @@ class Turtle:
                 width=self.line_width,
                 capstyle='round',
             )
-            # TODO: Improve this, cannot access private sprite attribute.
-            self._canvas.tag_lower(self._line_id, self._sprite._id)
+            self._sprite.to_front(of=self._line_id)
             self._lines.append(self._line_id)
 
 

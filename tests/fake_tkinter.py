@@ -27,6 +27,7 @@ class FakeCanvas:
         self.create_line = mock.Mock(return_value=42)
         self.itemconfig = mock.Mock()
         self.tag_lower = mock.Mock()
+        self.tag_raise = mock.Mock()
 
     def create_polygon(self, coords, **kwargs):
         self.create_polygon_coords = coords

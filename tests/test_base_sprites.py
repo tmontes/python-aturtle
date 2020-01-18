@@ -41,6 +41,74 @@ class TestDefaultSprite(test_base.TestCase):
         self.assertAlmostEqual(sprite.angle, 0, places=1)
 
 
+    def test_to_front_calls_tag_raise(self):
+
+        sprite = base.Sprite(canvas=self.canvas, shape=None)
+        sprite.to_front()
+        self.canvas.tag_raise.assert_called_with(
+            None,   # sprite canvas id, None in the Sprite base class
+        )
+
+
+    def test_to_front_of_another_sprite_calls_canvas_tag_raise(self):
+
+        sprite = base.Sprite(canvas=self.canvas, shape=None)
+        other = base.Sprite(canvas=self.canvas, shape=None)
+        other._id = 42
+
+        sprite.to_front(of=other)
+        self.canvas.tag_raise.assert_called_with(
+            None,   # sprite canvas id, None in the Sprite base class
+            42,     # the other sprite canvas id, explicitly assigned above
+        )
+
+
+    def test_to_front_of_canvas_item_id_calls_canvas_tag_raise(self):
+
+        sprite = base.Sprite(canvas=self.canvas, shape=None)
+        canvas_item_id = 24
+
+        sprite.to_front(of=canvas_item_id)
+        self.canvas.tag_raise.assert_called_with(
+            None,   # sprite canvas id, None in the Sprite base class
+            canvas_item_id,
+        )
+
+
+    def test_to_back_calls_tag_lower(self):
+
+        sprite = base.Sprite(canvas=self.canvas, shape=None)
+        sprite.to_back()
+        self.canvas.tag_lower.assert_called_with(
+            None,   # sprite canvas id, None in the Sprite base class
+        )
+
+
+    def test_to_back_of_another_sprite_calls_canvas_tag_lower(self):
+
+        sprite = base.Sprite(canvas=self.canvas, shape=None)
+        other = base.Sprite(canvas=self.canvas, shape=None)
+        other._id = 42
+
+        sprite.to_back(of=other)
+        self.canvas.tag_lower.assert_called_with(
+            None,   # sprite canvas id, None in the Sprite base class
+            42,     # the other sprite canvas id, explicitly assigned above
+        )
+
+
+    def test_to_back_of_canvas_item_id_calls_canvas_tag_lower(self):
+
+        sprite = base.Sprite(canvas=self.canvas, shape=None)
+        canvas_item_id = 24
+
+        sprite.to_back(of=canvas_item_id)
+        self.canvas.tag_lower.assert_called_with(
+            None,   # sprite canvas id, None in the Sprite base class
+            canvas_item_id,
+        )
+
+
     def test_direct_move_moves_anchor(self):
 
         sprite = base.Sprite(canvas=self.canvas, shape=None)
