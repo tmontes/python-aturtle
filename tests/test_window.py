@@ -44,6 +44,7 @@ class FakedTkinterTestCase(unittest.TestCase):
         window.Window.close_all(strict=False)
 
 
+
 class TestWindow(FakedTkinterTestCase):
 
     def test_create(self):
@@ -180,10 +181,22 @@ class TestWindow(FakedTkinterTestCase):
         self.assertEqual(w.x, 100)
 
 
+    def test_custom_placement_negative_x(self):
+
+        w = window.Window(x=-100)
+        self.assertEqual(w.x, SCREEN_WIDTH - w.width - 100)
+
+
     def test_custom_placement_y(self):
 
         w = window.Window(y=50)
         self.assertEqual(w.y, 50)
+
+
+    def test_custom_placement_negative_y(self):
+
+        w = window.Window(y=-50)
+        self.assertEqual(w.y, SCREEN_HEIGHT - w.height - 50)
 
 
     def test_custom_fill_passed_to_canvas(self):
