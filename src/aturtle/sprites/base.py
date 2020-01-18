@@ -206,15 +206,15 @@ class Sprite:
         self.direct_move(x - sprite_x, y - sprite_y, update=update)
 
 
-    def direct_forward(self, distance, *, update=None):
+    def direct_forward(self, delta, *, update=None):
         """
-        Move the Sprite forward by `distance`, towards the direction set by
-        its angle. Negative values move the Sprite in the opposite direction.
+        Move the Sprite forward by `delta` in the direction set by its angle.
+        Negative values move in the opposite direction.
         The `update` argument overrides the init-time value.
         """
         angle_rad = self._angle * math.pi / 180.0
-        delta_x = distance * math.cos(angle_rad)
-        delta_y = distance * math.sin(angle_rad)
+        delta_x = delta * math.cos(angle_rad)
+        delta_y = delta * math.sin(angle_rad)
         self.direct_move(delta_x, delta_y, update=update)
 
 
@@ -328,19 +328,18 @@ class Sprite:
                 await asyncio.sleep(frame_seconds)
 
 
-    async def async_forward(self, distance, *, speed=None, easing=None, callback=None,
+    async def async_forward(self, delta, *, speed=None, easing=None, callback=None,
                             fps=None, update=None):
         """
-        Animated move of the Sprite forward by `distance`, towards the direction
-        set by its angle.  Negative values move the Sprite in the opposite
-        direction.
+        Animated move of the Sprite forward by `delta` in the direction set by
+        its angle.  Negative values move in the opposite direction.
 
         The `speed`, `easing`, `callback`, `fps`, and `update` arguments over-
         ride the init-time values.
         """
         angle_rad = self._angle * math.pi / 180.0
-        delta_x = distance * math.cos(angle_rad)
-        delta_y = distance * math.sin(angle_rad)
+        delta_x = delta * math.cos(angle_rad)
+        delta_y = delta * math.sin(angle_rad)
         await self.async_move(
             delta_x,
             delta_y,

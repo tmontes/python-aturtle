@@ -92,46 +92,23 @@ class Turtle:
             self._lines.append(self._line_id)
 
 
-    async def async_forward(self, distance, *, down=None, speed=None,
+    async def async_forward(self, delta, *, down=None, speed=None,
                             easing=None, fps=None, update=None):
         """
-        Animated move of the Turtle forward by `distance`, towards the
-        direction set by its angle. Negative values move the Turtle in
-        the opposite direction.
+        Animated move of the Turtle forward by `delta` in the direction set by
+        its angle. Negative values move in the opposite direction.
 
         The `down` argument overrides the current down state, if not None.
 
-        The `speed`, `easing`, `fps`, and `update` values are passed to
-        the underlying Sprite's animated movement operation.
+        The `speed`, `easing`, `fps`, and `update` values are passed to the
+        underlying Sprite's animated movement operation.
         """
         self._line_id = None
         self._line_start = self._sprite.anchor
         with self._down_override(down):
             await self._sprite.async_forward(
-                distance,
+                delta,
                 callback=self._async_draw_line if self.down else None,
-                speed=speed,
-                easing=easing,
-                fps=fps,
-                update=update,
-            )
-
-
-    async def async_backward(self, distance, *, down=None, speed=None,
-                             easing=None, fps=None, update=None):
-        """
-        Animated move of the Turtle backward by `distance`, away from the
-        direction set by its angle. Negative values move the Turtle in
-        the opposite direction.
-
-        The `down` argument overrides the current down state, if not None.
-
-        The `speed`, `easing`, `fps`, and `update` values are passed to
-        the underlying Sprite's animated movement operation.
-        """
-        with self._down_override(down):
-            await self.async_forward(
-                -distance,
                 speed=speed,
                 easing=easing,
                 fps=fps,
@@ -238,7 +215,6 @@ class Turtle:
 
     _sync_draw_line = syncer.create_sync_func(_async_draw_line, name_mapper)
     sync_forward = syncer.create_sync_func(async_forward, name_mapper)
-    sync_backward = syncer.create_sync_func(async_backward, name_mapper)
     sync_move = syncer.create_sync_func(async_move, name_mapper)
     sync_move_to = syncer.create_sync_func(async_move_to, name_mapper)
     sync_left = syncer.create_sync_func(async_left, name_mapper)

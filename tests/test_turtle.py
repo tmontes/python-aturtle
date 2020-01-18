@@ -285,76 +285,6 @@ class TestTurtleAsyncMovement(AsyncAnimationBase):
                 )
 
 
-    def test_async_backward_awaits_sprite_async_forward(self):
-
-        t = turtle.Turtle(self.sprite)
-
-        coro = t.async_backward(42)
-        self._run_coroutines(coro)
-
-        self.sprite.async_forward.assert_awaited_with(
-            -42,
-            callback=t._async_draw_line,
-            speed=None,
-            easing=None,
-            fps=None,
-            update=None,
-        )
-
-
-    def test_async_backward_with_args_awaits_sprite_async_forward_with_args(self):
-
-        t = turtle.Turtle(self.sprite)
-
-        coro = t.async_backward(
-            -42,
-            speed='speed',
-            easing='easing',
-            fps='fps',
-            update='update',
-        )
-        self._run_coroutines(coro)
-
-        self.sprite.async_forward.assert_awaited_with(
-            42,
-            callback=t._async_draw_line,
-            speed='speed',
-            easing='easing',
-            fps='fps',
-            update='update',
-        )
-
-
-    def test_async_backward_down_draw_line_vs_init_down(self):
-
-        init_downs = (False, True)
-        downs = (None, False, True)
-
-        for init_down, down in it.product(init_downs, downs):
-            with self.subTest(init_down=init_down, down=down):
-
-                t = turtle.Turtle(self.sprite, down=init_down)
-
-                self.assertIs(t.down, init_down)
-
-                coro = t.async_backward(42, down=down)
-                self._run_coroutines(coro)
-
-                self.assertIs(t.down, init_down)
-
-                effective_down = down if down is not None else init_down
-                expected_cb = t._async_draw_line if effective_down else None
-
-                self.sprite.async_forward.assert_awaited_with(
-                    -42,
-                    callback=expected_cb,
-                    speed=None,
-                    easing=None,
-                    fps=None,
-                    update=None,
-                )
-
-
     def test_async_move_awaits_sprite_async_move(self):
 
         t = turtle.Turtle(self.sprite)
@@ -674,73 +604,6 @@ class TestTurtleSyncMovement(SyncAnimationBase):
                 )
 
 
-    def test_sync_backward_calls_sprite_sync_forward(self):
-
-        t = turtle.Turtle(self.sprite)
-
-        t.sync_backward(42)
-
-        self.sprite.sync_forward.assert_called_with(
-            -42,
-            callback=t._sync_draw_line,
-            speed=None,
-            easing=None,
-            fps=None,
-            update=None,
-        )
-
-
-    def test_sync_backward_with_args_calls_sprite_sync_forward_with_args(self):
-
-        t = turtle.Turtle(self.sprite)
-
-        t.sync_backward(
-            -42,
-            speed='speed',
-            easing='easing',
-            fps='fps',
-            update='update',
-        )
-
-        self.sprite.sync_forward.assert_called_with(
-            42,
-            callback=t._sync_draw_line,
-            speed='speed',
-            easing='easing',
-            fps='fps',
-            update='update',
-        )
-
-
-    def test_sync_backward_down_draw_line_vs_init_down(self):
-
-        init_downs = (False, True)
-        downs = (None, False, True)
-
-        for init_down, down in it.product(init_downs, downs):
-            with self.subTest(init_down=init_down, down=down):
-
-                t = turtle.Turtle(self.sprite, down=init_down)
-
-                self.assertIs(t.down, init_down)
-
-                t.sync_backward(42, down=down)
-
-                self.assertIs(t.down, init_down)
-
-                effective_down = down if down is not None else init_down
-                expected_cb = t._sync_draw_line if effective_down else None
-
-                self.sprite.sync_forward.assert_called_with(
-                    -42,
-                    callback=expected_cb,
-                    speed=None,
-                    easing=None,
-                    fps=None,
-                    update=None,
-                )
-
-
     def test_sync_move_calls_sprite_sync_move(self):
 
         t = turtle.Turtle(self.sprite)
@@ -940,60 +803,6 @@ class TestTurtleAsyncMovementIntegrated(AsyncAnimationBase):
             )
 
 
-    def test_async_backward_draws_calls_canvas_create_line(self):
-
-        t = turtle.Turtle(self.sprite, line_color='pink', line_width=5)
-
-        coro = t.async_backward(100)
-        self._run_coroutines(coro)
-
-        self.canvas.create_line.assert_called_with(
-            0, 0,
-            mock.ANY, 0,
-            fill='pink',
-            width=5,
-            capstyle=mock.ANY,
-        )
-
-
-    def test_async_backward_lines_are_behind_the_sprite(self):
-
-        t = turtle.Turtle(self.sprite)
-
-        coro = t.async_backward(100)
-        self._run_coroutines(coro)
-
-        self.canvas.tag_raise.assert_called_with(
-            None,   # sprite canvas id, None in the Sprite base class
-            42,     # line canvas id from fake canvas.create_line
-        )
-
-
-    def test_async_backward_lines_are_progressively_updated(self):
-
-        t = turtle.Turtle(self.sprite)
-
-        coro = t.async_backward(100, speed=100, fps=10)
-        self._run_coroutines(coro)
-
-        # distance=speed=100 and fps=10
-        # First frame creates the line, other 9 frames update it.
-
-        coords_call_args_list = self.canvas.coords.call_args_list
-        self.assertEqual(
-            len(coords_call_args_list),
-            9,
-            msg='canvas.coords number of calls',
-        )
-
-        # All canvas.coords calls include the correct line id: 42
-        for call_args in coords_call_args_list:
-            self.assertEqual(
-                call_args,
-                mock.call(42, mock.ANY, mock.ANY, mock.ANY, mock.ANY),
-            )
-
-
     def test_async_move_draws_calls_canvas_create_line(self):
 
         t = turtle.Turtle(self.sprite, line_color='pink', line_width=5)
@@ -1169,57 +978,6 @@ class TestTurtleSyncMovementIntegrated(SyncAnimationBase):
             )
 
 
-    def test_sync_backward_draws_calls_canvas_create_line(self):
-
-        t = turtle.Turtle(self.sprite, line_color='pink', line_width=5)
-
-        t.sync_backward(100)
-
-        self.canvas.create_line.assert_called_with(
-            0, 0,
-            mock.ANY, 0,
-            fill='pink',
-            width=5,
-            capstyle=mock.ANY,
-        )
-
-
-    def test_sync_backward_lines_are_behind_the_sprite(self):
-
-        t = turtle.Turtle(self.sprite)
-
-        t.sync_backward(100)
-
-        self.canvas.tag_raise.assert_called_with(
-            None,   # sprite canvas id, None in the Sprite base class
-            42,     # line canvas id from fake canvas.create_line
-        )
-
-
-    def test_sync_backward_lines_are_progressively_updated(self):
-
-        t = turtle.Turtle(self.sprite)
-
-        t.sync_backward(100, speed=100, fps=10)
-
-        # distance=speed=100 and fps=10
-        # First frame creates the line, other 9 frames update it.
-
-        coords_call_args_list = self.canvas.coords.call_args_list
-        self.assertEqual(
-            len(coords_call_args_list),
-            9,
-            msg='canvas.coords number of calls',
-        )
-
-        # All canvas.coords calls include the correct line id: 42
-        for call_args in coords_call_args_list:
-            self.assertEqual(
-                call_args,
-                mock.call(42, mock.ANY, mock.ANY, mock.ANY, mock.ANY),
-            )
-
-
     def test_sync_move_draws_calls_canvas_create_line(self):
 
         t = turtle.Turtle(self.sprite, line_color='pink', line_width=5)
@@ -1320,6 +1078,3 @@ class TestTurtleSyncMovementIntegrated(SyncAnimationBase):
                 call_args,
                 mock.call(42, mock.ANY, mock.ANY, mock.ANY, mock.ANY),
             )
-
-
-
