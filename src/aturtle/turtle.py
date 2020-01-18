@@ -5,6 +5,8 @@
 # See LICENSE for details.
 # ----------------------------------------------------------------------------
 
+import contextlib
+
 from . utils import syncer
 
 
@@ -59,6 +61,19 @@ class Turtle:
         return self._sprite.angle
 
 
+    @contextlib.contextmanager
+    def _down_override(self, down):
+
+        save_down = self.down
+        if down is not None:
+            self.down = down
+
+        try:
+            yield
+        finally:
+            self.down = save_down
+
+
     async def _async_draw_line(self, _progress, anchor):
         """
         Sprite movement callback to handle line drawing.
@@ -78,85 +93,97 @@ class Turtle:
             self._lines.append(self._line_id)
 
 
-    async def async_forward(self, distance, *, speed=None, easing=None,
-                            fps=None, update=None):
+    async def async_forward(self, distance, *, down=None, speed=None,
+                            easing=None, fps=None, update=None):
         """
         Animated move of the Turtle forward by `distance`, towards the
         direction set by its angle. Negative values move the Turtle in
         the opposite direction.
 
+        The `down` argument overrides the current down state, if not None.
+
         The `speed`, `easing`, `fps`, and `update` values are passed to
         the underlying Sprite's animated movement operation.
         """
         self._line_id = None
         self._line_start = self._sprite.anchor
-        await self._sprite.async_forward(
-            distance,
-            callback=self._async_draw_line if self.down else None,
-            speed=speed,
-            easing=easing,
-            fps=fps,
-            update=update,
-        )
+        with self._down_override(down):
+            await self._sprite.async_forward(
+                distance,
+                callback=self._async_draw_line if self.down else None,
+                speed=speed,
+                easing=easing,
+                fps=fps,
+                update=update,
+            )
 
 
-    async def async_backward(self, distance, *, speed=None, easing=None,
-                             fps=None, update=None):
+    async def async_backward(self, distance, *, down=None, speed=None,
+                             easing=None, fps=None, update=None):
         """
         Animated move of the Turtle backward by `distance`, away from the
         direction set by its angle. Negative values move the Turtle in
         the opposite direction.
 
+        The `down` argument overrides the current down state, if not None.
+
         The `speed`, `easing`, `fps`, and `update` values are passed to
         the underlying Sprite's animated movement operation.
         """
-        await self.async_forward(
-            -distance,
-            speed=speed,
-            easing=easing,
-            fps=fps,
-            update=update,
-        )
+        with self._down_override(down):
+            await self.async_forward(
+                -distance,
+                speed=speed,
+                easing=easing,
+                fps=fps,
+                update=update,
+            )
 
 
-    async def async_move(self, dx, dy, *, speed=None, easing=None, fps=None,
-                         update=None):
+    async def async_move(self, dx, dy, *, down=None, speed=None, easing=None,
+                         fps=None, update=None):
         """
         Animated move of the Turtle by the given relative `dx` and `dy` values.
 
+        The `down` argument overrides the current down state, if not None.
+
         The `speed`, `easing`, `fps`, and `update` values are passed to
         the underlying Sprite's animated movement operation.
         """
         self._line_id = None
         self._line_start = self._sprite.anchor
-        await self._sprite.async_move(
-            dx, dy,
-            callback=self._async_draw_line if self.down else None,
-            speed=speed,
-            easing=easing,
-            fps=fps,
-            update=update,
-        )
+        with self._down_override(down):
+            await self._sprite.async_move(
+                dx, dy,
+                callback=self._async_draw_line if self.down else None,
+                speed=speed,
+                easing=easing,
+                fps=fps,
+                update=update,
+            )
 
 
-    async def async_move_to(self, x, y, *, speed=None, easing=None, fps=None,
-                            update=None):
+    async def async_move_to(self, x, y, *, down=None, speed=None, easing=None,
+                            fps=None, update=None):
         """
         Animated move of the Turtle to the given absolute `x` and `y` position.
 
+        The `down` argument overrides the current down state, if not None.
+
         The `speed`, `easing`, `fps`, and `update` values are passed to
         the underlying Sprite's animated movement operation.
         """
         self._line_id = None
         self._line_start = self._sprite.anchor
-        await self._sprite.async_move_to(
-            x, y,
-            callback=self._async_draw_line if self.down else None,
-            speed=speed,
-            easing=easing,
-            fps=fps,
-            update=update,
-        )
+        with self._down_override(down):
+            await self._sprite.async_move_to(
+                x, y,
+                callback=self._async_draw_line if self.down else None,
+                speed=speed,
+                easing=easing,
+                fps=fps,
+                update=update,
+            )
 
 
     async def async_left(self, angle, *, speed=None, easing=None, fps=None,
