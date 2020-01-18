@@ -902,6 +902,18 @@ class TestAsyncRotateAnimation(AsyncAnimationBase):
         self.assertAlmostEqual(self.sprite.angle, 0.1, places=1)
 
 
+    def test_async_rotate_r_speed_initialized_sprite_uses_that_speed(self):
+
+        sprite = base.Sprite(canvas=self.canvas, shape=None, m_speed=1, r_speed=10)
+
+        coro = sprite.async_rotate(10, fps=10)
+        self._run_coroutines(coro)
+
+        # Should use r_speed=10. For angle=10, fps=10 we should have 10 frames.
+        asyncio_sleep_call_args = self.asyncio.sleep_call_args
+        self.assertEqual(len(asyncio_sleep_call_args), 10, 'asyncio.sleep await count')
+
+
 
 class TestAsyncRotateToAnimation(AsyncAnimationBase):
 
@@ -986,6 +998,18 @@ class TestAsyncRotateToAnimation(AsyncAnimationBase):
         self._run_coroutines(coro)
 
         self.assertAlmostEqual(self.sprite.angle, 40.1, places=1)
+
+
+    def test_async_rotate_to_r_speed_initialized_sprite_uses_that_speed(self):
+
+        sprite = base.Sprite(canvas=self.canvas, shape=None, m_speed=1, r_speed=10)
+
+        coro = sprite.async_rotate_to(10, fps=10)
+        self._run_coroutines(coro)
+
+        # Should use r_speed=10. For angle=10, fps=10 we should have 10 frames.
+        asyncio_sleep_call_args = self.asyncio.sleep_call_args
+        self.assertEqual(len(asyncio_sleep_call_args), 10, 'asyncio.sleep await count')
 
 
 
@@ -1510,6 +1534,17 @@ class TestSyncRotateAnimation(SyncAnimationBase):
         self.assertAlmostEqual(self.sprite.angle, 0.1, places=1)
 
 
+    def test_sync_rotate_r_speed_initialized_sprite_uses_that_speed(self):
+
+        sprite = base.Sprite(canvas=self.canvas, shape=None, m_speed=1, r_speed=10)
+
+        sprite.sync_rotate(10, fps=10)
+
+        # Should use r_speed=10. For angle=10, fps=10 we should have 10 frames.
+        time_sleep_call_args = self.time.sleep.call_args_list
+        self.assertEqual(len(time_sleep_call_args), 10, 'asyncio.sleep await count')
+
+
 
 class TestSyncRotateToAnimation(SyncAnimationBase):
 
@@ -1587,6 +1622,17 @@ class TestSyncRotateToAnimation(SyncAnimationBase):
         self.sprite.sync_rotate_to(40.1, speed=1_000_000, fps=1)
         self.assertAlmostEqual(self.sprite.angle, 40.1, places=1)
 
+
+
+    def test_sync_rotate_to_r_speed_initialized_sprite_uses_that_speed(self):
+
+        sprite = base.Sprite(canvas=self.canvas, shape=None, m_speed=1, r_speed=10)
+
+        sprite.sync_rotate_to(10, fps=10)
+
+        # Should use r_speed=10. For angle=10, fps=10 we should have 10 frames.
+        time_sleep_call_args = self.time.sleep.call_args_list
+        self.assertEqual(len(time_sleep_call_args), 10, 'asyncio.sleep await count')
 
 
 
