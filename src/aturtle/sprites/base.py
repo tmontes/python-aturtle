@@ -233,7 +233,7 @@ class Sprite:
         """
         with self._movement.relative(), contextlib.suppress(asyncio.CancelledError):
 
-            speed = self._r_speed if speed is None else speed
+            speed = self._m_speed if speed is None else speed
             easing = self._m_easing if easing is None else easing
             callback = self._m_callback if callback is None else callback
             fps = self._fps if fps is None else fps
@@ -269,7 +269,7 @@ class Sprite:
         """
         with self._movement.absolute(), contextlib.suppress(asyncio.CancelledError):
 
-            speed = self._r_speed if speed is None else speed
+            speed = self._m_speed if speed is None else speed
             easing = self._m_easing if easing is None else easing
             callback = self._m_callback if callback is None else callback
             fps = self._fps if fps is None else fps
