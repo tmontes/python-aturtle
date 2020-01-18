@@ -8,6 +8,7 @@
 import tkinter
 
 
+
 class Window:
 
     _windows = []
@@ -19,6 +20,12 @@ class Window:
         Window._windows.append(self)
 
         tk_window.title(title)
+
+        # Negative x/y values place tk_window from right/bottom of screen.
+        if x is not None and x < 0:
+            x = tk_window.winfo_screenwidth() - width + x
+        if y is not None and y < 0:
+            y = tk_window.winfo_screenheight() - height + y
 
         # Center tk_window on screen unless (x, y) is given.
         x = (tk_window.winfo_screenwidth() - width) // 2 if x is None else x
