@@ -328,27 +328,62 @@ class Sprite:
                 await asyncio.sleep(frame_seconds)
 
 
-    async def async_forward(self, delta, *, speed=None, easing=None, callback=None,
-                            fps=None, update=None):
+    async def async_forward(self, delta, *, track_angle=True, speed=None,
+                            easing=None, callback=None, fps=None, update=None):
         """
         Animated move of the Sprite forward by `delta` in the direction set by
         its angle.  Negative values move in the opposite direction.
 
+        When `track_angle` is true, movement tracks concurrent updates to the
+        Sprite's angle, potentially resulting in non-linear paths. Otherwise,
+        movement follows a straight line, set by the starting Sprite's angle.
+
         The `speed`, `easing`, `callback`, `fps`, and `update` arguments over-
         ride the init-time values.
         """
-        angle_rad = self._angle * math.pi / 180.0
-        delta_x = delta * math.cos(angle_rad)
-        delta_y = delta * math.sin(angle_rad)
-        await self.async_move(
-            delta_x,
-            delta_y,
-            speed=speed,
-            easing=easing,
-            callback=callback,
-            fps=fps,
-            update=update,
-        )
+        if not track_angle:
+            angle_rad = self._angle * math.pi / 180.0
+            delta_x = delta * math.cos(angle_rad)
+            delta_y = delta * math.sin(angle_rad)
+            await self.async_move(
+                delta_x,
+                delta_y,
+                speed=speed,
+                easing=easing,
+                callback=callback,
+                fps=fps,
+                update=update,
+            )
+            return
+
+        with self._movement.relative(), contextlib.suppress(asyncio.CancelledError):
+
+            speed = self._m_speed if speed is None else speed
+            easing = self._m_easing if easing is None else easing
+            callback = self._m_callback if callback is None else callback
+            fps = self._fps if fps is None else fps
+
+            distance = abs(delta)
+            total_seconds = distance / speed
+            # Fast speed / low fps lead to 0 total_frames. Have at least 1.
+            total_frames = max(int(total_seconds * fps), 1)
+            frame_seconds = 1 / fps
+
+            prev_eased_progress = 0
+            for frame in range(1, total_frames+1):
+                angle_rad = self._angle * math.pi / 180.0
+                frame_dx = delta * math.cos(angle_rad) / total_frames
+                frame_dy = delta * math.sin(angle_rad) / total_frames
+
+                progress = frame / total_frames
+                eased_progress = easing(progress) if easing else progress
+                eased_delta = (eased_progress - prev_eased_progress) * total_frames
+
+                self.direct_move(frame_dx * eased_delta, frame_dy * eased_delta, update=update)
+                if callback:
+                    await callback(eased_progress, self._anchor)
+                await asyncio.sleep(frame_seconds)
+                prev_eased_progress = eased_progress
 
 
     async def async_rotate(self, dangle, *, around=None, speed=None, easing=None,

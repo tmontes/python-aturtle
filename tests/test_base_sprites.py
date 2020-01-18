@@ -7,6 +7,7 @@
 
 import collections
 import contextlib
+import math
 from unittest import mock
 
 from aturtle.sprites import base
@@ -797,7 +798,7 @@ class TestAsyncMoveToAnimation(AsyncAnimationBase):
 
 
 
-class TestAsyncForwardAnimation(AsyncAnimationBase):
+class TestAsyncForwardAngleTrackingAnimation(AsyncAnimationBase):
 
     def setUp(self):
 
@@ -907,6 +908,145 @@ class TestAsyncForwardAnimation(AsyncAnimationBase):
         sprite = base.Sprite(canvas=self.canvas, shape=None, m_speed=10, r_speed=1)
 
         coro = sprite.async_forward(10, fps=10)
+        self._run_coroutines(coro)
+
+        # Should use m_speed=10. For distance=10, fps=10 we should have 10 frames.
+        canvas_move_calls = self.canvas.move.call_args_list
+        self.assertEqual(len(canvas_move_calls), 10, 'canvas.move call count')
+
+
+    def test_async_forward_tracks_concurrent_angle_changes(self):
+
+        sprite = base.Sprite(canvas=self.canvas, shape=None)
+
+        forward = sprite.async_forward(10, fps=10, speed=10)
+        rotate = sprite.async_rotate(10, fps=10, speed=10)
+        self._run_coroutines(forward, rotate)
+
+        # Expect 10 canvas move calls given distance=speed and fps=10.
+        canvas_move_calls = self.canvas.move.call_args_list
+        self.assertEqual(len(canvas_move_calls), 10, 'canvas.move call count')
+
+        # Expect the angle at of each (dx, dy) move to keep growing given that
+        # both forward and rotate have the same duration.
+        canvas_move_angles = [
+            math.atan2(call_args.args[2], call_args.args[1]) * 180 / math.pi
+            for call_args in canvas_move_calls
+        ]
+        self.assertEqual(canvas_move_angles, sorted(canvas_move_angles))
+
+
+
+class TestAsyncForwardNonAngleTrackingAnimation(AsyncAnimationBase):
+
+    def setUp(self):
+
+        super().setUp()
+        self.sprite = base.Sprite(canvas=self.canvas, shape=None, anchor=(0, 0))
+
+
+    def test_async_forward_with_speed_moves_anchor(self):
+
+        coro = self.sprite.async_forward(50, speed=50, fps=10, track_angle=False)
+        self._run_coroutines(coro)
+
+        self.assert_almost_equal_anchor(self.sprite.anchor, (50, 0), places=1)
+
+
+    def test_async_forward_negative_with_speed_moves_anchor(self):
+
+        coro = self.sprite.async_forward(-50, speed=50, fps=10, track_angle=False)
+        self._run_coroutines(coro)
+
+        self.assert_almost_equal_anchor(self.sprite.anchor, (-50, 0), places=1)
+
+
+    def test_async_forward_with_speed_calls_canvas_move_and_asyncio_sleep(self):
+
+        coro = self.sprite.async_forward(50, speed=50, fps=10, track_angle=False)
+        self._run_coroutines(coro)
+
+        # Given that the distance is 50 and the speed is 50, animation
+        # duration is 1 second. At 10 fps, 10 frames must be generated:
+        # each with a call to canvas.move of 1/10th the distance and an
+        # await of asyncio.sleep of 1/10th the duration.
+
+        canvas_move_calls = self.canvas.move.call_args_list
+        self.assertEqual(len(canvas_move_calls), 10, 'canvas.move call count')
+        for call in canvas_move_calls:
+            _shape_id, dx, dy = call.args
+            self.assertAlmostEqual(dx, 5, places=1)
+            self.assertAlmostEqual(dy, 0, places=1)
+
+        asyncio_sleep_call_args = self.asyncio.sleep_call_args
+        self.assertEqual(len(asyncio_sleep_call_args), 10, 'asyncio.sleep await count')
+        for sleep_duration in asyncio_sleep_call_args:
+            self.assertAlmostEqual(sleep_duration, 0.1, places=3)
+
+        # TODO: A more correct test would check that canvas.move calls and
+        # asyncio.sleep awaits are called in alternating turns.
+
+
+    def test_async_forward_with_speed_and_easing_progresses_non_linearly(self):
+
+        def easing(progress):
+            return 0 if progress < 0.5 else 1
+
+        coro = self.sprite.async_forward(50, speed=50, fps=10, easing=easing, track_angle=False)
+        self._run_coroutines(coro)
+
+        # canvas.move should have been called 10 times:
+        # - First 4 with no movement.
+        # - 5th with the whole movement.
+        # - Remaining with no movement.
+
+        canvas_move_calls = self.canvas.move.call_args_list
+        self.assertEqual(len(canvas_move_calls), 10, 'canvas.move call count')
+        for call in canvas_move_calls[:4]:
+            _shape_id, dx, dy = call.args
+            self.assertAlmostEqual(dx, 0, places=1)
+            self.assertAlmostEqual(dy, 0, places=1)
+
+        _shape_id, dx, dy = canvas_move_calls[4].args
+        self.assertAlmostEqual(dx, 50, places=1)
+        self.assertAlmostEqual(dy, 0, places=1)
+
+        for call in canvas_move_calls[5:]:
+            _shape_id, dx, dy = call.args
+            self.assertAlmostEqual(dx, 0, places=1)
+            self.assertAlmostEqual(dy, 0, places=1)
+
+
+    def test_async_forward_with_speed_calls_callback(self):
+
+        data = []
+        async def cb(*args):
+            data.append(args)
+
+        coro = self.sprite.async_forward(50, speed=50, fps=10, callback=cb, track_angle=False)
+        self._run_coroutines(coro)
+
+        # Data should have 10 (progress, (x, y)) tuples:
+        self.assertEqual(len(data), 10, 'callback count')
+        for i, (progress, (x, y)) in enumerate(data, start=1):
+            self.assertAlmostEqual(progress, i/10, places=3)
+            self.assertAlmostEqual(x, 50*progress, places=1)
+            self.assertAlmostEqual(y, 0, places=1)
+
+
+    def test_async_forward_with_high_speed_and_nearly_zero_frames_works(self):
+
+        coro = self.sprite.async_forward(0.1, speed=1_000_000, fps=1, track_angle=False)
+        self._run_coroutines(coro)
+
+        self.assert_almost_equal_anchor(self.sprite.anchor, (0.1, 0), places=1)
+
+
+    def test_async_forward_m_speed_initialized_sprite_uses_that_speed(self):
+
+        sprite = base.Sprite(canvas=self.canvas, shape=None, m_speed=10, r_speed=1)
+
+        coro = sprite.async_forward(10, fps=10, track_angle=False)
         self._run_coroutines(coro)
 
         # Should use m_speed=10. For distance=10, fps=10 we should have 10 frames.
@@ -1444,7 +1584,7 @@ class TestSyncMoveToAnimation(SyncAnimationBase):
 
 
 
-class TestSyncForwardAnimation(SyncAnimationBase):
+class TestSyncForwardAngleTrackingAnimation(SyncAnimationBase):
 
     def setUp(self):
 
@@ -1545,6 +1685,114 @@ class TestSyncForwardAnimation(SyncAnimationBase):
         sprite = base.Sprite(canvas=self.canvas, shape=None, m_speed=10, r_speed=1)
 
         sprite.sync_forward(10, fps=10)
+
+        # Should use m_speed=10. For distance=10, fps=10 we should have 10 frames.
+        canvas_move_calls = self.canvas.move.call_args_list
+        self.assertEqual(len(canvas_move_calls), 10, 'canvas.move call count')
+
+
+
+class TestSyncForwardNonAngleTrackingAnimation(SyncAnimationBase):
+
+    def setUp(self):
+
+        super().setUp()
+        self.sprite = base.Sprite(canvas=self.canvas, shape=None, anchor=(0, 0))
+
+
+    def test_sync_forward_with_speed_moves_anchor(self):
+
+        self.sprite.sync_forward(50, speed=50, fps=10, track_angle=False)
+        self.assert_almost_equal_anchor(self.sprite.anchor, (50, 0), places=1)
+
+
+    def test_sync_forward_negative_with_speed_moves_anchor(self):
+
+        self.sprite.sync_forward(-50, speed=50, fps=10, track_angle=False)
+        self.assert_almost_equal_anchor(self.sprite.anchor, (-50, 0), places=1)
+
+
+    def test_sync_forward_with_speed_calls_canvas_move_and_asyncio_sleep(self):
+
+        self.sprite.sync_forward(50, speed=50, fps=10, track_angle=False)
+
+        # Given that the distance is 50 and the speed is 50, animation
+        # duration is 1 second. At 10 fps, 10 frames must be generated:
+        # each with a call to canvas.move of 1/10th the distance and an
+        # await of asyncio.sleep of 1/10th the duration.
+
+        canvas_move_calls = self.canvas.move.call_args_list
+        self.assertEqual(len(canvas_move_calls), 10, 'canvas.move call count')
+        for call in canvas_move_calls:
+            _shape_id, dx, dy = call.args
+            self.assertAlmostEqual(dx, 5, places=1)
+            self.assertAlmostEqual(dy, 0, places=1)
+
+        time_sleep_call_args = self.time.sleep.call_args_list
+        self.assertEqual(len(time_sleep_call_args), 10, 'time.sleep await count')
+        for call_args in time_sleep_call_args:
+            self.assertAlmostEqual(call_args.args[0], 0.1, places=3)
+
+        # TODO: A more correct test would check that canvas.move calls and
+        # asyncio.sleep awaits are called in alternating turns.
+
+
+    def test_sync_forward_with_speed_and_easing_progresses_non_linearly(self):
+
+        def easing(progress):
+            return 0 if progress < 0.5 else 1
+
+        self.sprite.sync_forward(50, speed=50, fps=10, easing=easing, track_angle=False)
+
+        # canvas.move should have been called 10 times:
+        # - First 4 with no movement.
+        # - 5th with the whole movement.
+        # - Remaining with no movement.
+
+        canvas_move_calls = self.canvas.move.call_args_list
+        self.assertEqual(len(canvas_move_calls), 10, 'canvas.move call count')
+        for call in canvas_move_calls[:4]:
+            _shape_id, dx, dy = call.args
+            self.assertAlmostEqual(dx, 0, places=1)
+            self.assertAlmostEqual(dy, 0, places=1)
+
+        _shape_id, dx, dy = canvas_move_calls[4].args
+        self.assertAlmostEqual(dx, 50, places=1)
+        self.assertAlmostEqual(dy, 0, places=1)
+
+        for call in canvas_move_calls[5:]:
+            _shape_id, dx, dy = call.args
+            self.assertAlmostEqual(dx, 0, places=1)
+            self.assertAlmostEqual(dy, 0, places=1)
+
+
+    def test_sync_forward_with_speed_calls_callback(self):
+
+        data = []
+        def cb(*args):
+            data.append(args)
+
+        self.sprite.sync_forward(50, speed=50, fps=10, callback=cb, track_angle=False)
+
+        # Data should have 10 (progress, (x, y)) tuples:
+        self.assertEqual(len(data), 10, 'callback count')
+        for i, (progress, (x, y)) in enumerate(data, start=1):
+            self.assertAlmostEqual(progress, i/10, places=3)
+            self.assertAlmostEqual(x, 50*progress, places=1)
+            self.assertAlmostEqual(y, 0, places=1)
+
+
+    def test_sync_forward_with_high_speed_and_nearly_zero_frames_works(self):
+
+        self.sprite.sync_forward(0.1, speed=1_000_000, fps=1, track_angle=False)
+        self.assert_almost_equal_anchor(self.sprite.anchor, (0.1, 0), places=1)
+
+
+    def test_sync_forward_m_speed_initialized_sprite_uses_that_speed(self):
+
+        sprite = base.Sprite(canvas=self.canvas, shape=None, m_speed=10, r_speed=1)
+
+        sprite.sync_forward(10, fps=10, track_angle=False)
 
         # Should use m_speed=10. For distance=10, fps=10 we should have 10 frames.
         canvas_move_calls = self.canvas.move.call_args_list
