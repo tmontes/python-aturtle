@@ -757,8 +757,7 @@ class TestTurtleAsyncMovementIntegrated(AsyncAnimationBase):
         self._run_coroutines(coro)
 
         self.canvas.create_line.assert_called_with(
-            0, 0,
-            mock.ANY, 0,
+            mock.ANY,
             fill='pink',
             width=5,
             capstyle=mock.ANY,
@@ -799,7 +798,7 @@ class TestTurtleAsyncMovementIntegrated(AsyncAnimationBase):
         for call_args in coords_call_args_list:
             self.assertEqual(
                 call_args,
-                mock.call(42, mock.ANY, mock.ANY, mock.ANY, mock.ANY),
+                mock.call(42, mock.ANY),
             )
 
 
@@ -811,8 +810,7 @@ class TestTurtleAsyncMovementIntegrated(AsyncAnimationBase):
         self._run_coroutines(coro)
 
         self.canvas.create_line.assert_called_with(
-            0, 0,
-            mock.ANY, mock.ANY,
+            mock.ANY,
             fill='pink',
             width=5,
             capstyle=mock.ANY,
@@ -853,7 +851,7 @@ class TestTurtleAsyncMovementIntegrated(AsyncAnimationBase):
         for call_args in coords_call_args_list:
             self.assertEqual(
                 call_args,
-                mock.call(42, mock.ANY, mock.ANY, mock.ANY, mock.ANY),
+                mock.call(42, mock.ANY),
             )
 
 
@@ -865,8 +863,7 @@ class TestTurtleAsyncMovementIntegrated(AsyncAnimationBase):
         self._run_coroutines(coro)
 
         self.canvas.create_line.assert_called_with(
-            0, 0,
-            mock.ANY, mock.ANY,
+            mock.ANY,
             fill='pink',
             width=5,
             capstyle=mock.ANY,
@@ -907,7 +904,7 @@ class TestTurtleAsyncMovementIntegrated(AsyncAnimationBase):
         for call_args in coords_call_args_list:
             self.assertEqual(
                 call_args,
-                mock.call(42, mock.ANY, mock.ANY, mock.ANY, mock.ANY),
+                mock.call(42, mock.ANY),
             )
 
 
@@ -934,8 +931,7 @@ class TestTurtleSyncMovementIntegrated(SyncAnimationBase):
         t.sync_forward(100)
 
         self.canvas.create_line.assert_called_with(
-            0, 0,
-            mock.ANY, 0,
+            mock.ANY,
             fill='pink',
             width=5,
             capstyle=mock.ANY,
@@ -974,7 +970,7 @@ class TestTurtleSyncMovementIntegrated(SyncAnimationBase):
         for call_args in coords_call_args_list:
             self.assertEqual(
                 call_args,
-                mock.call(42, mock.ANY, mock.ANY, mock.ANY, mock.ANY),
+                mock.call(42, mock.ANY),
             )
 
 
@@ -985,8 +981,7 @@ class TestTurtleSyncMovementIntegrated(SyncAnimationBase):
         t.sync_move(40, 30)
 
         self.canvas.create_line.assert_called_with(
-            0, 0,
-            mock.ANY, mock.ANY,
+            mock.ANY,
             fill='pink',
             width=5,
             capstyle=mock.ANY,
@@ -1025,7 +1020,7 @@ class TestTurtleSyncMovementIntegrated(SyncAnimationBase):
         for call_args in coords_call_args_list:
             self.assertEqual(
                 call_args,
-                mock.call(42, mock.ANY, mock.ANY, mock.ANY, mock.ANY),
+                mock.call(42, mock.ANY),
             )
 
 
@@ -1036,8 +1031,7 @@ class TestTurtleSyncMovementIntegrated(SyncAnimationBase):
         t.sync_move_to(40, 30)
 
         self.canvas.create_line.assert_called_with(
-            0, 0,
-            mock.ANY, mock.ANY,
+            mock.ANY,
             fill='pink',
             width=5,
             capstyle=mock.ANY,
@@ -1076,5 +1070,5 @@ class TestTurtleSyncMovementIntegrated(SyncAnimationBase):
         for call_args in coords_call_args_list:
             self.assertEqual(
                 call_args,
-                mock.call(42, mock.ANY, mock.ANY, mock.ANY, mock.ANY),
+                mock.call(42, mock.ANY),
             )

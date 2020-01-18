@@ -41,7 +41,7 @@ class Turtle:
         self.line_width = line_width
 
         self._line_id = None
-        self._line_start = None
+        self._line_coords = None
         self._lines = []
 
 
@@ -78,12 +78,12 @@ class Turtle:
         """
         Sprite movement callback to handle line drawing.
         """
+        self._line_coords.extend(anchor)
         if self._line_id:
-            self._canvas.coords(self._line_id, *self._line_start, *anchor)
+            self._canvas.coords(self._line_id, self._line_coords)
         else:
             self._line_id = self._canvas.create_line(
-                *self._line_start,
-                *anchor,
+                self._line_coords,
                 fill=self.line_color,
                 width=self.line_width,
                 capstyle='round',
@@ -104,7 +104,7 @@ class Turtle:
         underlying Sprite's animated movement operation.
         """
         self._line_id = None
-        self._line_start = self._sprite.anchor
+        self._line_coords = list(self._sprite.anchor)
         with self._down_override(down):
             await self._sprite.async_forward(
                 delta,
@@ -127,7 +127,7 @@ class Turtle:
         the underlying Sprite's animated movement operation.
         """
         self._line_id = None
-        self._line_start = self._sprite.anchor
+        self._line_coords = list(self._sprite.anchor)
         with self._down_override(down):
             await self._sprite.async_move(
                 dx, dy,
@@ -150,7 +150,7 @@ class Turtle:
         the underlying Sprite's animated movement operation.
         """
         self._line_id = None
-        self._line_start = self._sprite.anchor
+        self._line_coords = list(self._sprite.anchor)
         with self._down_override(down):
             await self._sprite.async_move_to(
                 x, y,
