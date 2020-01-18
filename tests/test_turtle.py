@@ -496,9 +496,28 @@ class TestTurtleAsyncMovement(AsyncAnimationBase):
 
 
 
-class TestTurtleSyncRotation(base.TestCase):
+class SyncAnimationBase(base.TestCase):
 
     def setUp(self):
+
+        self.time = mock.Mock()
+        self._exit_stack = contextlib.ExitStack()
+        self._exit_stack.enter_context(
+            mock.patch('aturtle.sprites.base.time', self.time)
+        )
+
+
+    def tearDown(self):
+
+        self._exit_stack.close()
+
+
+
+class TestTurtleSyncRotation(SyncAnimationBase):
+
+    def setUp(self):
+
+        super().setUp()
 
         self.canvas = fake_tkinter.FakeCanvas()
         self.sprite = fake_sprite.FakeSprite(
@@ -574,9 +593,11 @@ class TestTurtleSyncRotation(base.TestCase):
 
 
 
-class TestTurtleSyncMovement(base.TestCase):
+class TestTurtleSyncMovement(SyncAnimationBase):
 
     def setUp(self):
+
+        super().setUp()
 
         self.canvas = fake_tkinter.FakeCanvas()
         self.sprite = fake_sprite.FakeSprite(
