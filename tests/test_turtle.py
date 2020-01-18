@@ -1103,3 +1103,223 @@ class TestTurtleAsyncMovementIntegrated(AsyncAnimationBase):
 
 
 
+class TestTurtleSyncMovementIntegrated(SyncAnimationBase):
+
+    def setUp(self):
+
+        super().setUp()
+
+        self.canvas = fake_tkinter.FakeCanvas()
+        self.sprite = sprite_base.Sprite(self.canvas, shape=None)
+
+
+    def tearDown(self):
+
+        self._exit_stack.close()
+
+
+    def test_sync_forward_draws_calls_canvas_create_line(self):
+
+        t = turtle.Turtle(self.sprite, line_color='pink', line_width=5)
+
+        t.sync_forward(100)
+
+        self.canvas.create_line.assert_called_with(
+            0, 0,
+            mock.ANY, 0,
+            fill='pink',
+            width=5,
+            capstyle=mock.ANY,
+        )
+
+
+    def test_sync_forward_lines_are_behind_the_sprite(self):
+
+        t = turtle.Turtle(self.sprite)
+
+        t.sync_forward(100)
+
+        self.canvas.tag_lower.assert_called_with(
+            42,     # line canvas id from fake canvas.create_line
+            None,   # sprite canvas id, None in the Sprite base class
+        )
+
+
+    def test_sync_forward_lines_are_progressively_updated(self):
+
+        t = turtle.Turtle(self.sprite)
+
+        t.sync_forward(100, speed=100, fps=10)
+
+        # distance=speed=100 and fps=10
+        # First frame creates the line, other 9 frames update it.
+
+        coords_call_args_list = self.canvas.coords.call_args_list
+        self.assertEqual(
+            len(coords_call_args_list),
+            9,
+            msg='canvas.coords number of calls',
+        )
+
+        # All canvas.coords calls include the correct line id: 42
+        for call_args in coords_call_args_list:
+            self.assertEqual(
+                call_args,
+                mock.call(42, mock.ANY, mock.ANY, mock.ANY, mock.ANY),
+            )
+
+
+    def test_sync_backward_draws_calls_canvas_create_line(self):
+
+        t = turtle.Turtle(self.sprite, line_color='pink', line_width=5)
+
+        t.sync_backward(100)
+
+        self.canvas.create_line.assert_called_with(
+            0, 0,
+            mock.ANY, 0,
+            fill='pink',
+            width=5,
+            capstyle=mock.ANY,
+        )
+
+
+    def test_sync_backward_lines_are_behind_the_sprite(self):
+
+        t = turtle.Turtle(self.sprite)
+
+        t.sync_backward(100)
+
+        self.canvas.tag_lower.assert_called_with(
+            42,     # line canvas id from fake canvas.create_line
+            None,   # sprite canvas id, None in the Sprite base class
+        )
+
+
+    def test_sync_backward_lines_are_progressively_updated(self):
+
+        t = turtle.Turtle(self.sprite)
+
+        t.sync_backward(100, speed=100, fps=10)
+
+        # distance=speed=100 and fps=10
+        # First frame creates the line, other 9 frames update it.
+
+        coords_call_args_list = self.canvas.coords.call_args_list
+        self.assertEqual(
+            len(coords_call_args_list),
+            9,
+            msg='canvas.coords number of calls',
+        )
+
+        # All canvas.coords calls include the correct line id: 42
+        for call_args in coords_call_args_list:
+            self.assertEqual(
+                call_args,
+                mock.call(42, mock.ANY, mock.ANY, mock.ANY, mock.ANY),
+            )
+
+
+    def test_sync_move_draws_calls_canvas_create_line(self):
+
+        t = turtle.Turtle(self.sprite, line_color='pink', line_width=5)
+
+        t.sync_move(40, 30)
+
+        self.canvas.create_line.assert_called_with(
+            0, 0,
+            mock.ANY, mock.ANY,
+            fill='pink',
+            width=5,
+            capstyle=mock.ANY,
+        )
+
+
+    def test_sync_move_lines_are_behind_the_sprite(self):
+
+        t = turtle.Turtle(self.sprite)
+
+        t.sync_move(40, 30)
+
+        self.canvas.tag_lower.assert_called_with(
+            42,     # line canvas id from fake canvas.create_line
+            None,   # sprite canvas id, None in the Sprite base class
+        )
+
+
+    def test_sync_move_lines_are_progressively_updated(self):
+
+        t = turtle.Turtle(self.sprite)
+
+        t.sync_move(40, 30, speed=50, fps=10)
+
+        # distance=speed=50 and fps=10
+        # First frame creates the line, other 9 frames update it.
+
+        coords_call_args_list = self.canvas.coords.call_args_list
+        self.assertEqual(
+            len(coords_call_args_list),
+            9,
+            msg='canvas.coords number of calls',
+        )
+
+        # All canvas.coords calls include the correct line id: 42
+        for call_args in coords_call_args_list:
+            self.assertEqual(
+                call_args,
+                mock.call(42, mock.ANY, mock.ANY, mock.ANY, mock.ANY),
+            )
+
+
+    def test_sync_move_to_draws_calls_canvas_create_line(self):
+
+        t = turtle.Turtle(self.sprite, line_color='pink', line_width=5)
+
+        t.sync_move_to(40, 30)
+
+        self.canvas.create_line.assert_called_with(
+            0, 0,
+            mock.ANY, mock.ANY,
+            fill='pink',
+            width=5,
+            capstyle=mock.ANY,
+        )
+
+
+    def test_sync_move_to_lines_are_behind_the_sprite(self):
+
+        t = turtle.Turtle(self.sprite)
+
+        t.sync_move_to(40, 30)
+
+        self.canvas.tag_lower.assert_called_with(
+            42,     # line canvas id from fake canvas.create_line
+            None,   # sprite canvas id, None in the Sprite base class
+        )
+
+
+    def test_sync_move_to_lines_are_progressively_updated(self):
+
+        t = turtle.Turtle(self.sprite)
+
+        t.sync_move_to(40, 30, speed=50, fps=10)
+
+        # distance=speed=50 and fps=10
+        # First frame creates the line, other 9 frames update it.
+
+        coords_call_args_list = self.canvas.coords.call_args_list
+        self.assertEqual(
+            len(coords_call_args_list),
+            9,
+            msg='canvas.coords number of calls',
+        )
+
+        # All canvas.coords calls include the correct line id: 42
+        for call_args in coords_call_args_list:
+            self.assertEqual(
+                call_args,
+                mock.call(42, mock.ANY, mock.ANY, mock.ANY, mock.ANY),
+            )
+
+
+
