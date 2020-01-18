@@ -909,9 +909,9 @@ class TestTurtleAsyncMovementIntegrated(AsyncAnimationBase):
         coro = t.async_forward(100)
         self._run_coroutines(coro)
 
-        self.canvas.tag_lower.assert_called_with(
-            42,     # line canvas id from fake canvas.create_line
+        self.canvas.tag_raise.assert_called_with(
             None,   # sprite canvas id, None in the Sprite base class
+            42,     # line canvas id from fake canvas.create_line
         )
 
 
@@ -963,9 +963,9 @@ class TestTurtleAsyncMovementIntegrated(AsyncAnimationBase):
         coro = t.async_backward(100)
         self._run_coroutines(coro)
 
-        self.canvas.tag_lower.assert_called_with(
-            42,     # line canvas id from fake canvas.create_line
+        self.canvas.tag_raise.assert_called_with(
             None,   # sprite canvas id, None in the Sprite base class
+            42,     # line canvas id from fake canvas.create_line
         )
 
 
@@ -1017,9 +1017,9 @@ class TestTurtleAsyncMovementIntegrated(AsyncAnimationBase):
         coro = t.async_move(40, 30)
         self._run_coroutines(coro)
 
-        self.canvas.tag_lower.assert_called_with(
-            42,     # line canvas id from fake canvas.create_line
+        self.canvas.tag_raise.assert_called_with(
             None,   # sprite canvas id, None in the Sprite base class
+            42,     # line canvas id from fake canvas.create_line
         )
 
 
@@ -1071,9 +1071,9 @@ class TestTurtleAsyncMovementIntegrated(AsyncAnimationBase):
         coro = t.async_move_to(40, 30)
         self._run_coroutines(coro)
 
-        self.canvas.tag_lower.assert_called_with(
-            42,     # line canvas id from fake canvas.create_line
+        self.canvas.tag_raise.assert_called_with(
             None,   # sprite canvas id, None in the Sprite base class
+            42,     # line canvas id from fake canvas.create_line
         )
 
 
@@ -1139,9 +1139,9 @@ class TestTurtleSyncMovementIntegrated(SyncAnimationBase):
 
         t.sync_forward(100)
 
-        self.canvas.tag_lower.assert_called_with(
-            42,     # line canvas id from fake canvas.create_line
+        self.canvas.tag_raise.assert_called_with(
             None,   # sprite canvas id, None in the Sprite base class
+            42,     # line canvas id from fake canvas.create_line
         )
 
 
@@ -1190,9 +1190,9 @@ class TestTurtleSyncMovementIntegrated(SyncAnimationBase):
 
         t.sync_backward(100)
 
-        self.canvas.tag_lower.assert_called_with(
-            42,     # line canvas id from fake canvas.create_line
+        self.canvas.tag_raise.assert_called_with(
             None,   # sprite canvas id, None in the Sprite base class
+            42,     # line canvas id from fake canvas.create_line
         )
 
 
@@ -1241,9 +1241,9 @@ class TestTurtleSyncMovementIntegrated(SyncAnimationBase):
 
         t.sync_move(40, 30)
 
-        self.canvas.tag_lower.assert_called_with(
-            42,     # line canvas id from fake canvas.create_line
+        self.canvas.tag_raise.assert_called_with(
             None,   # sprite canvas id, None in the Sprite base class
+            42,     # line canvas id from fake canvas.create_line
         )
 
 
@@ -1292,9 +1292,9 @@ class TestTurtleSyncMovementIntegrated(SyncAnimationBase):
 
         t.sync_move_to(40, 30)
 
-        self.canvas.tag_lower.assert_called_with(
-            42,     # line canvas id from fake canvas.create_line
+        self.canvas.tag_raise.assert_called_with(
             None,   # sprite canvas id, None in the Sprite base class
+            42,     # line canvas id from fake canvas.create_line
         )
 
 
