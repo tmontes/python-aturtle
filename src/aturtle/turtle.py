@@ -117,28 +117,6 @@ class Turtle:
             )
 
 
-    async def async_backward(self, distance, *, down=None, speed=None,
-                             easing=None, fps=None, update=None):
-        """
-        Animated move of the Turtle backward by `distance`, away from the
-        direction set by its angle. Negative values move the Turtle in
-        the opposite direction.
-
-        The `down` argument overrides the current down state, if not None.
-
-        The `speed`, `easing`, `fps`, and `update` values are passed to
-        the underlying Sprite's animated movement operation.
-        """
-        with self._down_override(down):
-            await self.async_forward(
-                -distance,
-                speed=speed,
-                easing=easing,
-                fps=fps,
-                update=update,
-            )
-
-
     async def async_move(self, dx, dy, *, down=None, speed=None, easing=None,
                          fps=None, update=None):
         """
@@ -238,7 +216,6 @@ class Turtle:
 
     _sync_draw_line = syncer.create_sync_func(_async_draw_line, name_mapper)
     sync_forward = syncer.create_sync_func(async_forward, name_mapper)
-    sync_backward = syncer.create_sync_func(async_backward, name_mapper)
     sync_move = syncer.create_sync_func(async_move, name_mapper)
     sync_move_to = syncer.create_sync_func(async_move_to, name_mapper)
     sync_left = syncer.create_sync_func(async_left, name_mapper)
