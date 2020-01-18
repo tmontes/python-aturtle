@@ -55,3 +55,27 @@ class TestTurtle(base.TestCase):
         self.assertEqual(t.angle, 0)
 
 
+    def test_create_turtle_explicit_down_True(self):
+
+        t = turtle.Turtle(self.sprite, down=True)
+        self.assertIs(t.down, True)
+
+
+    def test_create_turtle_explicit_down_False(self):
+
+        t = turtle.Turtle(self.sprite, down=False)
+        self.assertIs(t.down, False)
+
+
+    def test_create_turtle_explicit_line_color(self):
+
+        t = turtle.Turtle(self.sprite, line_color='orange')
+        self.assertEqual(t.line_color, 'orange')
+
+
+    def test_create_turtle_explicit_line_width(self):
+
+        t = turtle.Turtle(self.sprite, line_width=42)
+        self.assertEqual(t.line_width, 42)
+
+
