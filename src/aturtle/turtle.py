@@ -58,49 +58,85 @@ class Turtle:
             self._lines.append(self._line_id)
 
 
-    async def async_forward(self, distance):
+    async def async_forward(self, distance, *, speed=None, easing=None,
+                            fps=None, update=None):
 
         self._line_id = None
         self._line_start = self._sprite.anchor
         await self._sprite.async_forward(
             distance,
             callback=self._async_draw_line if self._down else None,
+            speed=speed,
+            easing=easing,
+            fps=fps,
+            update=update,
         )
 
 
-    async def async_backward(self, distance):
+    async def async_backward(self, distance, *, speed=None, easing=None,
+                             fps=None, update=None):
 
-        await self.async_forward(-distance)
+        await self.async_forward(
+            -distance,
+            speed=speed,
+            easing=easing,
+            fps=fps,
+            update=update,
+        )
 
 
-    async def async_move(self, dx, dy):
+    async def async_move(self, dx, dy, *, speed=None, easing=None, fps=None,
+                         update=None):
 
         self._line_id = None
         self._line_start = self._sprite.anchor
         await self._sprite.async_move(
             dx, dy,
             callback=self._async_draw_line if self._down else None,
+            speed=speed,
+            easing=easing,
+            fps=fps,
+            update=update,
         )
 
 
-    async def async_move_to(self, dx, dy):
+    async def async_move_to(self, dx, dy, *, speed=None, easing=None, fps=None,
+                            update=None):
 
         self._line_id = None
         self._line_start = self._sprite.anchor
         await self._sprite.async_move_to(
             dx, dy,
             callback=self._async_draw_line if self._down else None,
+            speed=speed,
+            easing=easing,
+            fps=fps,
+            update=update,
         )
 
 
-    async def async_left(self, angle):
+    async def async_left(self, angle, *, speed=None, easing=None, fps=None,
+                         update=None):
 
-        await self._sprite.async_rotate(-angle)
+        await self._sprite.async_rotate(
+            -angle,
+            speed=speed,
+            easing=easing,
+            fps=fps,
+            update=update,
+        )
 
 
-    async def async_right(self, angle):
+    async def async_right(self, angle, *, speed=None, easing=None, fps=None,
+                          update=None):
 
-        await self._sprite.async_rotate(angle)
+        await self._sprite.async_rotate(
+            angle,
+            speed=speed,
+            easing=easing,
+            fps=fps,
+            update=update,
+        )
 
 
     def name_mapper(name):
