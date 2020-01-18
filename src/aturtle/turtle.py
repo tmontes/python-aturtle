@@ -34,7 +34,7 @@ class Turtle:
         self._canvas = sprite.canvas
         self._sprite = sprite
 
-        self._down = down
+        self._down = bool(down)
         self.line_color = line_color
         self.line_width = line_width
 
@@ -55,6 +55,13 @@ class Turtle:
         Lowers the turtle onto the canvas. Lines are drawn as it moves.
         """
         self._down = True
+
+
+    def isdown(self):
+        """
+        True if turtle movements draw lines. False otherwise.
+        """
+        return self._down
 
 
     async def _async_draw_line(self, _progress, anchor):
