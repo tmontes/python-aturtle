@@ -25,6 +25,7 @@ __email__ = 'tiago.montes@gmail.com'
 from . window import Window
 from . import shapes
 from . sprites import create_sprite
+from . import turtle
 
 
 __all__ = ['Window', 'create_sprite']

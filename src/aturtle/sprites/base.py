@@ -9,7 +9,7 @@ import asyncio
 import contextlib
 import math
 
-from . import syncer
+from .. utils import syncer
 
 
 
@@ -124,6 +124,14 @@ class Sprite:
 
         self._movement = _ConcurrentAnimationContexts('moves')
         self._rotation = _ConcurrentAnimationContexts('rotates')
+
+
+    @property
+    def canvas(self):
+        """
+        The Sprite's canvas.
+        """
+        return self._canvas
 
 
     @property

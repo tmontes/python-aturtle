@@ -30,7 +30,9 @@ coroutine functions.
 # IMPORTANT
 # ---------
 # Not being generic, this module may need updates if ever the coroutine function
-# objects it needs to handle use other kinds of async code.
+# objects it needs to handle use other kinds of async code. In particular, it
+# has been updated in order to support chained attribute access expressions used
+# in the Turtle class' async methds.
 
 import ast
 import inspect
@@ -92,7 +94,7 @@ def create_sync_func(async_func, name_transformer):
 
     IMPORTANT
     ---------
-    Created explicitly to handle base.Sprite's use case.
+    Created explicitly to handle base.Sprite's and Turtle's use cases.
     """
 
     if not inspect.iscoroutinefunction(async_func):
@@ -165,19 +167,41 @@ class _ExprTransformer(ast.NodeTransformer):
 
     def visit_Attribute(self, node):
         """
-        Replaces "asyncio.sleep" constructs with "time.sleep" ones, and
-        "self.async_name" constructs with "self.sync_name" ones, using
-        `name_transformer` to produce "sync_name" from "async_name".
+        Replaces "asyncio.sleep" constructs with "time.sleep" ones,
+        "self.async_name" constructs with "self.sync_name" ones, and
+        "self.<ASAC>.async_name" constructs with "self.<ASAC>.sync_name"
+        ones, where "<ASAC>" is a chain of "attribute.sub_attribute",
+        using `name_transformer` to produce "sync_name" from "async_name".
         """
-        if node.value.id == 'asyncio' and node.attr == 'sleep':
+        if isinstance(node.value, ast.Name):
+            if node.value.id == 'asyncio' and node.attr == 'sleep':
+                # Transform "asyncio.sleep" into "time.sleep"
+                return ast.Attribute(
+                    value=ast.Name(id='time', ctx=node.value.ctx),
+                    attr='sleep',
+                    ctx=node.ctx,
+                )
+            if node.value.id == 'self':
+                # Transform "self.async_name" into "self.sync_name".
+                return ast.Attribute(
+                    value=node.value,
+                    attr=self._name_transformer(node.attr),
+                    ctx=node.ctx,
+                )
+        if isinstance(node.value, ast.Attribute) and self._starts_at_self(node.value):
+            # Recurse into sub-attributes if first name is "self".
             return ast.Attribute(
-                value=ast.Name(id='time', ctx=node.value.ctx),
-                attr='sleep',
-                ctx=node.ctx,
-            )
-        elif node.value.id == 'self':
-            return ast.Attribute(
-                value=ast.Name(id=node.value.id, ctx=node.value.ctx),
+                value=self.visit_Attribute(node.value),
                 attr=self._name_transformer(node.attr),
                 ctx=node.ctx,
             )
+        # Leave unchanged.
+        return node
+
+    def _starts_at_self(self, node):
+        # True if the attribute/sub-attribute chain in node starts with "self".
+        if isinstance(node.value, ast.Name):
+            return node.value.id == 'self'
+        if isinstance(node.value, ast.Attribute):
+            return self._starts_at_self(node.value)
+        return False
