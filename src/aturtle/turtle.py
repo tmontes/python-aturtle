@@ -92,23 +92,22 @@ class Turtle:
             self._lines.append(self._line_id)
 
 
-    async def async_forward(self, distance, *, down=None, speed=None,
+    async def async_forward(self, delta, *, down=None, speed=None,
                             easing=None, fps=None, update=None):
         """
-        Animated move of the Turtle forward by `distance`, towards the
-        direction set by its angle. Negative values move the Turtle in
-        the opposite direction.
+        Animated move of the Turtle forward by `delta` in the direction set by
+        its angle. Negative values move in the opposite direction.
 
         The `down` argument overrides the current down state, if not None.
 
-        The `speed`, `easing`, `fps`, and `update` values are passed to
-        the underlying Sprite's animated movement operation.
+        The `speed`, `easing`, `fps`, and `update` values are passed to the
+        underlying Sprite's animated movement operation.
         """
         self._line_id = None
         self._line_start = self._sprite.anchor
         with self._down_override(down):
             await self._sprite.async_forward(
-                distance,
+                delta,
                 callback=self._async_draw_line if self.down else None,
                 speed=speed,
                 easing=easing,
