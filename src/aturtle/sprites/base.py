@@ -151,6 +151,39 @@ class Sprite:
 
 
     # ------------------------------------------------------------------------
+    # Display depth control.
+
+    def to_front(self, *, of=None):
+        """
+        Move the Sprite to the front of:
+        - All visible elements by default.
+        - The Sprite passed in `of`.
+        - The Sprite's canvas item with id `of`.
+        """
+        if of is None:
+            self._canvas.tag_raise(self._id)
+        elif isinstance(of, Sprite):
+            self._canvas.tag_raise(self._id, of._id)
+        else:
+            self._canvas.tag_raise(self._id, of)
+
+
+    def to_back(self, *, of=None):
+        """
+        Move the Sprite to the back of:
+        - All visible elements by default.
+        - The Sprite passed in `of`.
+        - The Sprite's canvas item with id `of`.
+        """
+        if of is None:
+            self._canvas.tag_lower(self._id)
+        elif isinstance(of, Sprite):
+            self._canvas.tag_lower(self._id, of._id)
+        else:
+            self._canvas.tag_lower(self._id, of)
+
+
+    # ------------------------------------------------------------------------
     # Direct movement and rotation methods: no animation at play.
 
     def direct_move(self, dx, dy, *, update=None):
