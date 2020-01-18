@@ -34,7 +34,7 @@ class Turtle:
         self._canvas = sprite.canvas
         self._sprite = sprite
 
-        self._down = bool(down)
+        self.down = down
         self.line_color = line_color
         self.line_width = line_width
 
@@ -57,27 +57,6 @@ class Turtle:
         The turtle's rotation angle, in degrees.
         """
         return self._sprite.angle
-
-
-    def up(self):
-        """
-        Raises the turtle from the canvas. No lines are drawn as it moves.
-        """
-        self._down = False
-
-
-    def down(self):
-        """
-        Lowers the turtle onto the canvas. Lines are drawn as it moves.
-        """
-        self._down = True
-
-
-    def isdown(self):
-        """
-        True if turtle movements draw lines. False otherwise.
-        """
-        return self._down
 
 
     async def _async_draw_line(self, _progress, anchor):
@@ -113,7 +92,7 @@ class Turtle:
         self._line_start = self._sprite.anchor
         await self._sprite.async_forward(
             distance,
-            callback=self._async_draw_line if self._down else None,
+            callback=self._async_draw_line if self.down else None,
             speed=speed,
             easing=easing,
             fps=fps,
@@ -152,7 +131,7 @@ class Turtle:
         self._line_start = self._sprite.anchor
         await self._sprite.async_move(
             dx, dy,
-            callback=self._async_draw_line if self._down else None,
+            callback=self._async_draw_line if self.down else None,
             speed=speed,
             easing=easing,
             fps=fps,
@@ -172,7 +151,7 @@ class Turtle:
         self._line_start = self._sprite.anchor
         await self._sprite.async_move_to(
             x, y,
-            callback=self._async_draw_line if self._down else None,
+            callback=self._async_draw_line if self.down else None,
             speed=speed,
             easing=easing,
             fps=fps,
