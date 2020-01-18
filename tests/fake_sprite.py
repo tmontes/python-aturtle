@@ -15,3 +15,5 @@ class FakeSprite:
         self.canvas = canvas
         self.anchor = anchor
         self.angle = angle
+        self.async_rotate = mock.AsyncMock()
+        self.sync_rotate = mock.Mock()
