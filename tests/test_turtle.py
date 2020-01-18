@@ -97,6 +97,12 @@ class AsyncAnimationBase(base.TestCase):
             mock.patch('aturtle.sprites.base.asyncio', self.asyncio)
         )
 
+
+    def tearDown(self):
+
+        self._exit_stack.close()
+
+
     def _run_coroutines(self, *coros):
 
         ready = collections.deque(coros)
