@@ -11,10 +11,12 @@ import itertools as it
 from unittest import mock
 
 from aturtle import turtle
+from aturtle.sprites import base as sprite_base
 
 from . import base
 from . import fake_tkinter
 from . import fake_sprite
+from . import fake_asyncio
 
 
 
@@ -87,6 +89,14 @@ class TestTurtle(base.TestCase):
 
 class AsyncAnimationBase(base.TestCase):
 
+    def setUp(self):
+
+        self.asyncio = fake_asyncio.FakeAsyncio()
+        self._exit_stack = contextlib.ExitStack()
+        self._exit_stack.enter_context(
+            mock.patch('aturtle.sprites.base.asyncio', self.asyncio)
+        )
+
     def _run_coroutines(self, *coros):
 
         ready = collections.deque(coros)
@@ -104,6 +114,8 @@ class AsyncAnimationBase(base.TestCase):
 class TestTurtleAsyncRotation(AsyncAnimationBase):
 
     def setUp(self):
+
+        super().setUp()
 
         self.canvas = fake_tkinter.FakeCanvas()
         self.sprite = fake_sprite.FakeSprite(
@@ -186,6 +198,8 @@ class TestTurtleAsyncRotation(AsyncAnimationBase):
 class TestTurtleAsyncMovement(AsyncAnimationBase):
 
     def setUp(self):
+
+        super().setUp()
 
         self.canvas = fake_tkinter.FakeCanvas()
         self.sprite = fake_sprite.FakeSprite(
@@ -833,6 +847,232 @@ class TestTurtleSyncMovement(base.TestCase):
                     update=None,
                 )
 
+
+
+class TestTurtleAsyncMovementIntegrated(AsyncAnimationBase):
+
+    def setUp(self):
+
+        super().setUp()
+
+        self.canvas = fake_tkinter.FakeCanvas()
+        self.sprite = sprite_base.Sprite(self.canvas, shape=None)
+
+
+    def test_async_forward_draws_calls_canvas_create_line(self):
+
+        t = turtle.Turtle(self.sprite, line_color='pink', line_width=5)
+
+        coro = t.async_forward(100)
+        self._run_coroutines(coro)
+
+        self.canvas.create_line.assert_called_with(
+            0, 0,
+            mock.ANY, 0,
+            fill='pink',
+            width=5,
+            capstyle=mock.ANY,
+        )
+
+
+    def test_async_forward_lines_are_behind_the_sprite(self):
+
+        t = turtle.Turtle(self.sprite)
+
+        coro = t.async_forward(100)
+        self._run_coroutines(coro)
+
+        self.canvas.tag_lower.assert_called_with(
+            42,     # line canvas id from fake canvas.create_line
+            None,   # sprite canvas id, None in the Sprite base class
+        )
+
+
+    def test_async_forward_lines_are_progressively_updated(self):
+
+        t = turtle.Turtle(self.sprite)
+
+        coro = t.async_forward(100, speed=100, fps=10)
+        self._run_coroutines(coro)
+
+        # distance=speed=100 and fps=10
+        # First frame creates the line, other 9 frames update it.
+
+        coords_call_args_list = self.canvas.coords.call_args_list
+        self.assertEqual(
+            len(coords_call_args_list),
+            9,
+            msg='canvas.coords number of calls',
+        )
+
+        # All canvas.coords calls include the correct line id: 42
+        for call_args in coords_call_args_list:
+            self.assertEqual(
+                call_args,
+                mock.call(42, mock.ANY, mock.ANY, mock.ANY, mock.ANY),
+            )
+
+
+    def test_async_backward_draws_calls_canvas_create_line(self):
+
+        t = turtle.Turtle(self.sprite, line_color='pink', line_width=5)
+
+        coro = t.async_backward(100)
+        self._run_coroutines(coro)
+
+        self.canvas.create_line.assert_called_with(
+            0, 0,
+            mock.ANY, 0,
+            fill='pink',
+            width=5,
+            capstyle=mock.ANY,
+        )
+
+
+    def test_async_backward_lines_are_behind_the_sprite(self):
+
+        t = turtle.Turtle(self.sprite)
+
+        coro = t.async_backward(100)
+        self._run_coroutines(coro)
+
+        self.canvas.tag_lower.assert_called_with(
+            42,     # line canvas id from fake canvas.create_line
+            None,   # sprite canvas id, None in the Sprite base class
+        )
+
+
+    def test_async_backward_lines_are_progressively_updated(self):
+
+        t = turtle.Turtle(self.sprite)
+
+        coro = t.async_backward(100, speed=100, fps=10)
+        self._run_coroutines(coro)
+
+        # distance=speed=100 and fps=10
+        # First frame creates the line, other 9 frames update it.
+
+        coords_call_args_list = self.canvas.coords.call_args_list
+        self.assertEqual(
+            len(coords_call_args_list),
+            9,
+            msg='canvas.coords number of calls',
+        )
+
+        # All canvas.coords calls include the correct line id: 42
+        for call_args in coords_call_args_list:
+            self.assertEqual(
+                call_args,
+                mock.call(42, mock.ANY, mock.ANY, mock.ANY, mock.ANY),
+            )
+
+
+    def test_async_move_draws_calls_canvas_create_line(self):
+
+        t = turtle.Turtle(self.sprite, line_color='pink', line_width=5)
+
+        coro = t.async_move(40, 30)
+        self._run_coroutines(coro)
+
+        self.canvas.create_line.assert_called_with(
+            0, 0,
+            mock.ANY, mock.ANY,
+            fill='pink',
+            width=5,
+            capstyle=mock.ANY,
+        )
+
+
+    def test_async_move_lines_are_behind_the_sprite(self):
+
+        t = turtle.Turtle(self.sprite)
+
+        coro = t.async_move(40, 30)
+        self._run_coroutines(coro)
+
+        self.canvas.tag_lower.assert_called_with(
+            42,     # line canvas id from fake canvas.create_line
+            None,   # sprite canvas id, None in the Sprite base class
+        )
+
+
+    def test_async_move_lines_are_progressively_updated(self):
+
+        t = turtle.Turtle(self.sprite)
+
+        coro = t.async_move(40, 30, speed=50, fps=10)
+        self._run_coroutines(coro)
+
+        # distance=speed=50 and fps=10
+        # First frame creates the line, other 9 frames update it.
+
+        coords_call_args_list = self.canvas.coords.call_args_list
+        self.assertEqual(
+            len(coords_call_args_list),
+            9,
+            msg='canvas.coords number of calls',
+        )
+
+        # All canvas.coords calls include the correct line id: 42
+        for call_args in coords_call_args_list:
+            self.assertEqual(
+                call_args,
+                mock.call(42, mock.ANY, mock.ANY, mock.ANY, mock.ANY),
+            )
+
+
+    def test_async_move_to_draws_calls_canvas_create_line(self):
+
+        t = turtle.Turtle(self.sprite, line_color='pink', line_width=5)
+
+        coro = t.async_move_to(40, 30)
+        self._run_coroutines(coro)
+
+        self.canvas.create_line.assert_called_with(
+            0, 0,
+            mock.ANY, mock.ANY,
+            fill='pink',
+            width=5,
+            capstyle=mock.ANY,
+        )
+
+
+    def test_async_move_to_lines_are_behind_the_sprite(self):
+
+        t = turtle.Turtle(self.sprite)
+
+        coro = t.async_move_to(40, 30)
+        self._run_coroutines(coro)
+
+        self.canvas.tag_lower.assert_called_with(
+            42,     # line canvas id from fake canvas.create_line
+            None,   # sprite canvas id, None in the Sprite base class
+        )
+
+
+    def test_async_move_to_lines_are_progressively_updated(self):
+
+        t = turtle.Turtle(self.sprite)
+
+        coro = t.async_move_to(40, 30, speed=50, fps=10)
+        self._run_coroutines(coro)
+
+        # distance=speed=50 and fps=10
+        # First frame creates the line, other 9 frames update it.
+
+        coords_call_args_list = self.canvas.coords.call_args_list
+        self.assertEqual(
+            len(coords_call_args_list),
+            9,
+            msg='canvas.coords number of calls',
+        )
+
+        # All canvas.coords calls include the correct line id: 42
+        for call_args in coords_call_args_list:
+            self.assertEqual(
+                call_args,
+                mock.call(42, mock.ANY, mock.ANY, mock.ANY, mock.ANY),
+            )
 
 
 
