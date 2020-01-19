@@ -57,8 +57,8 @@ class Window:
         self._binds = {}
 
         # Direct key support.
-        self._direct_key_binds = {}
-        self._direct_key_idle_ids = {}
+        self._direct_key_callbacks = {}
+        self._direct_key_after_ids = {}
 
 
     @property
@@ -128,9 +128,9 @@ class Window:
         self._y_scroll = new_y_scroll
 
 
-    def bind(self, sequence, func):
+    def bind(self, sequence, cb):
 
-        self._binds[sequence] = self._tk_window.bind(sequence, func)
+        self._binds[sequence] = self._tk_window.bind(sequence, cb)
 
 
     def unbind(self, sequence=None):
@@ -146,58 +146,57 @@ class Window:
             raise ValueError(f'Unknown bound sequence: {sequence!r}.')
 
 
-    def bind_direct_key(self, keysym, press_func=None, release_func=None):
+    def bind_direct_key(self, keysym, press_cb=None, release_cb=None):
 
-        if not press_func and not release_func:
+        if not press_cb and not release_cb:
             raise ValueError(f'Missing event handler argument.')
 
         self.bind(f'<KeyPress-{keysym}>', self._direct_key_press)
         self.bind(f'<KeyRelease-{keysym}>', self._direct_key_release)
 
-        self._direct_key_binds[keysym] = (press_func, release_func)
+        self._direct_key_callbacks[keysym] = (press_cb, release_cb)
 
 
     def _direct_key_press(self, event):
 
         keysym = event.keysym
-        if keysym in self._direct_key_idle_ids:
-            self._tk_window.after_cancel(self._direct_key_idle_ids[keysym])
-            del self._direct_key_idle_ids[keysym]
+        if keysym in self._direct_key_after_ids:
+            self._tk_window.after_cancel(self._direct_key_after_ids[keysym])
+            del self._direct_key_after_ids[keysym]
         else:
-            press_func, _release_func = self._direct_key_binds[keysym]
-            if press_func:
-                press_func(event)
+            press_cb, _release_cb = self._direct_key_callbacks[keysym]
+            if press_cb:
+                press_cb(event)
 
 
     def _direct_key_release(self, event):
 
         keysym = event.keysym
-        idle_id = self._tk_window.after_idle(self._direct_handle_release, event)
-        self._direct_key_idle_ids[keysym] = idle_id
+        after_id = self._tk_window.after_idle(self._direct_handle_release, event)
+        self._direct_key_after_ids[keysym] = after_id
 
 
     def _direct_handle_release(self, event):
 
         keysym = event.keysym
-        del self._direct_key_idle_ids[keysym]
-        _press_func, release_func = self._direct_key_binds[keysym]
-        if release_func:
-            release_func(event)
+        del self._direct_key_after_ids[keysym]
+        _press_cb, release_cb = self._direct_key_callbacks[keysym]
+        if release_cb:
+            release_cb(event)
 
 
     def unbind_direct_key(self, keysym=None):
 
         if keysym is None:
-            keysyms = list(self._direct_key_binds)
+            keysyms = list(self._direct_key_callbacks)
             for keysym in keysyms:
                 self.unbind_direct_key(keysym)
-        elif keysym in self._direct_key_binds:
+        elif keysym in self._direct_key_callbacks:
             self.unbind(f'<KeyPress-{keysym}>')
             self.unbind(f'<KeyRelease-{keysym}>')
-            del self._direct_key_binds[keysym]
+            del self._direct_key_callbacks[keysym]
         else:
             raise ValueError(f'Unknown bound direct key: {keysym!r}.')
-
 
 
     def close(self):
