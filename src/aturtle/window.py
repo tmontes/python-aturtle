@@ -129,12 +129,22 @@ class Window:
 
 
     def bind(self, sequence, cb):
+        """
+        Binds Tk event `sequence` to the `cb` callable, such that `cb` is
+        called with a single event argument, when the event is triggered.
 
+        Existing bindings for the same `sequence` are replaced.
+        """
         self._binds[sequence] = self._tk_window.bind(sequence, cb)
 
 
     def unbind(self, sequence=None):
+        """
+        Unbinds the Tk event `sequence`. If `sequence` is None, all events
+        previously bound via `bind` are unbound.
 
+        Raises ValueError if the `sequence` isn't bound.
+        """
         if sequence is None:
             sequences = list(self._binds)
             for sequence in sequences:
@@ -147,7 +157,17 @@ class Window:
 
 
     def bind_direct_key(self, keysym, press_cb=None, release_cb=None):
+        """
+        Binds "direct-key" events such that when the key defined by `keysym` is
+        pressed the `press_cb` is called with a single event argument, and when
+        that same key is released the `release_cb` is called, again with a
+        single event argument.
 
+        The difference between bind_direct_key('a') and bind('<KeyPress-a>') is
+        that the former ensures that pressing and holding the A key triggers
+        the `press_cb` just once, while the latter triggers the associated
+        callback multiple times depending on OS level key delay and repeat.
+        """
         if not press_cb and not release_cb:
             raise ValueError(f'Missing event handler argument.')
 
@@ -158,35 +178,52 @@ class Window:
 
 
     def _direct_key_press(self, event):
-
+        """
+        Handles "direct-key" KeyPress events.
+        May be called multiple times while a key is held down.
+        """
         keysym = event.keysym
         if keysym in self._direct_key_after_ids:
+            # 2nd and subsequent KeyPress events: cancel idle handler.
             self._tk_window.after_cancel(self._direct_key_after_ids[keysym])
             del self._direct_key_after_ids[keysym]
         else:
+            # First KeyPress event: trigger press_cb, if any.
             press_cb, _release_cb = self._direct_key_callbacks[keysym]
             if press_cb:
                 press_cb(event)
 
 
     def _direct_key_release(self, event):
-
+        """
+        Handles "direct-key" KeyRelease events.
+        May be called multiple times while a key is held down.
+        """
         keysym = event.keysym
+        # Idle handler will only run when key is raised.
         after_id = self._tk_window.after_idle(self._direct_handle_release, event)
         self._direct_key_after_ids[keysym] = after_id
 
 
     def _direct_handle_release(self, event):
-
+        """
+        Idle handler, called when keys are raised.
+        """
         keysym = event.keysym
         del self._direct_key_after_ids[keysym]
+        # Trigger release_cb, if any.
         _press_cb, release_cb = self._direct_key_callbacks[keysym]
         if release_cb:
             release_cb(event)
 
 
     def unbind_direct_key(self, keysym=None):
+        """
+        Unbinds the "direct-key" events associated with `keysym`. If `keysym`
+        is None, all "direct-key" events are unbound.
 
+        Raises ValueError if `keysym` isn't "direct-key" bound.
+        """
         if keysym is None:
             keysyms = list(self._direct_key_callbacks)
             for keysym in keysyms:
