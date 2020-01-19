@@ -449,6 +449,77 @@ class TestWindowEventHandling(FakedTkinterTestCase):
         self.assertEqual(len(unbind_call_args), 4, 'unbind call count')
 
 
+    def _event(self, keysym):
+
+        event = mock.Mock()
+        event.keysym = keysym
+        return event
+
+
+    def test_bind_direct_key_press_and_release(self):
+
+        press_cb = mock.Mock()
+        release_cb = mock.Mock()
+        self.w.bind_direct_key('a', press_cb, release_cb)
+
+        # KeyPress event.
+        event = self._event('a')
+        self.w._direct_key_press(event)
+
+        # Press callback called.
+        press_cb.assert_called_once()
+        press_cb.assert_called_with(event)
+        release_cb.assert_not_called()
+
+        press_cb.reset_mock()
+
+        # KeyRelease event. Not held down so _direct_key_idle called.
+        self.w._direct_key_release(event)
+        self.w._direct_key_idle(event)
+
+        # Release callback called.
+        press_cb.assert_not_called()
+        release_cb.assert_called_once()
+        release_cb.assert_called_with(event)
+
+
+    def test_bind_direct_key_press_hold_and_release(self):
+
+        press_cb = mock.Mock()
+        release_cb = mock.Mock()
+        self.w.bind_direct_key('a', press_cb, release_cb)
+
+        # KeyPress event.
+        event = self._event('a')
+        self.w._direct_key_press(event)
+
+        # Press callback called.
+        press_cb.assert_called_once()
+        press_cb.assert_called_with(event)
+        release_cb.assert_not_called()
+
+        press_cb.reset_mock()
+
+        # Holding the key triggers KeyPress/KeyReleases repeatedly.
+        # But never idle, so _direct_key_idle never called.
+        for _ in range(10):
+            self.w._direct_key_release(event)
+            self.w._direct_key_press(event)
+
+            # No callbacks while key held down.
+            press_cb.assert_not_called()
+            release_cb.assert_not_called()
+
+        # Last KeyRelease event. Not held down so _direct_key_idle called.
+        self.w._direct_key_release(event)
+        self.w._direct_key_idle(event)
+
+        # Release callback called.
+        press_cb.assert_not_called()
+        release_cb.assert_called_once()
+        release_cb.assert_called_with(event)
+
+
 
 class TestMultipleWindows(FakedTkinterTestCase):
 

@@ -49,6 +49,8 @@ class FakeWindow:
         self._h = None
         self.bind = mock.Mock()
         self.unbind = mock.Mock()
+        self.after_idle = mock.Mock()
+        self.after_cancel = mock.Mock()
         self.update = mock.Mock()
         self.destroy = mock.Mock()
 

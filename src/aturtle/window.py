@@ -201,11 +201,11 @@ class Window:
         """
         keysym = event.keysym
         # Idle handler will only run when key is raised.
-        after_id = self._tk_window.after_idle(self._direct_handle_release, event)
+        after_id = self._tk_window.after_idle(self._direct_key_idle, event)
         self._direct_key_after_ids[keysym] = after_id
 
 
-    def _direct_handle_release(self, event):
+    def _direct_key_idle(self, event):
         """
         Idle handler, called when keys are raised.
         """
