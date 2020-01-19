@@ -23,8 +23,12 @@ class Window:
         Initialize a Window with the given `width` and `height`, filled in
         `fill_color`, with the given `title`.
 
-        Positive `x` and `y` values place the Window's from the screen's top-
-        left corner.  Negative values place it from the bottom-right corner.
+        Positive `x` and `y` values place the Window from the screen's top-
+        left corner. Negative values place it from the bottom-right corner.
+
+        Windows hold a canvas object that automatically sizes up/down on
+        Window resizes, and keeps its (0, 0) origin at the horizontal and
+        vertical Window center.
         """
 
         tk_window = tkinter.Tk() if not Window._windows else tkinter.Toplevel()
