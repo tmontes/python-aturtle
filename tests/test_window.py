@@ -305,7 +305,7 @@ class TestWindowEventHandling(FakedTkinterTestCase):
 
     def test_bind_calls_tk_window_bind(self):
 
-        handler = lambda e: None
+        handler = mock.Mock()
         self.w.bind('<KeyPress-a>', handler)
 
         self.w._tk_window.bind.assert_called_with('<KeyPress-a>', handler)
@@ -313,7 +313,7 @@ class TestWindowEventHandling(FakedTkinterTestCase):
 
     def test_bind_unbind_calls_tk_window_bind_unbind(self):
 
-        handler = lambda e: None
+        handler = mock.Mock()
         self.w.bind('<KeyPress-a>', handler)
         self.w.unbind('<KeyPress-a>')
 
@@ -335,8 +335,8 @@ class TestWindowEventHandling(FakedTkinterTestCase):
 
     def test_unbind_default_unbinds_all_bindings(self):
 
-        self.w.bind('<KeyPress-a>', lambda e: None)
-        self.w.bind('<KeyPress-b>', lambda e: None)
+        self.w.bind('<KeyPress-a>', mock.Mock())
+        self.w.bind('<KeyPress-b>', mock.Mock())
 
         self.w.unbind()
         unbind_call_args = self.w._tk_window.unbind.call_args_list
@@ -354,8 +354,7 @@ class TestWindowEventHandling(FakedTkinterTestCase):
         # Ignore any window setup bind calls that may have taken place.
         self.w._tk_window.bind.reset_mock()
 
-        press_cb = lambda e: None
-        self.w.bind_direct_key('x', press_cb)
+        self.w.bind_direct_key('x', mock.Mock())
 
         bind_call_args = self.w._tk_window.bind.call_args_list
         self.assertEqual(len(bind_call_args), 2, 'unbind call count')
@@ -370,8 +369,7 @@ class TestWindowEventHandling(FakedTkinterTestCase):
         # Ignore any window setup bind calls that may have taken place.
         self.w._tk_window.bind.reset_mock()
 
-        release_cb = lambda e: None
-        self.w.bind_direct_key('y', None, release_cb)
+        self.w.bind_direct_key('y', None, mock.Mock())
 
         bind_call_args = self.w._tk_window.bind.call_args_list
         self.assertEqual(len(bind_call_args), 2, 'unbind call count')
@@ -386,9 +384,7 @@ class TestWindowEventHandling(FakedTkinterTestCase):
         # Ignore any window setup bind calls that may have taken place.
         self.w._tk_window.bind.reset_mock()
 
-        press_cb = lambda e: None
-        release_cb = lambda e: None
-        self.w.bind_direct_key('z', press_cb, release_cb)
+        self.w.bind_direct_key('z', mock.Mock(), mock.Mock())
 
         bind_call_args = self.w._tk_window.bind.call_args_list
         self.assertEqual(len(bind_call_args), 2, 'bind call count')
@@ -403,9 +399,7 @@ class TestWindowEventHandling(FakedTkinterTestCase):
         # Ignore any window setup bind calls that may have taken place.
         self.w._tk_window.bind.reset_mock()
 
-        press_cb = lambda e: None
-        release_cb = lambda e: None
-        self.w.bind_direct_key('a', press_cb, release_cb)
+        self.w.bind_direct_key('a', mock.Mock(), mock.Mock())
         self.w.unbind_direct_key('a')
 
         bind_call_args = self.w._tk_window.bind.call_args_list
@@ -429,7 +423,7 @@ class TestWindowEventHandling(FakedTkinterTestCase):
             self.w.unbind_direct_key('b')
 
 
-    def test_unbind_default_works_with_no_bindings(self):
+    def test_unbind_direct_key_default_works_with_no_bindings(self):
 
         self.w.unbind_direct_key()
         self.w._tk_window.unbind.assert_not_called()
@@ -437,10 +431,8 @@ class TestWindowEventHandling(FakedTkinterTestCase):
 
     def test_unbind_direct_key_default_unbinds_all_direct_keys(self):
 
-        press_cb = lambda e: None
-        release_cb = lambda e: None
-        self.w.bind_direct_key('a', press_cb, release_cb)
-        self.w.bind_direct_key('b', press_cb, release_cb)
+        self.w.bind_direct_key('a', mock.Mock(), mock.Mock())
+        self.w.bind_direct_key('b', mock.Mock(), mock.Mock())
 
         self.w.unbind_direct_key()
 
