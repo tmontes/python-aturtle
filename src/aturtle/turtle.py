@@ -92,13 +92,17 @@ class Turtle:
             self._lines.append(self._line_id)
 
 
-    async def async_forward(self, delta, *, down=None, speed=None,
-                            easing=None, fps=None, update=None):
+    async def async_forward(self, delta, *, down=None, track_angle=None,
+                            speed=None, easing=None, fps=None, update=None):
         """
         Animated move of the Turtle forward by `delta` in the direction set by
         its angle. Negative values move in the opposite direction.
 
         The `down` argument overrides the current down state, if not None.
+
+        When `track_angle` is true, movement tracks concurrent updates to the
+        Turtle's angle, potentially resulting in non-linear paths. Otherwise,
+        movement follows a straight line, set by the starting Turtle's angle.
 
         The `speed`, `easing`, `fps`, and `update` values are passed to the
         underlying Sprite's animated movement operation.
@@ -109,6 +113,7 @@ class Turtle:
             await self._sprite.async_forward(
                 delta,
                 callback=self._async_draw_line if self.down else None,
+                track_angle=track_angle,
                 speed=speed,
                 easing=easing,
                 fps=fps,

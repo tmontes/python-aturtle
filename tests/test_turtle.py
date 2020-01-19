@@ -225,6 +225,7 @@ class TestTurtleAsyncMovement(AsyncAnimationBase):
         self.sprite.async_forward.assert_awaited_with(
             42,
             callback=t._async_draw_line,
+            track_angle=None,
             speed=None,
             easing=None,
             fps=None,
@@ -238,6 +239,7 @@ class TestTurtleAsyncMovement(AsyncAnimationBase):
 
         coro = t.async_forward(
             42,
+            track_angle='track-angle',
             speed='speed',
             easing='easing',
             fps='fps',
@@ -248,6 +250,7 @@ class TestTurtleAsyncMovement(AsyncAnimationBase):
         self.sprite.async_forward.assert_awaited_with(
             42,
             callback=t._async_draw_line,
+            track_angle='track-angle',
             speed='speed',
             easing='easing',
             fps='fps',
@@ -278,6 +281,7 @@ class TestTurtleAsyncMovement(AsyncAnimationBase):
                 self.sprite.async_forward.assert_awaited_with(
                     42,
                     callback=expected_cb,
+                    track_angle=None,
                     speed=None,
                     easing=None,
                     fps=None,
@@ -546,6 +550,7 @@ class TestTurtleSyncMovement(SyncAnimationBase):
         self.sprite.sync_forward.assert_called_with(
             42,
             callback=t._sync_draw_line,
+            track_angle=None,
             speed=None,
             easing=None,
             fps=None,
@@ -559,6 +564,7 @@ class TestTurtleSyncMovement(SyncAnimationBase):
 
         t.sync_forward(
             42,
+            track_angle='track-angle',
             speed='speed',
             easing='easing',
             fps='fps',
@@ -568,6 +574,7 @@ class TestTurtleSyncMovement(SyncAnimationBase):
         self.sprite.sync_forward.assert_called_with(
             42,
             callback=t._sync_draw_line,
+            track_angle='track-angle',
             speed='speed',
             easing='easing',
             fps='fps',
@@ -597,6 +604,7 @@ class TestTurtleSyncMovement(SyncAnimationBase):
                 self.sprite.sync_forward.assert_called_with(
                     42,
                     callback=expected_cb,
+                    track_angle=None,
                     speed=None,
                     easing=None,
                     fps=None,
