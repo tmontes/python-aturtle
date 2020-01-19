@@ -53,6 +53,8 @@ class Window:
         self._tk_window = tk_window
         self.canvas = canvas
 
+        self._binds = {}
+
 
     @property
     def x(self):
@@ -119,6 +121,24 @@ class Window:
         new_y_scroll = -event.height // 2
         self.canvas.yview_scroll(new_y_scroll-self._y_scroll, 'units')
         self._y_scroll = new_y_scroll
+
+
+    def bind(self, sequence, func):
+
+        self._binds[sequence] = self._tk_window.bind(sequence, func)
+
+
+    def unbind(self, sequence=None):
+
+        if sequence is None:
+            for sequence, func_id in self._binds.items():
+                self._tk_window.unbind(sequence, func_id)
+            self._binds.clear()
+        elif sequence in self._binds:
+            self._tk_window.unbind(sequence, self._binds[sequence])
+            del self._binds[sequence]
+        else:
+            raise ValueError(f'Unknown bound sequence: {sequence!r}.')
 
 
     def close(self):
