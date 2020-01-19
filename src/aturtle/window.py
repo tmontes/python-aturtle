@@ -11,10 +11,25 @@ import tkinter
 
 class Window:
 
+    """
+    A Window holding a canvas.
+    """
+
     _windows = []
 
     def __init__(self, width=320, height=320, x=None, y=None,
                  fill_color='white', title='A-Turtle'):
+        """
+        Initialize a Window with the given `width` and `height`, filled in
+        `fill_color`, with the given `title`.
+
+        Positive `x` and `y` values place the Window from the screen's top-
+        left corner. Negative values place it from the bottom-right corner.
+
+        Windows hold a canvas object that automatically sizes up/down on
+        Window resizes, and keeps its (0, 0) origin at the horizontal and
+        vertical Window center.
+        """
 
         tk_window = tkinter.Tk() if not Window._windows else tkinter.Toplevel()
         Window._windows.append(self)
@@ -63,13 +78,18 @@ class Window:
 
     @property
     def x(self):
-
+        """
+        The Window's horizontal position.
+        """
         return self._tk_window.winfo_x()
 
 
     @x.setter
     def x(self, value):
-
+        """
+        Set the Window's horizontal position.
+        Negative values place the Window from the right of the screen.
+        """
         if value < 0:
             value = self._tk_window.winfo_screenwidth() - self.width + value
 
@@ -78,13 +98,18 @@ class Window:
 
     @property
     def y(self):
-
+        """
+        The Window's vertical position.
+        """
         return self._tk_window.winfo_y()
 
 
     @y.setter
     def y(self, value):
-
+        """
+        Set the Window's vertical position.
+        Negative values place the Window from the bottom of the screen.
+        """
         if value < 0:
             value = self._tk_window.winfo_screenheight() - self.height + value
 
@@ -93,25 +118,33 @@ class Window:
 
     @property
     def width(self):
-
+        """
+        The Window width.
+        """
         return self._tk_window.winfo_width()
 
 
     @width.setter
     def width(self, value):
-
+        """
+        Set the Window width.
+        """
         self._tk_window.geometry(f'{value}x{self.height}')
 
 
     @property
     def height(self):
-
+        """
+        The Window height.
+        """
         return self._tk_window.winfo_height()
 
 
     @height.setter
     def height(self, value):
-
+        """
+        Set the Window height.
+        """
         self._tk_window.geometry(f'{self.width}x{value}')
 
 
@@ -237,7 +270,12 @@ class Window:
 
 
     def close(self):
+        """
+        Closes this Window.
 
+        Raises RuntimeError if this is the first created Window and there still
+        are other open Windows.
+        """
         is_root = self._tk_window is Window._windows[0]._tk_window
         if is_root and len(Window._windows) > 1:
             raise RuntimeError('Must be last to close.')
@@ -251,7 +289,11 @@ class Window:
 
     @classmethod
     def close_all(cls, strict=True):
+        """
+        Closes all Windows.
 
+        Raises RuntimeError if `strict` is true and there are no open Windows.
+        """
         if not cls._windows:
             if strict:
                 raise RuntimeError('No windows.')
