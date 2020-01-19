@@ -429,7 +429,7 @@ class TestWindowEventHandling(FakedTkinterTestCase):
             self.w.unbind_direct_key('b')
 
 
-    def test_unbind_default_works_with_no_bindings(self):
+    def test_unbind_direct_key_default_works_with_no_bindings(self):
 
         self.w.unbind_direct_key()
         self.w._tk_window.unbind.assert_not_called()
