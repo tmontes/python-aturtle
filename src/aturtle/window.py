@@ -136,9 +136,9 @@ class Window:
     def unbind(self, sequence=None):
 
         if sequence is None:
-            for sequence, func_id in self._binds.items():
-                self._tk_window.unbind(sequence, func_id)
-            self._binds.clear()
+            sequences = list(self._binds)
+            for sequence in sequences:
+                self.unbind(sequence)
         elif sequence in self._binds:
             self._tk_window.unbind(sequence, self._binds[sequence])
             del self._binds[sequence]
