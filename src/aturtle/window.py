@@ -53,7 +53,12 @@ class Window:
         self._tk_window = tk_window
         self.canvas = canvas
 
+        # Event bindings.
         self._binds = {}
+
+        # Direct key support.
+        self._direct_key_binds = {}
+        self._direct_key_idle_ids = {}
 
 
     @property
@@ -139,6 +144,60 @@ class Window:
             del self._binds[sequence]
         else:
             raise ValueError(f'Unknown bound sequence: {sequence!r}.')
+
+
+    def bind_direct_key(self, keysym, press_func=None, release_func=None):
+
+        if not press_func and not release_func:
+            raise ValueError(f'Missing event handler argument.')
+
+        self.bind(f'<KeyPress-{keysym}>', self._direct_key_press)
+        self.bind(f'<KeyRelease-{keysym}>', self._direct_key_release)
+
+        self._direct_key_binds[keysym] = (press_func, release_func)
+
+
+    def _direct_key_press(self, event):
+
+        keysym = event.keysym
+        if keysym in self._direct_key_idle_ids:
+            self._tk_window.after_cancel(self._direct_key_idle_ids[keysym])
+            del self._direct_key_idle_ids[keysym]
+        else:
+            press_func, _release_func = self._direct_key_binds[keysym]
+            if press_func:
+                press_func(event)
+
+
+    def _direct_key_release(self, event):
+
+        keysym = event.keysym
+        idle_id = self._tk_window.after_idle(self._direct_handle_release, event)
+        self._direct_key_idle_ids[keysym] = idle_id
+
+
+    def _direct_handle_release(self, event):
+
+        keysym = event.keysym
+        del self._direct_key_idle_ids[keysym]
+        _press_func, release_func = self._direct_key_binds[keysym]
+        if release_func:
+            release_func(event)
+
+
+    def unbind_direct_key(self, keysym=None):
+
+        if keysym is None:
+            keysyms = list(self._direct_key_binds)
+            for keysym in keysyms:
+                self.unbind_direct_key(keysym)
+        elif keysym in self._direct_key_binds:
+            self.unbind(f'<KeyPress-{keysym}>')
+            self.unbind(f'<KeyRelease-{keysym}>')
+            del self._direct_key_binds[keysym]
+        else:
+            raise ValueError(f'Unknown bound direct key: {keysym!r}.')
+
 
 
     def close(self):
