@@ -936,6 +936,24 @@ class TestAsyncForwardAngleTrackingAnimation(AsyncAnimationBase):
         self.assertEqual(canvas_move_angles, sorted(canvas_move_angles))
 
 
+    def test_async_forward_distance_with_concurrent_angle_changes(self):
+
+        sprite = base.Sprite(canvas=self.canvas, shape=None)
+
+        forward = sprite.async_forward(10, fps=10, speed=10)
+        rotate = sprite.async_rotate(42, fps=42, speed=42)
+        self._run_coroutines(forward, rotate)
+
+        # Each canvas.move call represents a (dx, dy) movement.
+        # All such movement distances must add to the forward 10 delta.
+        canvas_move_calls = self.canvas.move.call_args_list
+        distance = sum(
+            (call_args.args[1] ** 2 + call_args.args[2] ** 2) ** 0.5
+            for call_args in canvas_move_calls
+        )
+        self.assertAlmostEqual(distance, 10)
+
+
 
 class TestAsyncForwardNonAngleTrackingAnimation(AsyncAnimationBase):
 
