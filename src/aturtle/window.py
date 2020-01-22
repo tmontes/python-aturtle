@@ -7,6 +7,8 @@
 
 import tkinter
 
+from . import canvas
+
 
 
 class Window:
@@ -18,7 +20,8 @@ class Window:
     _windows = []
 
     def __init__(self, width=320, height=320, x=None, y=None,
-                 fill_color='white', title='A-Turtle'):
+                 fill_color='white', title='A-Turtle',
+                 canvas_factory=canvas.InvertedYTkCanvas):
         """
         Initialize a Window with the given `width` and `height`, filled in
         `fill_color`, with the given `title`.
@@ -47,9 +50,8 @@ class Window:
         y = (tk_window.winfo_screenheight() - height) // 2 if y is None else y
 
         tk_window.geometry(f'{width}x{height}+{x}+{y}')
-        canvas = tkinter.Canvas(
+        canvas = canvas_factory(
             tk_window,
-            highlightthickness=0,
             background=fill_color,
         )
         canvas.pack(expand=True, fill='both')
