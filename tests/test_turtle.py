@@ -225,7 +225,7 @@ class TestTurtleAsyncMovement(AsyncAnimationBase):
         self.sprite.async_forward.assert_awaited_with(
             42,
             callback=t._async_draw_line,
-            track_angle=None,
+            track_angle=True,
             speed=None,
             easing=None,
             fps=None,
@@ -281,7 +281,7 @@ class TestTurtleAsyncMovement(AsyncAnimationBase):
                 self.sprite.async_forward.assert_awaited_with(
                     42,
                     callback=expected_cb,
-                    track_angle=None,
+                    track_angle=True,
                     speed=None,
                     easing=None,
                     fps=None,
@@ -550,7 +550,7 @@ class TestTurtleSyncMovement(SyncAnimationBase):
         self.sprite.sync_forward.assert_called_with(
             42,
             callback=t._sync_draw_line,
-            track_angle=None,
+            track_angle=True,
             speed=None,
             easing=None,
             fps=None,
@@ -604,7 +604,7 @@ class TestTurtleSyncMovement(SyncAnimationBase):
                 self.sprite.sync_forward.assert_called_with(
                     42,
                     callback=expected_cb,
-                    track_angle=None,
+                    track_angle=True,
                     speed=None,
                     easing=None,
                     fps=None,
