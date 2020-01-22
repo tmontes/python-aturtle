@@ -29,7 +29,15 @@ class FakedTkinterTestCase(unittest.TestCase):
         )
         self.exit_stack = contextlib.ExitStack()
         self.exit_stack.enter_context(
+            # Use FakeTkInter to support tk-based window creation in tests.
             mock.patch('aturtle.window.tkinter', self.tkinter)
+        )
+        self.exit_stack.enter_context(
+            # Must be patched because canvas, imported by the window module,
+            # defines a class inheriting from tkinter.Canvas, unavailable in
+            # GitHub actions CI -- the import would fail at class definition
+            # time, otherwise.
+            mock.patch('aturtle.canvas.tkinter', self.tkinter)
         )
 
 
