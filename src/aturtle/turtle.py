@@ -92,7 +92,7 @@ class Turtle:
             self._lines.append(self._line_id)
 
 
-    async def async_forward(self, delta, *, down=None, track_angle=None,
+    async def async_forward(self, delta, *, down=None, track_angle=True,
                             speed=None, easing=None, fps=None, update=None):
         """
         Animated move of the Turtle forward by `delta` in the direction set by
