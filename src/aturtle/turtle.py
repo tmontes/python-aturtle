@@ -176,7 +176,7 @@ class Turtle:
         underlying Sprite's animated movement operation.
         """
         await self._sprite.async_rotate(
-            -angle,
+            angle,
             speed=speed,
             easing=easing,
             fps=fps,
@@ -193,7 +193,7 @@ class Turtle:
         underlying Sprite's animated movement operation.
         """
         await self._sprite.async_rotate(
-            angle,
+            -angle,
             speed=speed,
             easing=easing,
             fps=fps,

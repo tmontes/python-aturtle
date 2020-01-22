@@ -138,7 +138,7 @@ class TestTurtleAsyncRotation(AsyncAnimationBase):
         self._run_coroutines(coro)
 
         self.sprite.async_rotate.assert_awaited_with(
-            -90,
+            90,
             speed=None,
             easing=None,
             fps=None,
@@ -158,7 +158,7 @@ class TestTurtleAsyncRotation(AsyncAnimationBase):
         self._run_coroutines(coro)
 
         self.sprite.async_rotate.assert_awaited_with(
-            -90,
+            90,
             speed='speed',
             easing='easing',
             fps='fps',
@@ -172,7 +172,7 @@ class TestTurtleAsyncRotation(AsyncAnimationBase):
         self._run_coroutines(coro)
 
         self.sprite.async_rotate.assert_awaited_with(
-            90,
+            -90,
             speed=None,
             easing=None,
             fps=None,
@@ -192,7 +192,7 @@ class TestTurtleAsyncRotation(AsyncAnimationBase):
         self._run_coroutines(coro)
 
         self.sprite.async_rotate.assert_awaited_with(
-            90,
+            -90,
             speed='speed',
             easing='easing',
             fps='fps',
@@ -467,7 +467,7 @@ class TestTurtleSyncRotation(SyncAnimationBase):
         self.t.sync_left(90)
 
         self.sprite.sync_rotate.assert_called_with(
-            -90,
+            90,
             speed=None,
             easing=None,
             fps=None,
@@ -486,7 +486,7 @@ class TestTurtleSyncRotation(SyncAnimationBase):
         )
 
         self.sprite.sync_rotate.assert_called_with(
-            -90,
+            90,
             speed='speed',
             easing='easing',
             fps='fps',
@@ -499,7 +499,7 @@ class TestTurtleSyncRotation(SyncAnimationBase):
         self.t.sync_right(90)
 
         self.sprite.sync_rotate.assert_called_with(
-            90,
+            -90,
             speed=None,
             easing=None,
             fps=None,
@@ -518,7 +518,7 @@ class TestTurtleSyncRotation(SyncAnimationBase):
         )
 
         self.sprite.sync_rotate.assert_called_with(
-            90,
+            -90,
             speed='speed',
             easing='easing',
             fps='fps',
