@@ -106,7 +106,7 @@ class Shape(base.Shape):
 
         ax, ay = around
 
-        neg_theta = -math.pi * 2 * step / rotations
+        theta = math.pi * 2 * step / rotations
 
         pixel_rows = []
         transparency = {}
@@ -114,12 +114,12 @@ class Shape(base.Shape):
         for y in range(h):
             pixel_row = []
             for x in range(w):
-                cos_neg_theta = math.cos(neg_theta)
-                sin_neg_theta = math.sin(neg_theta)
+                cos_theta = math.cos(theta)
+                sin_theta = math.sin(theta)
                 off_x = x - ax
                 off_y = y - ay
-                src_x = int(off_x * cos_neg_theta - off_y * sin_neg_theta) + ax
-                src_y = int(off_x * sin_neg_theta + off_y * cos_neg_theta) + ay
+                src_x = int(off_x * cos_theta - off_y * sin_theta) + ax
+                src_y = int(off_x * sin_theta + off_y * cos_theta) + ay
                 if (0 <= src_x < w) and (0 <= src_y < h):
                     red, green, blue = image.get(src_x, src_y)
                     transp = image.transparency_get(src_x, src_y)
