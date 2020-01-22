@@ -38,6 +38,11 @@ class InvertedYTkCanvas(tkinter.Canvas):
         )
 
 
+    def create_image(self, x, y, *, image, anchor):
+
+        return super().create_image(x, -y, image=image, anchor=anchor)
+
+
     def move(self, item_id, dx, dy):
 
         return super().move(item_id, dx, -dy)
