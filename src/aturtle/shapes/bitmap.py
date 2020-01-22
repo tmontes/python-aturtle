@@ -142,10 +142,10 @@ class Shape(base.Shape):
 
         # PIL-based image rotation.
 
-        neg_theta = -360 * step / total
+        theta = 360 * step / total
 
         rotated_pil_image = pil_image.rotate(
-            neg_theta,
+            theta,
             resample=Image.BICUBIC,
             center=around,
         )
