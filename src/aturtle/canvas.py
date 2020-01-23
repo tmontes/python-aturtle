@@ -19,50 +19,6 @@ class InvertedYTkCanvas:
             background=background,
         )
 
-    def pack(self, *, expand, fill):
-
-        return self._canvas.pack(expand=expand, fill=fill)
-
-
-    def config(self, *, xscrollincrement, yscrollincrement):
-
-        return self._canvas.config(
-            xscrollincrement=xscrollincrement,
-            yscrollincrement=yscrollincrement,
-        )
-
-
-    def xview_scroll(self, number, what):
-
-        return self._canvas.xview_scroll(number, what)
-
-
-    def yview_scroll(self, number, what):
-
-        return self._canvas.yview_scroll(number, what)
-
-
-
-    def itemconfig(self, item_id, *, image):
-
-        return self._canvas.itemconfig(item_id, image=image)
-
-
-    def update(self):
-
-        return self._canvas.update()
-
-
-    def tag_raise(self, item_id, other=None):
-
-        return self._canvas.tag_raise(item_id, other)
-
-
-    def tag_lower(self, item_id, other=None):
-
-        return self._canvas.tag_lower(item_id, other)
-
-
     def _inverted_y(self, coords):
 
         return [
@@ -106,6 +62,6 @@ class InvertedYTkCanvas:
         return self._canvas.coords(item_id, self._inverted_y(coords))
 
 
-    def delete(self, item_id):
+    def __getattr__(self, name):
 
-        return self._canvas.delete(item_id)
+        return getattr(self._canvas, name)
