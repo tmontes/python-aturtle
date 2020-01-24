@@ -10,7 +10,7 @@ Python Async Turtle
 """
 
 
-__version__ = '19.1.0a0'
+__version__ = '1.0.0a0'
 
 __title__ = 'aturtle'
 __description__ = 'Python A-Turtle'
