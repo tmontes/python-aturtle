@@ -33,6 +33,13 @@ class FakedTkinterTestCase(unittest.TestCase):
         )
 
 
+    def _Window(self, *args, **kwargs):
+
+        # Default Window canvas is based on tkinter.Canvas. Use fake in tests.
+
+        return window.Window(*args, **kwargs, canvas_factory=self.tkinter.Canvas)
+
+
     def tearDown(self):
 
         self.exit_stack.close()
@@ -49,72 +56,61 @@ class TestWindow(FakedTkinterTestCase):
 
     def test_create(self):
 
-        w = window.Window()
+        w = self._Window()
 
 
     def test_create_window_creates_underlying_tk_object(self):
 
-        w = window.Window()
+        w = self._Window()
         self.assertIsInstance(w._tk_window, fake_tkinter.FakeTk)
 
 
     def test_default_title_was_set(self):
 
-        w = window.Window()
+        w = self._Window()
         tk_window = w._tk_window
         tk_window.title.assert_called_once_with('A-Turtle')
 
 
     def test_default_width(self):
 
-        w = window.Window()
+        w = self._Window()
         self.assertEqual(w.width, 320)
 
 
     def test_default_height(self):
 
-        w = window.Window()
+        w = self._Window()
         self.assertEqual(w.height, 320)
 
 
     def test_default_x_is_screen_centered(self):
 
-        w = window.Window(width=200)
+        w = self._Window(width=200)
         self.assertEqual(w.x, (SCREEN_WIDTH - 200) // 2)
 
 
     def test_default_y_is_screen_centered(self):
 
-        w = window.Window(height=200)
+        w = self._Window(height=200)
         self.assertEqual(w.y, (SCREEN_HEIGHT - 200) // 2)
 
 
     def test_has_canvas(self):
 
-        w = window.Window()
+        w = self._Window()
         self.assertIsNotNone(w.canvas)
 
 
     def test_canvas_was_packed(self):
 
-        w = window.Window()
+        w = self._Window()
         w.canvas.pack.assert_called_once_with(expand=True, fill='both')
-
-
-    def test_canvas_border_removed(self):
-
-        w = window.Window()
-
-        canvas_init_call_args = self.tkinter.canvas_init_calls
-        self.assertEqual(len(canvas_init_call_args), 1, 'Non single canvas init.')
-
-        (_tk_window,), kwargs = canvas_init_call_args[0]
-        self.assertEqual(kwargs['highlightthickness'], 0)
 
 
     def test_canvas_default_fill_is_white(self):
 
-        w = window.Window()
+        w = self._Window()
 
         canvas_init_call_args = self.tkinter.canvas_init_calls
         self.assertEqual(len(canvas_init_call_args), 1, 'Non single canvas init.')
@@ -125,7 +121,7 @@ class TestWindow(FakedTkinterTestCase):
 
     def test_canvas_origin_is_centered(self):
 
-        w = window.Window(width=300, height=200)
+        w = self._Window(width=300, height=200)
 
         w.canvas.config.assert_called_once_with(
             xscrollincrement=1,
@@ -137,7 +133,7 @@ class TestWindow(FakedTkinterTestCase):
 
     def test_resize_handler_in_place(self):
 
-        w = window.Window()
+        w = self._Window()
 
         tk_window = w._tk_window
         tk_window.bind.assert_called_once()
@@ -149,7 +145,7 @@ class TestWindow(FakedTkinterTestCase):
 
     def test_resize_handler_adjusts_canvas_scroll(self):
 
-        w = window.Window()
+        w = self._Window()
 
         w.canvas.xview_scroll.reset_mock()
         w.canvas.yview_scroll.reset_mock()
@@ -165,43 +161,43 @@ class TestWindow(FakedTkinterTestCase):
 
     def test_custom_size_width(self):
 
-        w = window.Window(width=200, height=100)
+        w = self._Window(width=200, height=100)
         self.assertEqual(w.width, 200)
 
 
     def test_custom_size_height(self):
 
-        w = window.Window(width=200, height=100)
+        w = self._Window(width=200, height=100)
         self.assertEqual(w.height, 100)
 
 
     def test_custom_placement_x(self):
 
-        w = window.Window(x=100)
+        w = self._Window(x=100)
         self.assertEqual(w.x, 100)
 
 
     def test_custom_placement_negative_x(self):
 
-        w = window.Window(x=-100)
+        w = self._Window(x=-100)
         self.assertEqual(w.x, SCREEN_WIDTH - w.width - 100)
 
 
     def test_custom_placement_y(self):
 
-        w = window.Window(y=50)
+        w = self._Window(y=50)
         self.assertEqual(w.y, 50)
 
 
     def test_custom_placement_negative_y(self):
 
-        w = window.Window(y=-50)
+        w = self._Window(y=-50)
         self.assertEqual(w.y, SCREEN_HEIGHT - w.height - 50)
 
 
     def test_custom_fill_passed_to_canvas(self):
 
-        w = window.Window(fill_color='orange')
+        w = self._Window(fill_color='orange')
 
         canvas_init_call_args = self.tkinter.canvas_init_calls
         self.assertEqual(len(canvas_init_call_args), 1, 'Non single canvas init.')
@@ -212,75 +208,75 @@ class TestWindow(FakedTkinterTestCase):
 
     def test_custom_title_passed_to_tk_window(self):
 
-        w = window.Window(title='Test Title')
+        w = self._Window(title='Test Title')
         tk_window = w._tk_window
         tk_window.title.assert_called_once_with('Test Title')
 
 
     def test_positive_horizontal_placement(self):
 
-        w = window.Window()
+        w = self._Window()
         w.x = 100
         self.assertEqual(w.x, 100)
 
 
     def test_positive_vertical_placement(self):
 
-        w = window.Window()
+        w = self._Window()
         w.y = 50
         self.assertEqual(w.y, 50)
 
 
     def test_negative_horizontal_placement(self):
 
-        w = window.Window()
+        w = self._Window()
         w.x = -100
         self.assertEqual(w.x, SCREEN_WIDTH - w.width - 100)
 
 
     def test_negative_vertical_placement(self):
 
-        w = window.Window()
+        w = self._Window()
         w.y = -50
         self.assertEqual(w.y, SCREEN_HEIGHT - w.height - 50)
 
 
     def test_horizontal_sizing(self):
 
-        w = window.Window()
+        w = self._Window()
         w.width = 200
         self.assertEqual(w.width, 200)
 
 
     def test_vertical_sizing(self):
 
-        w = window.Window()
+        w = self._Window()
         w.height = 100
         self.assertEqual(w.height, 100)
 
 
     def test_close(self):
 
-        w = window.Window()
+        w = self._Window()
         w.close()
 
 
     def test_no_canvas_after_close(self):
 
-        w = window.Window()
+        w = self._Window()
         w.close()
         self.assertIsNone(w.canvas)
 
 
     def test_close_all(self):
 
-        w = window.Window()
+        w = self._Window()
         w.close_all()
 
 
     def test_second_close_all_raises(self):
 
-        w = window.Window()
+        w = self._Window()
         w.close_all()
         with self.assertRaises(RuntimeError):
             w.close_all()
@@ -288,7 +284,7 @@ class TestWindow(FakedTkinterTestCase):
 
     def test_no_canvas_after_close_all(self):
 
-        w = window.Window()
+        w = self._Window()
         w.close_all()
 
         self.assertIsNone(w.canvas)
@@ -300,7 +296,7 @@ class TestWindowEventHandling(FakedTkinterTestCase):
     def setUp(self):
 
         super().setUp()
-        self.w = window.Window()
+        self.w = self._Window()
 
 
     def test_bind_calls_tk_window_bind(self):
@@ -517,23 +513,23 @@ class TestMultipleWindows(FakedTkinterTestCase):
 
     def test_create_two_windows(self):
 
-        w1 = window.Window()
-        w2 = window.Window()
+        w1 = self._Window()
+        w2 = self._Window()
 
 
     def test_close_two_windows(self):
 
-        w1 = window.Window()
-        w2 = window.Window()
+        w1 = self._Window()
+        w2 = self._Window()
         w2.close()
         w1.close()
 
 
     def test_first_has_underlying_tk_others_have_underlying_toplevels(self):
 
-        w1 = window.Window()
-        w2 = window.Window()
-        w3 = window.Window()
+        w1 = self._Window()
+        w2 = self._Window()
+        w3 = self._Window()
 
         self.assertIsInstance(w1._tk_window, fake_tkinter.FakeTk)
         self.assertIsInstance(w2._tk_window, fake_tkinter.FakeToplevel)
@@ -542,8 +538,8 @@ class TestMultipleWindows(FakedTkinterTestCase):
 
     def test_close_first_window_raises_if_there_are_other_windows(self):
 
-        w1 = window.Window()
-        w2 = window.Window()
+        w1 = self._Window()
+        w2 = self._Window()
 
         with self.assertRaises(RuntimeError):
             w1.close()

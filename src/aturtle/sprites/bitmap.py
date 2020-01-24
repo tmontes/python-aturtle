@@ -27,7 +27,7 @@ class Sprite(base.Sprite):
             sprite_x - shape_x,
             sprite_y - shape_y,
             image=shape[angle],
-            anchor='nw',
+            anchor='sw',
         )
 
 

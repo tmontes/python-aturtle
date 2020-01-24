@@ -56,7 +56,7 @@ class TestDefaultSprite(base.TestCase):
             -10,
             -10,
             image='image-at-angle-0',
-            anchor='nw',
+            anchor='sw',
         )
 
 
