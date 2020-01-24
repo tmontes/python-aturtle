@@ -3,25 +3,45 @@ Python A-Turtle: AsyncIO-ready Turtle Graphics
 
 Python A-Trutle is a library that implements Turtle Graphics with `asyncio` support.
 
-.. todo::
+A short capability summary:
 
-   Complete welcome text.
+* Supports both sync and asyncio compatible coroutine API.
+* Multiple turtle support with either vector or bitmap shapes.
+* Concurrent animation support via the coroutine API.
+* Built on top of the Standard Library's ``tkinter`` module.
+* Sprite support (essentially turtles that don't draw lines)
+* More.
 
 
 Installation
 ------------
 
-.. todo::
+Python A-Turtle is a pure Python package distributed via `PyPI <https://pypi.org/pypi/aturtle>`_. Install it with:
 
-   Write installation section.
+.. code-block:: console
+                                                                                          
+        $ pip install aturtle
+
+For improved bitmap image rotation speed and quality, install the optional `Pillow <https://pypi.org/pypi/Pillow>`_ extra with:
+
+.. code-block:: console
+                                                                                          
+        $ pip install aturtle[pillow]
+
 
 
 Quick Start
 -----------
 
-.. todo::
+.. code-block:: python                                                                    
 
-   Write quick start section.
+    import aturtle
+
+    w = aturtle.Window()
+    sh = aturtle.shapes.vector.Triangle(radius=20, angle=0)
+    s = aturtle.create_sprite(w, sh, update=True)
+    t = aturtle.turtle.Turtle(s)
+    t.sync_forward(100)
 
 
 Thanks
@@ -43,10 +63,6 @@ About
 -----
 
 .. marker-start-about-dont-remove
-
-.. todo::
-
-   Review sentence tense.
 
 Python A-Turtle is being created by Tiago Montes.
 
