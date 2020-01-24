@@ -42,7 +42,7 @@ class TestInvertedTkYCanvas(unittest.TestCase):
 
     def test_create_creates_tkinter_Canvas(self):
 
-        _c = canvas.InvertedYTkCanvas(self.master, 'background')
+        _c = canvas.InvertedYCanvas(self.master, 'background')
 
         tkinter_canvas_call_args = self.tkinter.canvas_init_calls
 
@@ -51,7 +51,7 @@ class TestInvertedTkYCanvas(unittest.TestCase):
 
     def test_create_creates_tkinter_Canvas_with_given_master(self):
 
-        _c = canvas.InvertedYTkCanvas(self.master, 'background')
+        _c = canvas.InvertedYCanvas(self.master, 'background')
 
         tkinter_canvas_call_args = self.tkinter.canvas_init_calls
 
@@ -62,7 +62,7 @@ class TestInvertedTkYCanvas(unittest.TestCase):
 
     def test_create_creates_tkinter_Canvas_with_given_background(self):
 
-        _c = canvas.InvertedYTkCanvas(self.master, 'background')
+        _c = canvas.InvertedYCanvas(self.master, 'background')
 
         tkinter_canvas_call_args = self.tkinter.canvas_init_calls
 
@@ -72,7 +72,7 @@ class TestInvertedTkYCanvas(unittest.TestCase):
 
     def test_create_creates_tkinter_Canvas_with_zero_highlightthickness(self):
 
-        _c = canvas.InvertedYTkCanvas(self.master, 'background')
+        _c = canvas.InvertedYCanvas(self.master, 'background')
 
         tkinter_canvas_call_args = self.tkinter.canvas_init_calls
 
@@ -82,7 +82,7 @@ class TestInvertedTkYCanvas(unittest.TestCase):
 
     def test_create_polygon_returns_integer_item_id(self):
 
-        c = canvas.InvertedYTkCanvas(self.master, None)
+        c = canvas.InvertedYCanvas(self.master, None)
 
         item_id = c.create_polygon([], fill='fill', outline='outline', width=42)
 
@@ -91,7 +91,7 @@ class TestInvertedTkYCanvas(unittest.TestCase):
 
     def test_create_polygon_inverts_y_coordinates(self):
 
-        c = canvas.InvertedYTkCanvas(self.master, None)
+        c = canvas.InvertedYCanvas(self.master, None)
 
         coords = [0, 0, 1, 1, 2, -2]
         _item_id = c.create_polygon(coords, fill='fill', outline='outline', width=42)
@@ -103,7 +103,7 @@ class TestInvertedTkYCanvas(unittest.TestCase):
 
     def test_create_polygon_passes_args_to_Canvas_create_polygon(self):
 
-        c = canvas.InvertedYTkCanvas(self.master, None)
+        c = canvas.InvertedYCanvas(self.master, None)
 
         _item_id = c.create_polygon([], fill='fill', outline='outline', width=42)
 
@@ -113,7 +113,7 @@ class TestInvertedTkYCanvas(unittest.TestCase):
 
     def test_create_image_returns_integer_item_id(self):
 
-        c = canvas.InvertedYTkCanvas(self.master, None)
+        c = canvas.InvertedYCanvas(self.master, None)
 
         item_id = c.create_image(0, 0, image=None, anchor=None)
 
@@ -122,7 +122,7 @@ class TestInvertedTkYCanvas(unittest.TestCase):
 
     def test_create_image_inverts_y_coordinate(self):
 
-        c = canvas.InvertedYTkCanvas(self.master, None)
+        c = canvas.InvertedYCanvas(self.master, None)
 
         _item_id = c.create_image(42, 24, image=None, anchor=None)
 
@@ -133,7 +133,7 @@ class TestInvertedTkYCanvas(unittest.TestCase):
 
     def test_create_image_passes_args_to_Canvas_create_image(self):
 
-        c = canvas.InvertedYTkCanvas(self.master, None)
+        c = canvas.InvertedYCanvas(self.master, None)
 
         _item_id = c.create_image(42, 24, image='image', anchor='anchor')
 
@@ -144,7 +144,7 @@ class TestInvertedTkYCanvas(unittest.TestCase):
 
     def test_create_line_returns_integer_item_id(self):
 
-        c = canvas.InvertedYTkCanvas(self.master, None)
+        c = canvas.InvertedYCanvas(self.master, None)
 
         item_id = c.create_line([], fill='fill', width=42, capstyle='capstyle')
 
@@ -153,7 +153,7 @@ class TestInvertedTkYCanvas(unittest.TestCase):
 
     def test_create_line_inverts_y_coordinates(self):
 
-        c = canvas.InvertedYTkCanvas(self.master, None)
+        c = canvas.InvertedYCanvas(self.master, None)
 
         coords = [0, 0, 1, 1, 2, -2]
         _item_id = c.create_line(coords, fill='fill', width=42, capstyle='capstyle')
@@ -165,7 +165,7 @@ class TestInvertedTkYCanvas(unittest.TestCase):
 
     def test_create_line_passes_args_to_Canvas_create_line(self):
 
-        c = canvas.InvertedYTkCanvas(self.master, None)
+        c = canvas.InvertedYCanvas(self.master, None)
 
         _item_id = c.create_line([], fill='fill', width=42, capstyle='capstyle')
 
@@ -176,7 +176,7 @@ class TestInvertedTkYCanvas(unittest.TestCase):
 
     def test_move_calls_canvas_move_with_same_item_id(self):
 
-        c = canvas.InvertedYTkCanvas(self.master, None)
+        c = canvas.InvertedYCanvas(self.master, None)
 
         c.move(42, 0, 0)
 
@@ -185,7 +185,7 @@ class TestInvertedTkYCanvas(unittest.TestCase):
 
     def test_move_calls_canvas_move_with_inverted_y(self):
 
-        c = canvas.InvertedYTkCanvas(self.master, None)
+        c = canvas.InvertedYCanvas(self.master, None)
 
         c.move(None, 42, 24)
 
@@ -194,7 +194,7 @@ class TestInvertedTkYCanvas(unittest.TestCase):
 
     def test_coords_calls_canvas_coords_with_same_item_id(self):
 
-        c = canvas.InvertedYTkCanvas(self.master, None)
+        c = canvas.InvertedYCanvas(self.master, None)
 
         c.coords(42, [])
 
@@ -203,7 +203,7 @@ class TestInvertedTkYCanvas(unittest.TestCase):
 
     def test_coords_calls_canvas_coords_with_inverted_y_coords(self):
 
-        c = canvas.InvertedYTkCanvas(self.master, None)
+        c = canvas.InvertedYCanvas(self.master, None)
 
         c.coords(None, [1, 2, 3, 4, 5, 6])
 
@@ -214,7 +214,7 @@ class TestInvertedTkYCanvas(unittest.TestCase):
 
     def test_attribute_access_returns_tkinter_Canvas_attribute(self):
 
-        c = canvas.InvertedYTkCanvas(self.master, None)
+        c = canvas.InvertedYCanvas(self.master, None)
 
         names = (
             'pack',

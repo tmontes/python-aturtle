@@ -9,7 +9,7 @@ import tkinter
 
 
 
-class InvertedYTkCanvas:
+class InvertedYCanvas:
 
     """
     Behaves like a tkinter.Canvas widget, where Y coordinates are negated such
@@ -29,6 +29,9 @@ class InvertedYTkCanvas:
         )
 
     def _inverted_y(self, coords):
+
+        # `coords` is an iterable of (x0, y0, x1, y0, ..., xn, yn) numbers,
+        # where the ones in odd offsets/indices are Y values that are negated.
 
         return [
             -value if offset % 2 else value

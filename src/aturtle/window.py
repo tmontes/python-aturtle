@@ -21,7 +21,7 @@ class Window:
 
     def __init__(self, width=320, height=320, x=None, y=None,
                  fill_color='white', title='A-Turtle',
-                 canvas_factory=canvas.InvertedYTkCanvas):
+                 canvas_factory=canvas.InvertedYCanvas):
         """
         Initialize a Window with the given `width` and `height`, filled in
         `fill_color`, with the given `title`.
