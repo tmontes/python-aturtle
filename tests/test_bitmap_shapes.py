@@ -61,7 +61,7 @@ class _TkBasedTests(unittest.TestCase):
     def setUp(self):
 
         # PIL code path tests run against fake_tkinter.
-        self.tkinter = fake_tkinter.FakeTkinter(640, 480)
+        self.tkinter = fake_tkinter.Module(640, 480)
 
         # Replace tkinter with the fake one.
         self.save_tkinter = bitmap.tkinter

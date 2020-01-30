@@ -26,7 +26,7 @@ class TestDefaultSprite(base.TestCase):
 
     def setUp(self):
 
-        self.canvas = fake_tkinter.FakeCanvas()
+        self.canvas = fake_tkinter.Canvas()
 
 
     def test_create(self):

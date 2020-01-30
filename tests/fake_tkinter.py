@@ -10,9 +10,10 @@ from unittest import mock
 
 
 
-class FakeCanvas:
+class Canvas:
 
-    def __init__(self):
+    def __init__(self, *args, **kwargs):
+        self.init_args = mock.call(*args, **kwargs)
         self.pack = mock.Mock()
         self.config = mock.Mock()
         self.xview_scroll = mock.Mock()
@@ -21,23 +22,16 @@ class FakeCanvas:
         self.coords = mock.Mock()
         self.update = mock.Mock()
         self.delete = mock.Mock()
-        self.create_polygon_coords = None
-        self.create_polygon_kwargs = None
+        self.create_polygon = mock.Mock(return_value=42)
         self.create_image = mock.Mock(return_value=24)
         self.create_line = mock.Mock(return_value=42)
         self.itemconfig = mock.Mock()
         self.tag_lower = mock.Mock()
         self.tag_raise = mock.Mock()
 
-    def create_polygon(self, coords, **kwargs):
-        self.create_polygon_coords = coords
-        self.create_polygon_kwargs = kwargs
-        # Return some numeric id.
-        return 42
 
 
-
-class FakeWindow:
+class Window:
 
     def __init__(self, screen_width, screen_height):
         self.winfo_screenwidth = mock.Mock(return_value=screen_width)
@@ -82,15 +76,15 @@ class FakeWindow:
         return self._h
 
 
-class FakeTk(FakeWindow):
+class Tk(Window):
     pass
 
 
-class FakeToplevel(FakeWindow):
+class Toplevel(Window):
     pass
 
 
-class FakePhotoImage:
+class PhotoImage:
 
     def __init__(self):
         self.copies = 0
@@ -103,28 +97,34 @@ class FakePhotoImage:
 
     def copy(self):
         self.copies += 1
-        return FakePhotoImage()
+        return PhotoImage()
 
 
 
-class FakeTkinter:
+class Module:
 
     def __init__(self, screen_width, screen_height):
         self.screen_width = screen_width
         self.screen_height = screen_height
-        self.canvas_init_calls = []
+        self.windows = []
+        self.canvases = []
         self.photoimage_init_calls = []
 
     def Tk(self):
-        return FakeTk(self.screen_width, self.screen_height)
+        window = Tk(self.screen_width, self.screen_height)
+        self.windows.append(window)
+        return window
 
     def Toplevel(self):
-        return FakeToplevel(self.screen_width, self.screen_height)
+        window = Toplevel(self.screen_width, self.screen_height)
+        self.windows.append(window)
+        return window
 
     def Canvas(self, *args, **kwargs):
-        self.canvas_init_calls.append((args, kwargs))
-        return FakeCanvas()
+        canvas = Canvas(*args, **kwargs)
+        self.canvases.append(canvas)
+        return canvas
 
     def PhotoImage(self, *args, **kwargs):
         self.photoimage_init_calls.append((args, kwargs))
-        return FakePhotoImage()
+        return PhotoImage()

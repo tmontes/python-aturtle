@@ -24,7 +24,7 @@ class TestTurtle(base.TestCase):
 
     def setUp(self):
 
-        self.canvas = fake_tkinter.FakeCanvas()
+        self.canvas = fake_tkinter.Canvas()
         self.sprite = fake_sprite.FakeSprite(
             canvas=self.canvas,
             anchor=(0, 0),
@@ -123,7 +123,7 @@ class TestTurtleAsyncRotation(AsyncAnimationBase):
 
         super().setUp()
 
-        self.canvas = fake_tkinter.FakeCanvas()
+        self.canvas = fake_tkinter.Canvas()
         self.sprite = fake_sprite.FakeSprite(
             canvas=self.canvas,
             anchor=(0, 0),
@@ -207,7 +207,7 @@ class TestTurtleAsyncMovement(AsyncAnimationBase):
 
         super().setUp()
 
-        self.canvas = fake_tkinter.FakeCanvas()
+        self.canvas = fake_tkinter.Canvas()
         self.sprite = fake_sprite.FakeSprite(
             canvas=self.canvas,
             anchor=(0, 0),
@@ -453,7 +453,7 @@ class TestTurtleSyncRotation(SyncAnimationBase):
 
         super().setUp()
 
-        self.canvas = fake_tkinter.FakeCanvas()
+        self.canvas = fake_tkinter.Canvas()
         self.sprite = fake_sprite.FakeSprite(
             canvas=self.canvas,
             anchor=(0, 0),
@@ -533,7 +533,7 @@ class TestTurtleSyncMovement(SyncAnimationBase):
 
         super().setUp()
 
-        self.canvas = fake_tkinter.FakeCanvas()
+        self.canvas = fake_tkinter.Canvas()
         self.sprite = fake_sprite.FakeSprite(
             canvas=self.canvas,
             anchor=(0, 0),
@@ -753,7 +753,7 @@ class TestTurtleAsyncMovementIntegrated(AsyncAnimationBase):
 
         super().setUp()
 
-        self.canvas = fake_tkinter.FakeCanvas()
+        self.canvas = fake_tkinter.Canvas()
         self.sprite = sprite_base.Sprite(self.canvas, shape=None)
 
 
@@ -923,7 +923,7 @@ class TestTurtleSyncMovementIntegrated(SyncAnimationBase):
 
         super().setUp()
 
-        self.canvas = fake_tkinter.FakeCanvas()
+        self.canvas = fake_tkinter.Canvas()
         self.sprite = sprite_base.Sprite(self.canvas, shape=None)
 
 
