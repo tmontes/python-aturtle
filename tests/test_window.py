@@ -62,14 +62,15 @@ class TestWindow(FakedTkinterTestCase):
     def test_create_window_creates_underlying_tk_object(self):
 
         w = self._Window()
-        self.assertIsInstance(w._tk_window, fake_tkinter.FakeTk)
+        wrapped_tk_window = self.tkinter.windows[0]
+        self.assertIsInstance(wrapped_tk_window, fake_tkinter.FakeTk)
 
 
     def test_default_title_was_set(self):
 
         w = self._Window()
-        tk_window = w._tk_window
-        tk_window.title.assert_called_once_with('A-Turtle')
+        wrapped_tk_window = self.tkinter.windows[0]
+        wrapped_tk_window.title.assert_called_once_with('A-Turtle')
 
 
     def test_default_width(self):
@@ -134,10 +135,10 @@ class TestWindow(FakedTkinterTestCase):
 
         w = self._Window()
 
-        tk_window = w._tk_window
-        tk_window.bind.assert_called_once()
+        wrapped_tk_window = self.tkinter.windows[0]
+        wrapped_tk_window.bind.assert_called_once()
 
-        (sequence, func), _kwargs = tk_window.bind.call_args
+        (sequence, func), _kwargs = wrapped_tk_window.bind.call_args
         self.assertEqual(sequence, '<Configure>')
         self.assertTrue(callable(func), 'Resize handler not callable.')
 
@@ -207,8 +208,8 @@ class TestWindow(FakedTkinterTestCase):
     def test_custom_title_passed_to_tk_window(self):
 
         w = self._Window(title='Test Title')
-        tk_window = w._tk_window
-        tk_window.title.assert_called_once_with('Test Title')
+        wrapped_tk_window = self.tkinter.windows[0]
+        wrapped_tk_window.title.assert_called_once_with('Test Title')
 
 
     def test_positive_horizontal_placement(self):
@@ -295,6 +296,7 @@ class TestWindowEventHandling(FakedTkinterTestCase):
 
         super().setUp()
         self.w = self._Window()
+        self.wrapped_tk_window = self.tkinter.windows[0]
 
 
     def test_bind_calls_tk_window_bind(self):
@@ -302,7 +304,7 @@ class TestWindowEventHandling(FakedTkinterTestCase):
         handler = mock.Mock()
         self.w.bind('<KeyPress-a>', handler)
 
-        self.w._tk_window.bind.assert_called_with('<KeyPress-a>', handler)
+        self.wrapped_tk_window.bind.assert_called_with('<KeyPress-a>', handler)
 
 
     def test_bind_unbind_calls_tk_window_bind_unbind(self):
@@ -311,8 +313,8 @@ class TestWindowEventHandling(FakedTkinterTestCase):
         self.w.bind('<KeyPress-a>', handler)
         self.w.unbind('<KeyPress-a>')
 
-        self.w._tk_window.bind.assert_called_with('<KeyPress-a>', handler)
-        self.w._tk_window.unbind.assert_called_with('<KeyPress-a>', mock.ANY)
+        self.wrapped_tk_window.bind.assert_called_with('<KeyPress-a>', handler)
+        self.wrapped_tk_window.unbind.assert_called_with('<KeyPress-a>', mock.ANY)
 
 
     def test_unbind_unbound_raises_ValueError(self):
@@ -324,7 +326,7 @@ class TestWindowEventHandling(FakedTkinterTestCase):
     def test_unbind_default_works_with_no_bindings(self):
 
         self.w.unbind()
-        self.w._tk_window.unbind.assert_not_called()
+        self.wrapped_tk_window.unbind.assert_not_called()
 
 
     def test_unbind_default_unbinds_all_bindings(self):
@@ -333,7 +335,7 @@ class TestWindowEventHandling(FakedTkinterTestCase):
         self.w.bind('<KeyPress-b>', mock.Mock())
 
         self.w.unbind()
-        unbind_call_args = self.w._tk_window.unbind.call_args_list
+        unbind_call_args = self.wrapped_tk_window.unbind.call_args_list
         self.assertEqual(len(unbind_call_args), 2, 'unbind call count')
 
 
@@ -346,11 +348,11 @@ class TestWindowEventHandling(FakedTkinterTestCase):
     def test_bind_direct_key_with_press_cb_calls_window_bind_twice(self):
 
         # Ignore any window setup bind calls that may have taken place.
-        self.w._tk_window.bind.reset_mock()
+        self.wrapped_tk_window.bind.reset_mock()
 
         self.w.bind_direct_key('x', mock.Mock())
 
-        bind_call_args = self.w._tk_window.bind.call_args_list
+        bind_call_args = self.wrapped_tk_window.bind.call_args_list
         self.assertEqual(len(bind_call_args), 2, 'unbind call count')
 
         first_call, second_call = bind_call_args
@@ -361,11 +363,11 @@ class TestWindowEventHandling(FakedTkinterTestCase):
     def test_bind_direct_key_with_release_cb_calls_window_bind_twice(self):
 
         # Ignore any window setup bind calls that may have taken place.
-        self.w._tk_window.bind.reset_mock()
+        self.wrapped_tk_window.bind.reset_mock()
 
         self.w.bind_direct_key('y', None, mock.Mock())
 
-        bind_call_args = self.w._tk_window.bind.call_args_list
+        bind_call_args = self.wrapped_tk_window.bind.call_args_list
         self.assertEqual(len(bind_call_args), 2, 'unbind call count')
 
         first_call, second_call = bind_call_args
@@ -376,11 +378,11 @@ class TestWindowEventHandling(FakedTkinterTestCase):
     def test_bind_direct_key_with_both_cbs_calls_window_bind_twice(self):
 
         # Ignore any window setup bind calls that may have taken place.
-        self.w._tk_window.bind.reset_mock()
+        self.wrapped_tk_window.bind.reset_mock()
 
         self.w.bind_direct_key('z', mock.Mock(), mock.Mock())
 
-        bind_call_args = self.w._tk_window.bind.call_args_list
+        bind_call_args = self.wrapped_tk_window.bind.call_args_list
         self.assertEqual(len(bind_call_args), 2, 'bind call count')
 
         first_call, second_call = bind_call_args
@@ -391,19 +393,19 @@ class TestWindowEventHandling(FakedTkinterTestCase):
     def test_bind_unbind_direct_key_calls_window_bind_unbind_twice(self):
 
         # Ignore any window setup bind calls that may have taken place.
-        self.w._tk_window.bind.reset_mock()
+        self.wrapped_tk_window.bind.reset_mock()
 
         self.w.bind_direct_key('a', mock.Mock(), mock.Mock())
         self.w.unbind_direct_key('a')
 
-        bind_call_args = self.w._tk_window.bind.call_args_list
+        bind_call_args = self.wrapped_tk_window.bind.call_args_list
         self.assertEqual(len(bind_call_args), 2, 'bind call count')
 
         first_call, second_call = bind_call_args
         self.assertEqual(first_call, mock.call('<KeyPress-a>', mock.ANY))
         self.assertEqual(second_call, mock.call('<KeyRelease-a>', mock.ANY))
 
-        unbind_call_args = self.w._tk_window.unbind.call_args_list
+        unbind_call_args = self.wrapped_tk_window.unbind.call_args_list
         self.assertEqual(len(unbind_call_args), 2, 'unbind call count')
 
         first_call, second_call = unbind_call_args
@@ -420,7 +422,7 @@ class TestWindowEventHandling(FakedTkinterTestCase):
     def test_unbind_direct_key_default_works_with_no_bindings(self):
 
         self.w.unbind_direct_key()
-        self.w._tk_window.unbind.assert_not_called()
+        self.wrapped_tk_window.unbind.assert_not_called()
 
 
     def test_unbind_direct_key_default_unbinds_all_direct_keys(self):
@@ -431,7 +433,7 @@ class TestWindowEventHandling(FakedTkinterTestCase):
         self.w.unbind_direct_key()
 
         # Expect 4 unbind calls: KeyPress/KeyRelease for 2 keys.
-        unbind_call_args = self.w._tk_window.unbind.call_args_list
+        unbind_call_args = self.wrapped_tk_window.unbind.call_args_list
         self.assertEqual(len(unbind_call_args), 4, 'unbind call count')
 
 
@@ -529,9 +531,10 @@ class TestMultipleWindows(FakedTkinterTestCase):
         w2 = self._Window()
         w3 = self._Window()
 
-        self.assertIsInstance(w1._tk_window, fake_tkinter.FakeTk)
-        self.assertIsInstance(w2._tk_window, fake_tkinter.FakeToplevel)
-        self.assertIsInstance(w3._tk_window, fake_tkinter.FakeToplevel)
+        wrapped_tk_windows = self.tkinter.windows
+        self.assertIsInstance(wrapped_tk_windows[0], fake_tkinter.FakeTk)
+        self.assertIsInstance(wrapped_tk_windows[1], fake_tkinter.FakeToplevel)
+        self.assertIsInstance(wrapped_tk_windows[2], fake_tkinter.FakeToplevel)
 
 
     def test_close_first_window_raises_if_there_are_other_windows(self):

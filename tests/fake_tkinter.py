@@ -106,14 +106,19 @@ class FakeTkinter:
     def __init__(self, screen_width, screen_height):
         self.screen_width = screen_width
         self.screen_height = screen_height
+        self.windows = []
         self.canvases = []
         self.photoimage_init_calls = []
 
     def Tk(self):
-        return FakeTk(self.screen_width, self.screen_height)
+        window = FakeTk(self.screen_width, self.screen_height)
+        self.windows.append(window)
+        return window
 
     def Toplevel(self):
-        return FakeToplevel(self.screen_width, self.screen_height)
+        window = FakeToplevel(self.screen_width, self.screen_height)
+        self.windows.append(window)
+        return window
 
     def Canvas(self, *args, **kwargs):
         canvas = FakeCanvas(*args, **kwargs)
