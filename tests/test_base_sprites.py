@@ -551,7 +551,7 @@ class AsyncAnimationBase(test_base.TestCase):
 
         self.canvas = fake_tkinter.Canvas()
 
-        self.asyncio = fake_asyncio.FakeAsyncio()
+        self.asyncio = fake_asyncio.Asyncio()
         self._exit_stack = contextlib.ExitStack()
         self._exit_stack.enter_context(
             mock.patch('aturtle.sprites.base.asyncio', self.asyncio)

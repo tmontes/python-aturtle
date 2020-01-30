@@ -9,7 +9,7 @@ from unittest import mock
 
 
 
-class FakeSprite:
+class Sprite:
 
     def __init__(self, canvas, anchor, angle):
         self.canvas = canvas

@@ -25,7 +25,7 @@ class TestTurtle(base.TestCase):
     def setUp(self):
 
         self.canvas = fake_tkinter.Canvas()
-        self.sprite = fake_sprite.FakeSprite(
+        self.sprite = fake_sprite.Sprite(
             canvas=self.canvas,
             anchor=(0, 0),
             angle=0,
@@ -91,7 +91,7 @@ class AsyncAnimationBase(base.TestCase):
 
     def setUp(self):
 
-        self.asyncio = fake_asyncio.FakeAsyncio()
+        self.asyncio = fake_asyncio.Asyncio()
         self._exit_stack = contextlib.ExitStack()
         self._exit_stack.enter_context(
             mock.patch('aturtle.sprites.base.asyncio', self.asyncio)
@@ -124,7 +124,7 @@ class TestTurtleAsyncRotation(AsyncAnimationBase):
         super().setUp()
 
         self.canvas = fake_tkinter.Canvas()
-        self.sprite = fake_sprite.FakeSprite(
+        self.sprite = fake_sprite.Sprite(
             canvas=self.canvas,
             anchor=(0, 0),
             angle=0,
@@ -208,7 +208,7 @@ class TestTurtleAsyncMovement(AsyncAnimationBase):
         super().setUp()
 
         self.canvas = fake_tkinter.Canvas()
-        self.sprite = fake_sprite.FakeSprite(
+        self.sprite = fake_sprite.Sprite(
             canvas=self.canvas,
             anchor=(0, 0),
             angle=0,
@@ -454,7 +454,7 @@ class TestTurtleSyncRotation(SyncAnimationBase):
         super().setUp()
 
         self.canvas = fake_tkinter.Canvas()
-        self.sprite = fake_sprite.FakeSprite(
+        self.sprite = fake_sprite.Sprite(
             canvas=self.canvas,
             anchor=(0, 0),
             angle=0,
@@ -534,7 +534,7 @@ class TestTurtleSyncMovement(SyncAnimationBase):
         super().setUp()
 
         self.canvas = fake_tkinter.Canvas()
-        self.sprite = fake_sprite.FakeSprite(
+        self.sprite = fake_sprite.Sprite(
             canvas=self.canvas,
             anchor=(0, 0),
             angle=0,

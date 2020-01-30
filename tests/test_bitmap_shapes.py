@@ -20,8 +20,8 @@ class _PILBasedTests(unittest.TestCase):
     def setUp(self):
 
         # PIL code path tests run against fake_pil objects.
-        self.pil_image = fake_pil.FakePILImage
-        self.pil_image_tk = fake_pil.FakePILImageTk()
+        self.pil_image = fake_pil.PILImage
+        self.pil_image_tk = fake_pil.PILImageTk()
 
         if bitmap.tkinter:
             self.save_pil_image = None
