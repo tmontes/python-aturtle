@@ -112,11 +112,10 @@ class TestWindow(FakedTkinterTestCase):
 
         w = self._Window()
 
-        canvas_init_call_args = self.tkinter.canvas_init_calls
-        self.assertEqual(len(canvas_init_call_args), 1, 'Non single canvas init.')
+        self.assertEqual(len(self.tkinter.canvases), 1, 'Non single canvas init.')
 
-        (_tk_window,), kwargs = canvas_init_call_args[0]
-        self.assertEqual(kwargs['background'], 'white')
+        canvas_init_args = self.tkinter.canvases[0].init_args
+        self.assertEqual(canvas_init_args.kwargs['background'], 'white')
 
 
     def test_canvas_origin_is_centered(self):
@@ -199,11 +198,10 @@ class TestWindow(FakedTkinterTestCase):
 
         w = self._Window(fill_color='orange')
 
-        canvas_init_call_args = self.tkinter.canvas_init_calls
-        self.assertEqual(len(canvas_init_call_args), 1, 'Non single canvas init.')
+        self.assertEqual(len(self.tkinter.canvases), 1, 'Non single canvas init.')
 
-        (_tk_window,), kwargs = canvas_init_call_args[0]
-        self.assertEqual(kwargs['background'], 'orange')
+        canvas_init_args = self.tkinter.canvases[0].init_args
+        self.assertEqual(canvas_init_args.kwargs['background'], 'orange')
 
 
     def test_custom_title_passed_to_tk_window(self):

@@ -44,40 +44,33 @@ class TestInvertedTkYCanvas(unittest.TestCase):
 
         _c = canvas.InvertedYCanvas(self.master, 'background')
 
-        tkinter_canvas_call_args = self.tkinter.canvas_init_calls
-
-        self.assertEqual(len(tkinter_canvas_call_args), 1, 'tkinter.Canvas call count')
+        self.assertEqual(len(self.tkinter.canvases), 1, 'tkinter.Canvas call count')
 
 
     def test_create_creates_tkinter_Canvas_with_given_master(self):
 
         _c = canvas.InvertedYCanvas(self.master, 'background')
 
-        tkinter_canvas_call_args = self.tkinter.canvas_init_calls
+        canvas_init_args = self.tkinter.canvases[0].init_args
 
         # Passed a single positional argument: self.master
-        (single_arg,), _kwargs = tkinter_canvas_call_args[0]
-        self.assertIs(single_arg, self.master)
+        self.assertIs(canvas_init_args.args[0], self.master)
 
 
     def test_create_creates_tkinter_Canvas_with_given_background(self):
 
         _c = canvas.InvertedYCanvas(self.master, 'background')
 
-        tkinter_canvas_call_args = self.tkinter.canvas_init_calls
-
-        _args, kwargs = tkinter_canvas_call_args[0]
-        self.assertEqual(kwargs['background'], 'background')
+        canvas_init_args = self.tkinter.canvases[0].init_args
+        self.assertEqual(canvas_init_args.kwargs['background'], 'background')
 
 
     def test_create_creates_tkinter_Canvas_with_zero_highlightthickness(self):
 
         _c = canvas.InvertedYCanvas(self.master, 'background')
 
-        tkinter_canvas_call_args = self.tkinter.canvas_init_calls
-
-        _args, kwargs = tkinter_canvas_call_args[0]
-        self.assertEqual(kwargs['highlightthickness'], 0)
+        canvas_init_args = self.tkinter.canvases[0].init_args
+        self.assertEqual(canvas_init_args.kwargs['highlightthickness'], 0)
 
 
     def test_create_polygon_returns_integer_item_id(self):
@@ -96,7 +89,8 @@ class TestInvertedTkYCanvas(unittest.TestCase):
         coords = [0, 0, 1, 1, 2, -2]
         _item_id = c.create_polygon(coords, fill='fill', outline='outline', width=42)
 
-        c._canvas.create_polygon.assert_called_once_with(
+        wrapped_tkinter_canvas = self.tkinter.canvases[0]
+        wrapped_tkinter_canvas.create_polygon.assert_called_once_with(
             [0, 0, 1, -1, 2, 2],
             fill=mock.ANY,
             outline=mock.ANY,
@@ -110,7 +104,8 @@ class TestInvertedTkYCanvas(unittest.TestCase):
 
         _item_id = c.create_polygon([], fill='fill', outline='outline', width=42)
 
-        c._canvas.create_polygon.assert_called_once_with(
+        wrapped_tkinter_canvas = self.tkinter.canvases[0]
+        wrapped_tkinter_canvas.create_polygon.assert_called_once_with(
             mock.ANY,
             fill='fill',
             outline='outline',
@@ -133,7 +128,8 @@ class TestInvertedTkYCanvas(unittest.TestCase):
 
         _item_id = c.create_image(42, 24, image=None, anchor=None)
 
-        c._canvas.create_image.assert_called_with(
+        wrapped_tkinter_canvas = self.tkinter.canvases[0]
+        wrapped_tkinter_canvas.create_image.assert_called_with(
             42, -24, image=mock.ANY, anchor=mock.ANY
         )
 
@@ -144,7 +140,8 @@ class TestInvertedTkYCanvas(unittest.TestCase):
 
         _item_id = c.create_image(42, 24, image='image', anchor='anchor')
 
-        c._canvas.create_image.assert_called_with(
+        wrapped_tkinter_canvas = self.tkinter.canvases[0]
+        wrapped_tkinter_canvas.create_image.assert_called_with(
             mock.ANY, mock.ANY, image='image', anchor='anchor'
         )
 
@@ -165,7 +162,8 @@ class TestInvertedTkYCanvas(unittest.TestCase):
         coords = [0, 0, 1, 1, 2, -2]
         _item_id = c.create_line(coords, fill='fill', width=42, capstyle='capstyle')
 
-        c._canvas.create_line.assert_called_with(
+        wrapped_tkinter_canvas = self.tkinter.canvases[0]
+        wrapped_tkinter_canvas.create_line.assert_called_with(
             [0, 0, 1, -1, 2, 2], fill=mock.ANY, width=mock.ANY, capstyle=mock.ANY,
         )
 
@@ -176,7 +174,8 @@ class TestInvertedTkYCanvas(unittest.TestCase):
 
         _item_id = c.create_line([], fill='fill', width=42, capstyle='capstyle')
 
-        c._canvas.create_line.assert_called_with(
+        wrapped_tkinter_canvas = self.tkinter.canvases[0]
+        wrapped_tkinter_canvas.create_line.assert_called_with(
             mock.ANY, fill='fill', width=42, capstyle='capstyle',
         )
 
@@ -187,7 +186,8 @@ class TestInvertedTkYCanvas(unittest.TestCase):
 
         c.move(42, 0, 0)
 
-        c._canvas.move.assert_called_with(42, mock.ANY, mock.ANY)
+        wrapped_tkinter_canvas = self.tkinter.canvases[0]
+        wrapped_tkinter_canvas.move.assert_called_with(42, mock.ANY, mock.ANY)
 
 
     def test_move_calls_canvas_move_with_inverted_y(self):
@@ -196,7 +196,8 @@ class TestInvertedTkYCanvas(unittest.TestCase):
 
         c.move(None, 42, 24)
 
-        c._canvas.move.assert_called_with(mock.ANY, 42, -24)
+        wrapped_tkinter_canvas = self.tkinter.canvases[0]
+        wrapped_tkinter_canvas.move.assert_called_with(mock.ANY, 42, -24)
 
 
     def test_coords_calls_canvas_coords_with_same_item_id(self):
@@ -205,7 +206,8 @@ class TestInvertedTkYCanvas(unittest.TestCase):
 
         c.coords(42, [])
 
-        c._canvas.coords.assert_called_with(42, mock.ANY)
+        wrapped_tkinter_canvas = self.tkinter.canvases[0]
+        wrapped_tkinter_canvas.coords.assert_called_with(42, mock.ANY)
 
 
     def test_coords_calls_canvas_coords_with_inverted_y_coords(self):
@@ -214,7 +216,8 @@ class TestInvertedTkYCanvas(unittest.TestCase):
 
         c.coords(None, [1, 2, 3, 4, 5, 6])
 
-        c._canvas.coords.assert_called_with(
+        wrapped_tkinter_canvas = self.tkinter.canvases[0]
+        wrapped_tkinter_canvas.coords.assert_called_with(
             mock.ANY, [1, -2, 3, -4, 5, -6]
         )
 
@@ -235,8 +238,9 @@ class TestInvertedTkYCanvas(unittest.TestCase):
             'tag_raise',
         )
 
+        wrapped_tkinter_canvas = self.tkinter.canvases[0]
         for name in names:
             with self.subTest(attr_name=name):
                 result = getattr(c, name)
-                underlying = getattr(c._canvas, name)
+                underlying = getattr(wrapped_tkinter_canvas, name)
                 self.assertIs(result, underlying)

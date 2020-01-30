@@ -12,7 +12,8 @@ from unittest import mock
 
 class FakeCanvas:
 
-    def __init__(self):
+    def __init__(self, *args, **kwargs):
+        self.init_args = mock.call(*args, **kwargs)
         self.pack = mock.Mock()
         self.config = mock.Mock()
         self.xview_scroll = mock.Mock()
@@ -105,7 +106,7 @@ class FakeTkinter:
     def __init__(self, screen_width, screen_height):
         self.screen_width = screen_width
         self.screen_height = screen_height
-        self.canvas_init_calls = []
+        self.canvases = []
         self.photoimage_init_calls = []
 
     def Tk(self):
@@ -115,8 +116,9 @@ class FakeTkinter:
         return FakeToplevel(self.screen_width, self.screen_height)
 
     def Canvas(self, *args, **kwargs):
-        self.canvas_init_calls.append((args, kwargs))
-        return FakeCanvas()
+        canvas = FakeCanvas(*args, **kwargs)
+        self.canvases.append(canvas)
+        return canvas
 
     def PhotoImage(self, *args, **kwargs):
         self.photoimage_init_calls.append((args, kwargs))
