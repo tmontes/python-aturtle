@@ -31,7 +31,7 @@ class TestDefaultSprite(base.TestCase):
 
     def setUp(self):
 
-        self.canvas = fake_tkinter.FakeCanvas()
+        self.canvas = fake_tkinter.Canvas()
 
 
     def test_create(self):
@@ -241,7 +241,7 @@ class TestNonDefaultSprite(base.TestCase):
 
     def setUp(self):
 
-        self.canvas = fake_tkinter.FakeCanvas()
+        self.canvas = fake_tkinter.Canvas()
 
 
     def test_custom_anchor(self):
@@ -355,7 +355,7 @@ class TestRegressionSpriteInitializedWithUpdateTrue(base.TestCase):
 
     def test_direct_rotate_around_calls_canvas_update_once(self):
 
-        canvas = fake_tkinter.FakeCanvas()
+        canvas = fake_tkinter.Canvas()
         sprite = sprites.VectorSprite(canvas, UnitSquare(), update=True)
 
         sprite.direct_rotate(30, around=(10, 10))

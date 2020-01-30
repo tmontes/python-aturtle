@@ -10,7 +10,7 @@ from unittest import mock
 
 
 
-class FakeCanvas:
+class Canvas:
 
     def __init__(self, *args, **kwargs):
         self.init_args = mock.call(*args, **kwargs)
@@ -31,7 +31,7 @@ class FakeCanvas:
 
 
 
-class FakeWindow:
+class Window:
 
     def __init__(self, screen_width, screen_height):
         self.winfo_screenwidth = mock.Mock(return_value=screen_width)
@@ -76,15 +76,15 @@ class FakeWindow:
         return self._h
 
 
-class FakeTk(FakeWindow):
+class Tk(Window):
     pass
 
 
-class FakeToplevel(FakeWindow):
+class Toplevel(Window):
     pass
 
 
-class FakePhotoImage:
+class PhotoImage:
 
     def __init__(self):
         self.copies = 0
@@ -97,11 +97,11 @@ class FakePhotoImage:
 
     def copy(self):
         self.copies += 1
-        return FakePhotoImage()
+        return PhotoImage()
 
 
 
-class FakeTkinter:
+class Module:
 
     def __init__(self, screen_width, screen_height):
         self.screen_width = screen_width
@@ -111,20 +111,20 @@ class FakeTkinter:
         self.photoimage_init_calls = []
 
     def Tk(self):
-        window = FakeTk(self.screen_width, self.screen_height)
+        window = Tk(self.screen_width, self.screen_height)
         self.windows.append(window)
         return window
 
     def Toplevel(self):
-        window = FakeToplevel(self.screen_width, self.screen_height)
+        window = Toplevel(self.screen_width, self.screen_height)
         self.windows.append(window)
         return window
 
     def Canvas(self, *args, **kwargs):
-        canvas = FakeCanvas(*args, **kwargs)
+        canvas = Canvas(*args, **kwargs)
         self.canvases.append(canvas)
         return canvas
 
     def PhotoImage(self, *args, **kwargs):
         self.photoimage_init_calls.append((args, kwargs))
-        return FakePhotoImage()
+        return PhotoImage()

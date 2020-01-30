@@ -23,7 +23,7 @@ class TestInvertedTkYCanvas(unittest.TestCase):
 
     def setUp(self):
 
-        self.tkinter = fake_tkinter.FakeTkinter(
+        self.tkinter = fake_tkinter.Module(
             screen_width=SCREEN_WIDTH,
             screen_height=SCREEN_HEIGHT,
         )

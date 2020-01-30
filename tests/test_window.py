@@ -23,7 +23,7 @@ class FakedTkinterTestCase(unittest.TestCase):
 
     def setUp(self):
 
-        self.tkinter = fake_tkinter.FakeTkinter(
+        self.tkinter = fake_tkinter.Module(
             screen_width=SCREEN_WIDTH,
             screen_height=SCREEN_HEIGHT,
         )
@@ -63,7 +63,7 @@ class TestWindow(FakedTkinterTestCase):
 
         w = self._Window()
         wrapped_tk_window = self.tkinter.windows[0]
-        self.assertIsInstance(wrapped_tk_window, fake_tkinter.FakeTk)
+        self.assertIsInstance(wrapped_tk_window, fake_tkinter.Tk)
 
 
     def test_default_title_was_set(self):
@@ -532,9 +532,9 @@ class TestMultipleWindows(FakedTkinterTestCase):
         w3 = self._Window()
 
         wrapped_tk_windows = self.tkinter.windows
-        self.assertIsInstance(wrapped_tk_windows[0], fake_tkinter.FakeTk)
-        self.assertIsInstance(wrapped_tk_windows[1], fake_tkinter.FakeToplevel)
-        self.assertIsInstance(wrapped_tk_windows[2], fake_tkinter.FakeToplevel)
+        self.assertIsInstance(wrapped_tk_windows[0], fake_tkinter.Tk)
+        self.assertIsInstance(wrapped_tk_windows[1], fake_tkinter.Toplevel)
+        self.assertIsInstance(wrapped_tk_windows[2], fake_tkinter.Toplevel)
 
 
     def test_close_first_window_raises_if_there_are_other_windows(self):

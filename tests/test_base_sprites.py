@@ -22,7 +22,7 @@ class TestDefaultSprite(test_base.TestCase):
 
     def setUp(self):
 
-        self.canvas = fake_tkinter.FakeCanvas()
+        self.canvas = fake_tkinter.Canvas()
 
 
     def test_create(self):
@@ -332,7 +332,7 @@ class TestNonDefaultSprite(test_base.TestCase):
 
     def setUp(self):
 
-        self.canvas = fake_tkinter.FakeCanvas()
+        self.canvas = fake_tkinter.Canvas()
         self.sprite = base.Sprite(
             canvas=self.canvas,
             shape=None,
@@ -549,7 +549,7 @@ class AsyncAnimationBase(test_base.TestCase):
 
     def setUp(self):
 
-        self.canvas = fake_tkinter.FakeCanvas()
+        self.canvas = fake_tkinter.Canvas()
 
         self.asyncio = fake_asyncio.FakeAsyncio()
         self._exit_stack = contextlib.ExitStack()
@@ -1382,7 +1382,7 @@ class SyncAnimationBase(test_base.TestCase):
 
     def setUp(self):
 
-        self.canvas = fake_tkinter.FakeCanvas()
+        self.canvas = fake_tkinter.Canvas()
 
         self.time = mock.Mock()
         self._exit_stack = contextlib.ExitStack()
@@ -1974,7 +1974,7 @@ class TestRegressionSpriteInitializedWithUpdateTrue(test_base.TestCase):
 
     def setUp(self):
 
-        self.canvas = fake_tkinter.FakeCanvas()
+        self.canvas = fake_tkinter.Canvas()
         self.sprite = base.Sprite(self.canvas, shape=None, update=True)
 
 
