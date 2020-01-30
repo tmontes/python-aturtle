@@ -8,7 +8,7 @@
 from unittest import mock
 
 
-class FakePILImage:
+class PILImage:
 
     BICUBIC = object()
 
@@ -34,7 +34,7 @@ class FakePILImage:
         cls.rotate.reset_mock()
 
 
-class FakePILImageTk:
+class PILImageTk:
 
     def __init__(self):
         self.photoimage_calls = []

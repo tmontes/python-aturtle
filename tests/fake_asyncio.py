@@ -9,13 +9,13 @@ from unittest import mock
 
 
 
-class FakeSleep:
+class Sleep:
 
     def __await__(self):
         yield
 
 
-class FakeAsyncio:
+class Asyncio:
 
     class CancelledError(Exception):
         pass
@@ -25,4 +25,4 @@ class FakeAsyncio:
 
     def sleep(self, seconds):
         self.sleep_call_args.append(seconds)
-        return FakeSleep()
+        return Sleep()
