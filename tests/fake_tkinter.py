@@ -21,19 +21,12 @@ class FakeCanvas:
         self.coords = mock.Mock()
         self.update = mock.Mock()
         self.delete = mock.Mock()
-        self.create_polygon_coords = None
-        self.create_polygon_kwargs = None
+        self.create_polygon = mock.Mock(return_value=42)
         self.create_image = mock.Mock(return_value=24)
         self.create_line = mock.Mock(return_value=42)
         self.itemconfig = mock.Mock()
         self.tag_lower = mock.Mock()
         self.tag_raise = mock.Mock()
-
-    def create_polygon(self, coords, **kwargs):
-        self.create_polygon_coords = coords
-        self.create_polygon_kwargs = kwargs
-        # Return some numeric id.
-        return 42
 
 
 

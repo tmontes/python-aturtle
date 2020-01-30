@@ -96,9 +96,12 @@ class TestInvertedTkYCanvas(unittest.TestCase):
         coords = [0, 0, 1, 1, 2, -2]
         _item_id = c.create_polygon(coords, fill='fill', outline='outline', width=42)
 
-        args = c._canvas.create_polygon_coords
-
-        self.assertEqual(args, [0, 0, 1, -1, 2, 2])
+        c._canvas.create_polygon.assert_called_once_with(
+            [0, 0, 1, -1, 2, 2],
+            fill=mock.ANY,
+            outline=mock.ANY,
+            width=mock.ANY,
+        )
 
 
     def test_create_polygon_passes_args_to_Canvas_create_polygon(self):
@@ -107,8 +110,12 @@ class TestInvertedTkYCanvas(unittest.TestCase):
 
         _item_id = c.create_polygon([], fill='fill', outline='outline', width=42)
 
-        kwargs = c._canvas.create_polygon_kwargs
-        self.assertEqual(kwargs, dict(fill='fill', outline='outline', width=42))
+        c._canvas.create_polygon.assert_called_once_with(
+            mock.ANY,
+            fill='fill',
+            outline='outline',
+            width=42,
+        )
 
 
     def test_create_image_returns_integer_item_id(self):

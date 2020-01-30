@@ -5,6 +5,8 @@
 # See LICENSE for details.
 # ----------------------------------------------------------------------------
 
+from unittest import mock
+
 from aturtle import sprites, shapes
 
 from . import base
@@ -53,24 +55,36 @@ class TestDefaultSprite(base.TestCase):
 
         _sprite = sprites.VectorSprite(self.canvas, UnitSquare(fill_color='#009fff'))
 
-        create_polygon_kwargs = self.canvas.create_polygon_kwargs
-        self.assertEqual(create_polygon_kwargs['fill'], '#009fff')
+        self.canvas.create_polygon.assert_called_once_with(
+            mock.ANY,
+            fill='#009fff',
+            outline=mock.ANY,
+            width=mock.ANY,
+        )
 
 
     def test_shape_line_color_passed_to_create_polygon_outline_kwarg(self):
 
         _sprite = sprites.VectorSprite(self.canvas, UnitSquare(line_color='black'))
 
-        create_polygon_kwargs = self.canvas.create_polygon_kwargs
-        self.assertEqual(create_polygon_kwargs['outline'], 'black')
+        self.canvas.create_polygon.assert_called_once_with(
+            mock.ANY,
+            fill=mock.ANY,
+            outline='black',
+            width=mock.ANY,
+        )
 
 
     def test_shape_line_width_passed_to_create_polygon_width_kwarg(self):
 
         _sprite = sprites.VectorSprite(self.canvas, UnitSquare(line_width=2))
 
-        create_polygon_kwargs = self.canvas.create_polygon_kwargs
-        self.assertEqual(create_polygon_kwargs['width'], 2)
+        self.canvas.create_polygon.assert_called_once_with(
+            mock.ANY,
+            fill=mock.ANY,
+            outline=mock.ANY,
+            width=2,
+        )
 
 
     def test_shape_coords(self):
